@@ -1,0 +1,43 @@
+<ion-content class="ion-padding ion-text-center" color="light">
+
+  <ion-icon name="school-outline" class="app-icon" size="large"></ion-icon>
+  <ion-title class="app-title">E S C U E L A</ion-title>
+
+  <p class="app-description">
+    La plataforma para una comunicación efectiva entre la escuela, maestros y padres de familia.
+  </p>
+
+  <ion-img src="../../assets/img/logo-portal.png">
+
+  </ion-img>
+
+  <ion-list [inset]="true">
+    <ion-item>
+      <ion-input
+        label="Clave del Centro de Trabajo (CCT)"
+        labelPlacement="stacked"
+        placeholder="Escribe la clave aquí"
+        maxlength="10"
+        [(ngModel)]="cct"
+      >
+      </ion-input>
+    </ion-item>
+  </ion-list>
+
+  <ion-list [inset]="true">
+      <ion-input-otp [(ngModel)]="pin">
+        <ion-label>Ingresa los 4 digitos del PIN</ion-label>
+      </ion-input-otp>
+  </ion-list>
+
+  <ion-button
+    class="form__button"
+    expand="block"
+    fill="solid"
+    [disabled]="cct.length !== 10 || ('' + pin).length !== 4"
+    (click)="onContinue()"
+  >
+    Continuar
+  </ion-button>
+
+</ion-content>

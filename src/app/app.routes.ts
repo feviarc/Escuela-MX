@@ -11,23 +11,23 @@ export const routes: Routes = [
     loadComponent: () => import('./portal/portal.page').then( m => m.PortalPage)
   },
   {
-    path: 'home',
-    loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
-  },
-  {
     path: 'auth',
     loadComponent: () => import('./auth/auth.page').then( m => m.AuthPage)
   },
   {
-    path: 'admin',
+    path: 'admin-dashboard',
     loadComponent: () => import('./admin/admin.page').then( m => m.AdminPage)
   },
   {
-    path: 'teacher',
+    path: 'teacher-dashboard',
     loadComponent: () => import('./teacher/teacher.page').then( m => m.TeacherPage)
   },
   {
-    path: 'caregiver',
+    path: 'caregiver-dashboard',
     loadComponent: () => import('./caregiver/caregiver.page').then( m => m.CaregiverPage)
   },
+  {
+    path: '**',
+    redirectTo: 'portal'
+  }
 ];

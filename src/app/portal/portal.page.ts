@@ -6,9 +6,9 @@ import { IonicModule } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { schoolOutline } from 'ionicons/icons';
 import { firstValueFrom } from 'rxjs';
-// import { AuthService } from '../services/auth.service';
-// import { UserProfileService } from '../services/user-profile.service';
-// import { EscuelaService } from '../services/escuela.service';
+import { AuthService } from '../services/auth.service';
+import { UserProfileService } from '../services/user-profile.service';
+import { SchoolService } from '../services/school.service';
 
 
 @Component({
@@ -25,10 +25,10 @@ export class PortalPage implements OnInit {
   pin = '';
 
   constructor(
-    // private router: Router,
-    // private authService: AuthService,
-    // private escuelaService: EscuelaService,
-    // private userProfileService: UserProfileService
+    private router: Router,
+    private authService: AuthService,
+    private schoolService: SchoolService,
+    private userProfileService: UserProfileService
   ) {
     addIcons({schoolOutline});
   }
@@ -38,48 +38,47 @@ export class PortalPage implements OnInit {
   }
 
   private async checkUserStatus() {
-    // try {
-    //   const user = await firstValueFrom(this.authService.getCurrentUser());
+    try {
+      const user = await firstValueFrom(this.authService.getCurrentUser());
 
-    //   if(user) {
-    //     const profile = await firstValueFrom(this.userProfileService.getUserProfile(user.uid));
+      if(user) {
+        const profile = await firstValueFrom(this.userProfileService.getUserProfile(user.uid));
 
-    //     if(profile){
-    //       switch(profile.rol) {
-    //         case 'administrador':
-    //           this.router.navigateByUrl('/admin-dashboard');
-    //           break;
-    //         case 'maestro':
-    //           this.router.navigateByUrl('/maestro-dashboard');
-    //           break;
-    //         case 'padre':
-    //           this.router.navigateByUrl('/padre-dashboard');
-    //           break;
-    //         default:
-    //           this.router.navigateByUrl('/portal');
-    //       }
-    //     }
-    //   }
-    // } catch(error) {
-    //   console.log('Error en la verificación de usuario: ', error);
-    // }
+        if(profile){
+          switch(profile.rol) {
+            case 'administrador':
+              this.router.navigateByUrl('/admin-dashboard');
+              break;
+            case 'maestro':
+              this.router.navigateByUrl('/maestro-dashboard');
+              break;
+            case 'padre':
+              this.router.navigateByUrl('/padre-dashboard');
+              break;
+            default:
+              this.router.navigateByUrl('/portal');
+          }
+        }
+      }
+    } catch(error) {
+      console.log('Error en la verificación de usuario: ', error);
+    }
   }
 
   async onContinue() {
 
-    // console.log('PIN: ', this.pin);
+    if(!this.cct || !this.pin) {
+      console.log('PIN: ', this.pin);
+      console.error('La CCT y el PIN son obligatorios.');
+      return;
+    }
 
-    // if(!this.cct || !this.pin) {
-    //   console.error('La CCT y el PIN son obligatorios.');
-    //   return;
-    // }
+    const isValid = await this.schoolService.validateCredentials(this.cct.toUpperCase(), this.pin);
 
-    // const isValid = await this.escuelaService.validateCredentials(this.cct.toUpperCase(), this.pin);
-
-    // if(isValid) {
-    //   this.router.navigateByUrl('/auth');
-    // } else {
-    //   console.error('CCT o PIN incorrectos.');
-    // }
+    if(isValid) {
+      this.router.navigateByUrl('/auth');
+    } else {
+      console.error('CCT o PIN incorrectos.');
+    }
   }
 }

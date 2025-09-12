@@ -33,7 +33,7 @@ export const routes: Routes = [
     path: 'caregiver-dashboard',
     loadComponent: () => import('./caregiver/caregiver.page').then( m => m.CaregiverPage),
     canActivate: [AuthGuard],
-    data: {expectedRole: 'padre'}
+    data: {expectedRole: 'tutor'}
   },
   {
     path: '**',

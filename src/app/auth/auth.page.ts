@@ -63,7 +63,7 @@ export class AuthPage implements OnInit {
     }
 
     const isFirstUser = await this.userProfileService.isFirstUser();
-    const { email, password, isPadre } = this.authForm.value;
+    const { email, password, isTutor } = this.authForm.value;
 
     try {
       if(this.isLoginMode) {
@@ -81,8 +81,8 @@ export class AuthPage implements OnInit {
         let role = 'maestro';
         const user = await this.authService.register(email, password);
 
-        if(isPadre){
-          role = 'padre';
+        if(isTutor){
+          role = 'tutor';
         } else if(isFirstUser) {
           role = 'administrador';
         }
@@ -145,7 +145,7 @@ export class AuthPage implements OnInit {
           case 'maestro':
             this.router.navigateByUrl('/teacher-dashboard');
             break;
-          case 'padre':
+          case 'tutor':
             this.router.navigateByUrl('/caregiver-dashboard');
             break;
           default:
@@ -163,13 +163,13 @@ export class AuthPage implements OnInit {
   }
 
   private updateFormControls() {
-    const isPadreControl = this.authForm.get('isPadre');
+    const isTutorControl = this.authForm.get('isTutor');
     if(!this.isLoginMode) {
-      if(!isPadreControl) {
-        this.authForm.addControl('isPadre', this.formBuilder.control(false));
+      if(!isTutorControl) {
+        this.authForm.addControl('isTutor', this.formBuilder.control(false));
       }
     } else {
-      this.authForm.removeControl('isPadre');
+      this.authForm.removeControl('isTutor');
     }
   }
 }

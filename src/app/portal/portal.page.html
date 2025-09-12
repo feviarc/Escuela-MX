@@ -34,7 +34,7 @@
     class="form__button"
     expand="block"
     fill="solid"
-    [disabled]="cct.length !== 10 || ('' + pin).length !== 4"
+    [disabled]="isInvalidForm()"
     (click)="onContinue()"
   >
     Continuar

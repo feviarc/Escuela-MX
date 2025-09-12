@@ -9,7 +9,7 @@ import { AuthService } from './../services/auth.service';
 
 
 @Component({
-  selector: 'app-padre',
+  selector: 'app-caregiver',
   templateUrl: './caregiver.page.html',
   styleUrls: ['./caregiver.page.scss'],
   standalone: true,

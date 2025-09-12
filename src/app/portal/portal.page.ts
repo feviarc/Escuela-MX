@@ -50,10 +50,10 @@ export class PortalPage implements OnInit {
               this.router.navigateByUrl('/admin-dashboard');
               break;
             case 'maestro':
-              this.router.navigateByUrl('/maestro-dashboard');
+              this.router.navigateByUrl('/teacher-dashboard');
               break;
-            case 'padre':
-              this.router.navigateByUrl('/padre-dashboard');
+            case 'tutor':
+              this.router.navigateByUrl('/caregiver-dashboard');
               break;
             default:
               this.router.navigateByUrl('/portal');
@@ -65,13 +65,11 @@ export class PortalPage implements OnInit {
     }
   }
 
-  async onContinue() {
+  isInvalidForm() {
+    return this.cct.length !== 10 || (this.pin === null || ('' + this.pin).length !== 4);
+  }
 
-    if(!this.cct || !this.pin) {
-      console.log('PIN: ', this.pin);
-      console.error('La CCT y el PIN son obligatorios.');
-      return;
-    }
+  async onContinue() {
 
     const isValid = await this.schoolService.validateCredentials(this.cct.toUpperCase(), this.pin);
 
@@ -80,5 +78,9 @@ export class PortalPage implements OnInit {
     } else {
       console.error('CCT o PIN incorrectos.');
     }
+
+    this.cct = '';
+    this.pin = '';
+
   }
 }

@@ -51,7 +51,7 @@ export class AuthService {
     }
   }
 
-  private async getInitialUserRol(): Promise<'administrador' | 'maestro' | 'padre'> {
+  private async getInitialUserRol(): Promise<'administrador' | 'maestro' | 'tutor'> {
 
     const usuariosCollection = collection(this.firestore, 'usuarios');
     const querySnapshot = await getDocs(usuariosCollection);

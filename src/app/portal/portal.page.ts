@@ -23,6 +23,8 @@ export class PortalPage implements OnInit {
 
   cct = '';
   pin = '';
+  isToastOpen = false;
+  toastMessage = 'Revisa la clave y el PIN.';
 
   constructor(
     private router: Router,
@@ -69,6 +71,10 @@ export class PortalPage implements OnInit {
     return this.cct.length !== 10 || (this.pin === null || ('' + this.pin).length !== 4);
   }
 
+  setOpenToast(openStatus: boolean) {
+    this.isToastOpen = openStatus;
+  }
+
   async onContinue() {
 
     const isValid = await this.schoolService.validateCredentials(this.cct.toUpperCase(), this.pin);
@@ -76,7 +82,7 @@ export class PortalPage implements OnInit {
     if(isValid) {
       this.router.navigateByUrl('/auth');
     } else {
-      console.error('CCT o PIN incorrectos.');
+      this.setOpenToast(true);
     }
 
     this.cct = '';

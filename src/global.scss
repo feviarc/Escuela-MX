@@ -35,3 +35,13 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+
+
+/* Custom CSS */
+
+.page__toast--danger {
+  --background: #c5000f;
+  --color: #ffffff;
+  font-size: 1.3rem;
+}

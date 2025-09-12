@@ -39,5 +39,11 @@
   >
     Continuar
   </ion-button>
-
+  <ion-toast
+   cssClass="page__toast--danger"
+   [message]="toastMessage"
+   [isOpen]="isToastOpen"
+   [duration]="5000"
+   (didDismiss)="setOpenToast(false)"
+  ></ion-toast>
 </ion-content>

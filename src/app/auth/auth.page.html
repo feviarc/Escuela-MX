@@ -1,13 +1,78 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>auth</ion-title>
+    <ion-title>
+      @if(isLoginMode) {
+        Usuarios registrados
+      } @else if(isResetPasswordMode) {
+        Restablecer contraseña
+      } @else {
+        Nuevo usuario
+      }
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">auth</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+
+    @if(emailVerificationMessage) {
+      <ion-item lines="none" class="ion-text-center ion-padding-vertical">
+        <ion-text color="primary">
+          <p>{{emailVerificationMessage}}</p>
+        </ion-text>
+      </ion-item>
+    }
+
+    <ion-list>
+
+      <ion-item>
+        <ion-input
+         label="Email"
+         type="email"
+         formControlName="email"
+        ></ion-input>
+      </ion-item>
+
+      @if(!isResetPasswordMode) {
+        <ion-item>
+          <ion-input
+          label="Contraseña"
+          type="Password"
+          formControlName="password"
+          ></ion-input>
+        </ion-item>
+      }
+
+
+      @if (!isLoginMode && !isResetPasswordMode) {
+        <ion-item lines="none">
+          <ion-checkbox labelPlacement="end" formControlName="isPadre">
+            Registrarme como tutor (Madre o Padre)
+          </ion-checkbox>
+        </ion-item>
+      }
+
+    </ion-list>
+
+    <ion-button expand="block" type="submit" [disabled]="!authForm.valid">
+      @if(isLoginMode) {
+        Iniciar Sesión
+      } @else if(isResetPasswordMode) {
+        Restablecer Contraseña
+      } @else {
+        Registrarse
+      }
+    </ion-button>
+
+    <ion-button expand="block" fill="clear" (click)="onSwitchMode()">
+      {{ isLoginMode ? 'Registrate aquí' : 'Inicia sesión aquí' }}
+    </ion-button>
+
+    @if(isLoginMode) {
+      <ion-button expand="block" fill="clear" (click)="onSwitchToResetPassword()">
+        ¿Olvidaste tu contraseña?
+      </ion-button>
+    }
+
+  </form>
 </ion-content>

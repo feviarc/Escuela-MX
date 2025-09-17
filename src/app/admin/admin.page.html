@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Panel de Administración</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onLogout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Maestros registrados</ion-label>
+    </ion-list-header>
+    @if((teachers$ | async)?.length === 0) {
+      <ion-item>
+        <ion-label>No hay maestros registrados.</ion-label>
+      </ion-item>
+    } @else {
+      @for(teacher of teachers$ | async; track teacher.id) {
+        <ion-item>
+          <ion-label>{{ teacher.email }}</ion-label>
+        </ion-item>
+      }
+    }
+  </ion-list>
+</ion-content>

@@ -7,15 +7,13 @@
     La plataforma para una comunicación efectiva entre la escuela, maestros y padres de familia.
   </p>
 
-  <ion-img src="../../assets/img/logo-portal.png">
-
-  </ion-img>
+  <ion-img src="../../assets/img/logo-portal.png"></ion-img>
 
   <ion-list [inset]="true">
     <ion-item>
       <ion-input
         label="Clave del Centro de Trabajo (CCT)"
-        labelPlacement="stacked"
+        labelPlacement="floating"
         placeholder="Escribe la clave aquí"
         maxlength="10"
         [(ngModel)]="cct"
@@ -34,10 +32,16 @@
     class="form__button"
     expand="block"
     fill="solid"
-    [disabled]="cct.length !== 10 || ('' + pin).length !== 4"
+    [disabled]="isInvalidForm()"
     (click)="onContinue()"
   >
     Continuar
   </ion-button>
-
+  <ion-toast
+   cssClass="page__toast"
+   [message]="toastMessage"
+   [isOpen]="isToastOpen"
+   [duration]="5000"
+   (didDismiss)="setOpenToast(false)"
+  ></ion-toast>
 </ion-content>

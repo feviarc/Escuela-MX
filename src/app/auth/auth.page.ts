@@ -7,7 +7,7 @@ import {
   Validators,
   ReactiveFormsModule
 } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, IonInputPasswordToggle } from '@ionic/angular';
 import { User } from 'firebase/auth';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
@@ -25,9 +25,21 @@ import { UserProfileService } from '../services/user-profile.service';
 export class AuthPage implements OnInit {
 
   authForm!: FormGroup;
+  emailVerificationMessage: string | null = null;
+  resetPasswordMessage: string | null = null;
+  toastMessage: string | null = null;
   isLoginMode = true;
   isResetPasswordMode = false;
-  emailVerificationMessage: string | null = null;
+  isToastOpen = false;
+
+  private messages = {
+    invalidCredential: '🛑  Usuario o contraseña incorrectos.',
+    emailAlreadyInUse: '🛑  Este correo ya está registrado.',
+    passwordReset: '✅  Se envió un correo de restablecimiento de contraseña.',
+    emailVerification: '✅  Se envió un correo de verificación. Revisa tu bandeja de entrada o Spam.',
+    emailNotVerified: '⚠️  Tu correo electrónico aún no ha sido verificado. Revisa tu bandeja de entrada o la carpeta de Spam y haz clic en el enlace de verificación para activar tu cuenta.',
+    default: '🛑  Ocurrió un error. Inténtalo nuevamente.'
+  };
 
   constructor(
     private authService: AuthService,
@@ -72,8 +84,8 @@ export class AuthPage implements OnInit {
 
       } else if(this.isResetPasswordMode) {
         await firstValueFrom(this.authService.resetPassword(email));
-        console.log('Correo de reseteo enviado');
-        // Informar al usuario que un correo ha sido enviado, puede ser un toast.
+        this.toastMessage = this.messages.passwordReset;
+        this.setOpenToast(true);
         this.isResetPasswordMode = false;
         this.isLoginMode = true;
 
@@ -94,14 +106,36 @@ export class AuthPage implements OnInit {
           nombre: ''
         });
 
-        this.emailVerificationMessage = `¡Gracias por registrarte! Se ha enviado un correo de verificación a ${user.email}.`;
+        this.emailVerificationMessage = this.messages.emailVerification;
         this.isLoginMode = true;
-        this.authForm.reset();
       }
-    } catch(error) {
-      console.log('Error de Autenticación:', error);
-      this.emailVerificationMessage = 'No se pudo completar el registro, por favor, intenta de nuevo.';
+
+    } catch(error: any) {
+      console.log(error.code);
+      switch(error.code) {
+        case 'auth/invalid-credential':
+          this.toastMessage = this.messages.invalidCredential;
+          break;
+        case 'auth/email-already-in-use':
+          this.toastMessage = this.messages.emailAlreadyInUse;
+          break;
+        default:
+          this.toastMessage = this.messages.default;
+      }
+      this.setOpenToast(true);
     }
+     this.authForm.reset();
+  }
+
+  async onResendVerificationEmail() {
+    this.emailVerificationMessage = null;
+    try{
+      await this.authService.resendVerificationEmail();
+      this.toastMessage = this.messages.emailVerification;
+    } catch(error) {
+      this.toastMessage = this.messages.default;
+    }
+    this.setOpenToast(true);
   }
 
   onSwitchMode() {
@@ -119,6 +153,10 @@ export class AuthPage implements OnInit {
     this.authForm.get('password')?.updateValueAndValidity();
   }
 
+  setOpenToast(openStatus: boolean) {
+    this.isToastOpen = openStatus;
+  }
+
   private async handleLoginRedirect(user: User) {
 
     if(!user) {
@@ -126,11 +164,9 @@ export class AuthPage implements OnInit {
       return;
     }
 
-    console.log('emailVerified: ', user.emailVerified);
-
     if(!user.emailVerified) {
-      this.emailVerificationMessage = 'Tu correo electrónico no ha sido verificado. Por favor, revisa tu bandeja de entrada y haz clic en el enlace de verificación.';
-      await firstValueFrom(this.authService.logout());
+      this.emailVerificationMessage = this.messages.emailNotVerified;
+      // await firstValueFrom(this.authService.logout());
       return;
     }
 

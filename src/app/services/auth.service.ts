@@ -26,7 +26,6 @@ export class AuthService {
   private user: Observable<User | null>;
 
   constructor(private auth: Auth, private firestore: Firestore) {
-
     this.user = new Observable(observer => {
       onAuthStateChanged(this.auth, user => {
         observer.next(user);
@@ -35,7 +34,6 @@ export class AuthService {
   }
 
   async register(email: string, password: string): Promise<User> {
-
     const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
     const user = userCredential.user;
     const rol = await this.getInitialUserRol();
@@ -44,15 +42,20 @@ export class AuthService {
     return user;
   }
 
+  async resendVerificationEmail(): Promise<void> {
+    const user = this.auth.currentUser;
+    if(user) {
+      await this.sendEmailVerification(user);
+    }
+  }
+
   private async sendEmailVerification(user: User): Promise<void> {
     if(user) {
       await sendEmailVerification(user);
-      console.log('Correo de verificación enviado');
     }
   }
 
   private async getInitialUserRol(): Promise<'administrador' | 'maestro' | 'tutor'> {
-
     const usuariosCollection = collection(this.firestore, 'usuarios');
     const querySnapshot = await getDocs(usuariosCollection);
 
@@ -64,7 +67,6 @@ export class AuthService {
   }
 
   private async saveUserProfile(user: User, rol: string): Promise<void> {
-
     const userDocRef = doc(this.firestore, `usuarios/${user.uid}`);
     await setDoc(userDocRef, {
       uid: user.uid,

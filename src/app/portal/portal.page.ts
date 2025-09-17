@@ -24,7 +24,7 @@ export class PortalPage implements OnInit {
   cct = '';
   pin = '';
   isToastOpen = false;
-  toastMessage = 'Revisa la clave y el PIN.';
+  toastMessage = '🛑 La clave o el PIN son incorrectos.';
 
   constructor(
     private router: Router,

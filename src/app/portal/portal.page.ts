@@ -2,7 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import {
+  IonButton,
+  IonContent,
+  IonIcon,
+  IonImg,
+  IonInput,
+  IonInputOtp,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonTitle,
+  IonToast,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { schoolOutline } from 'ionicons/icons';
 import { firstValueFrom } from 'rxjs';
@@ -16,7 +28,21 @@ import { SchoolService } from '../services/school.service';
   templateUrl: './portal.page.html',
   styleUrls: ['./portal.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule]
+  imports: [IonLabel,
+    CommonModule,
+    FormsModule,
+    IonButton,
+    IonContent,
+    IonIcon,
+    IonImg,
+    IonInput,
+    IonInputOtp,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonTitle,
+    IonToast,
+  ]
 })
 
 export class PortalPage implements OnInit {
@@ -71,11 +97,7 @@ export class PortalPage implements OnInit {
     return this.cct.length !== 10 || (this.pin === null || ('' + this.pin).length !== 4);
   }
 
-  setOpenToast(openStatus: boolean) {
-    this.isToastOpen = openStatus;
-  }
-
-  async onContinue() {
+   async onContinue() {
 
     const isValid = await this.schoolService.validateCredentials(this.cct.toUpperCase(), this.pin);
 
@@ -88,5 +110,9 @@ export class PortalPage implements OnInit {
     this.cct = '';
     this.pin = '';
 
+  }
+
+  setOpenToast(openStatus: boolean) {
+    this.isToastOpen = openStatus;
   }
 }

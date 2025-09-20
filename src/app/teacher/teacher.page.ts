@@ -1,7 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from  '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import {
+  IonButton,
+  IonButtons,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonContent,
+  IonHeader,
+  IonLabel,
+  IonListHeader,
+  IonIcon,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { logOutOutline } from 'ionicons/icons';
 import { AuthService } from '../services/auth.service';
@@ -12,7 +26,22 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './teacher.page.html',
   styleUrls: ['./teacher.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule]
+  imports: [
+    CommonModule,
+    IonButton,
+    IonButtons,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
+    IonContent,
+    IonHeader,
+    IonLabel,
+    IonListHeader,
+    IonIcon,
+    IonTitle,
+    IonToolbar,
+  ]
 })
 
 export class TeacherPage implements OnInit {

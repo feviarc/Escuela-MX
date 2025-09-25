@@ -13,7 +13,6 @@ import { UserProfile } from '../models/user-profile.model';
 
 
 @Injectable({ providedIn: 'root' })
-
 export class UserProfileService {
 
   constructor(private firestore: Firestore) { }
@@ -44,4 +43,5 @@ export class UserProfileService {
     const querySnapshot = await getDocs(usuariosCollectionRef);
     return querySnapshot.empty;
   }
+
 }

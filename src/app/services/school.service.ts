@@ -9,9 +9,7 @@ import {
 import { BehaviorSubject } from 'rxjs';
 
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class SchoolService {
 
   private cctPinValidSource = new BehaviorSubject<boolean>(false);
@@ -45,4 +43,5 @@ export class SchoolService {
       return false;
     }
   }
+
 }

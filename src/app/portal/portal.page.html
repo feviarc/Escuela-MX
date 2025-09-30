@@ -1,49 +1,96 @@
-<ion-content class="ion-padding ion-text-center" color="light">
+@if(isLoading) {
+  <div class="loading-container">
+    <ion-spinner color="primary"></ion-spinner>
+    <p>Cargando...</p>
+  </div>
+}
 
-  <ion-icon name="school-outline" class="app-icon" size="large"></ion-icon>
-  <ion-title class="app-title">E S C U E L A</ion-title>
+@if(isStandalone && !isLoading ) {
+  <ion-content class="ion-padding ion-text-center" color="light">
 
-  <p class="app-description">
-    La plataforma para una comunicación efectiva entre la escuela, maestros y padres de familia.
-  </p>
+    <ion-list [inset]="true">
+      <ion-item>
+        <ion-input
+          label="Clave del Centro de Trabajo (CCT)"
+          labelPlacement="floating"
+          placeholder="Escribe la clave aquí"
+          maxlength="10"
+          [(ngModel)]="cct"
+        >
+        </ion-input>
+      </ion-item>
+    </ion-list>
 
-  <ion-img src="../../assets/img/logo-portal.png"></ion-img>
+    <ion-list [inset]="true">
+        <ion-input-otp [(ngModel)]="pin">
+          <ion-label>Ingresa los 4 digitos del PIN</ion-label>
+        </ion-input-otp>
+    </ion-list>
 
-  <ion-list [inset]="true">
-    <ion-item>
-      <ion-input
-        label="Clave del Centro de Trabajo (CCT)"
-        labelPlacement="floating"
-        placeholder="Escribe la clave aquí"
-        maxlength="10"
-        [(ngModel)]="cct"
+    <ion-button
+      expand="block"
+      fill="solid"
+      [disabled]="isInvalidForm()"
+      (click)="onContinue()"
+    >
+      Continuar
+    </ion-button>
+
+    <ion-toast
+    cssClass="page__toast"
+    [message]="toastMessage"
+    [isOpen]="isToastOpen"
+    [duration]="5000"
+    (didDismiss)="setOpenToast(false)"
+    ></ion-toast>
+
+  </ion-content>
+}
+
+@if(!isStandalone && !isLoading) {
+  <ion-content class="ion-padding ion-text-center" color="light">
+
+    <strong>ESCUELA</strong>
+    <p class="app-description">
+      Plataforma de notificaciones escolares para comunicación efectiva entre la escuela y padres de familia.
+    </p>
+
+    <ion-img src="../../assets/img/logo-portal.png"></ion-img>
+
+    @if(!isIOS) {
+      <ion-button
+        expand="block"
+        [disabled]="!installAppService.promptStatus"
+        (click)="showInstallAppBanner()"
       >
-      </ion-input>
-    </ion-item>
-  </ion-list>
+        <ion-icon slot="start" [name]="detectedOS"></ion-icon>
+        Instalar
+      </ion-button>
+    }
 
-  <ion-list [inset]="true">
-      <ion-input-otp [(ngModel)]="pin">
-        <ion-label>Ingresa los 4 digitos del PIN</ion-label>
-      </ion-input-otp>
-  </ion-list>
+    @if(isIOS) {
+      <ion-button
+        expand="block"
+        id="open-modal"
+      >
+        <ion-icon slot="start" [name]="detectedOS"></ion-icon>
+        Instalar
+      </ion-button>
 
-  <ion-button
-    class="form__button"
-    expand="block"
-    fill="solid"
-    [disabled]="isInvalidForm()"
-    (click)="onContinue()"
-  >
-    Continuar
-  </ion-button>
+      <ion-modal trigger="open-modal">
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="start">
+                <ion-button (click)="onCloseModal()">Cerrar</ion-button>
+              </ion-buttons>
+              <ion-title>Instalar</ion-title>
+            </ion-toolbar>
+          </ion-header>
+        </ng-template>
+      </ion-modal>
+    }
 
-  <ion-toast
-   cssClass="page__toast"
-   [message]="toastMessage"
-   [isOpen]="isToastOpen"
-   [duration]="5000"
-   (didDismiss)="setOpenToast(false)"
-  ></ion-toast>
+  </ion-content>
+}
 
-</ion-content>

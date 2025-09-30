@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   IonButton,
+  IonButtons,
   IonContent,
+  IonHeader,
   IonIcon,
   IonImg,
   IonInput,
@@ -12,13 +14,16 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonTitle,
+  IonModal,
+  IonSpinner,
   IonToast,
-} from '@ionic/angular/standalone';
+  IonToolbar, IonTitle } from '@ionic/angular/standalone';
+import { OverlayEventDetail } from '@ionic/core/components';
 import { addIcons } from 'ionicons';
-import { schoolOutline } from 'ionicons/icons';
+import { logoApple, logoAndroid, laptopOutline } from 'ionicons/icons';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { InstallAppService } from '../services/install-app-service';
 import { UserProfileService } from '../services/user-profile.service';
 import { SchoolService } from '../services/school.service';
 
@@ -28,11 +33,13 @@ import { SchoolService } from '../services/school.service';
   templateUrl: './portal.page.html',
   styleUrls: ['./portal.page.scss'],
   standalone: true,
-  imports: [IonLabel,
+  imports: [IonTitle, IonButtons, IonLabel,
     CommonModule,
     FormsModule,
     IonButton,
+    IonButtons,
     IonContent,
+    IonHeader,
     IonIcon,
     IonImg,
     IonInput,
@@ -40,29 +47,44 @@ import { SchoolService } from '../services/school.service';
     IonItem,
     IonLabel,
     IonList,
-    IonTitle,
+    IonModal,
+    IonSpinner,
     IonToast,
+    IonToolbar
   ]
 })
 
 export class PortalPage implements OnInit {
 
+  @ViewChild(IonModal) modal!: IonModal;
+
   cct = '';
   pin = '';
+  detectedOS = '';
+  isIOS = false;
+  isLoading = true;
   isToastOpen = false;
   toastMessage = '🛑 La clave o el PIN son incorrectos.';
+
 
   constructor(
     private router: Router,
     private authService: AuthService,
+    public installAppService: InstallAppService,
     private schoolService: SchoolService,
     private userProfileService: UserProfileService
   ) {
-    addIcons({schoolOutline});
+    addIcons({laptopOutline, logoAndroid, logoApple});
   }
 
   async ngOnInit() {
     await this.checkUserStatus();
+    this.detectedOS =  this.getOperatingSystem();
+    this.isIOS = this.detectedOS === 'logo-apple' ? true : false;
+
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 3000);
   }
 
   private async checkUserStatus() {
@@ -93,11 +115,36 @@ export class PortalPage implements OnInit {
     }
   }
 
+  get isStandalone() {
+    const androidMatchMedia = window.matchMedia('(display-mode: standalone)').matches;
+    const iOSMatchMedia = (window.navigator as any).standalone;
+    return ( androidMatchMedia || iOSMatchMedia  === true);
+  }
+
+  onCloseModal() {
+    this.modal.dismiss(null, 'cancel');
+  }
+
+  getOperatingSystem() {
+    const userAgent = navigator.userAgent;
+
+    if (/iPhone|iPad|iPod/i.test(userAgent)) return 'logo-apple';
+    if (/Android/i.test(userAgent)) return 'logo-android';
+
+    return 'laptop-outline';
+  }
+
   isInvalidForm() {
     return this.cct.length !== 10 || (this.pin === null || ('' + this.pin).length !== 4);
   }
 
-   async onContinue() {
+  @HostListener('window:beforeinstallprompt', ['$event'])
+  onBeforeInstallPrompt(event: Event) {
+    event.preventDefault();
+    this.installAppService.promptStatus = event;
+  }
+
+  async onContinue() {
 
     const isValid = await this.schoolService.validateCredentials(this.cct.toUpperCase(), this.pin);
 
@@ -109,10 +156,13 @@ export class PortalPage implements OnInit {
 
     this.cct = '';
     this.pin = '';
-
   }
 
   setOpenToast(openStatus: boolean) {
     this.isToastOpen = openStatus;
+  }
+
+  showInstallAppBanner() {
+    this.installAppService.showInstallAppBanner();
   }
 }

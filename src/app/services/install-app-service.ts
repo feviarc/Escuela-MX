@@ -10,11 +10,11 @@ export class InstallAppService {
     this.installPromptEvent = null;
   }
 
-  get eventStatus() {
+  get promptStatus() {
     return this.installPromptEvent;
   }
 
-  set eventStatus(event: any) {
+  set promptStatus(event: any) {
     this.installPromptEvent = event;
   }
 

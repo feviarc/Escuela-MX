@@ -1,7 +1,6 @@
-ion-img::part(image) {
-  border-radius: 12px;
-  margin: 2rem 0;
-  width: 99%;
+p {
+  margin-top: 16px;
+  color: var(--ion-color-medium);
 }
 
 .form__button {
@@ -15,9 +14,14 @@ ion-img::part(image) {
   justify-content: center;
   align-items: center;
   height: 100%;
+}
 
-  p {
-    margin-top: 16px;
-    color: var(--ion-color-medium);
-  }
+.modal__img {
+  padding: 1.5rem;
+}
+
+ion-img::part(image) {
+  border-radius: 12px;
+  margin: 2rem 0;
+  width: 99%;
 }

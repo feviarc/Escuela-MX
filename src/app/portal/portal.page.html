@@ -12,7 +12,7 @@
       <ion-item>
         <ion-input
           label="Clave del Centro de Trabajo (CCT)"
-          labelPlacement="floating"
+          labelPlacement="stacked"
           placeholder="Escribe la clave aquí"
           maxlength="10"
           [(ngModel)]="cct"
@@ -87,6 +87,9 @@
               <ion-title>Instalar</ion-title>
             </ion-toolbar>
           </ion-header>
+          <ion-content>
+            <img class="modal__img" src="../../assets/img/ios-install.jpg" alt="">
+          </ion-content>
         </ng-template>
       </ion-modal>
     }

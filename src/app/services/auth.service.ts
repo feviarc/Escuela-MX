@@ -20,7 +20,6 @@ import {
 
 
 @Injectable({ providedIn: 'root' })
-
 export class AuthService {
 
   private user: Observable<User | null>;

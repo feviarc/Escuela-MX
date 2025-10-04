@@ -7,7 +7,22 @@ import {
   Validators,
   ReactiveFormsModule
 } from '@angular/forms';
-import { IonicModule, IonInputPasswordToggle } from '@ionic/angular';
+import {
+  IonButton,
+  IonContent,
+  IonHeader,
+  IonInput,
+  IonInputPasswordToggle,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonNote,
+  IonText,
+  IonTitle,
+  IonToast,
+  IonToggle,
+  IonToolbar,
+} from '@ionic/angular/standalone';
 import { User } from 'firebase/auth';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
@@ -19,7 +34,24 @@ import { UserProfileService } from '../services/user-profile.service';
   templateUrl: './auth.page.html',
   styleUrls: ['./auth.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, ReactiveFormsModule]
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    IonButton,
+    IonContent,
+    IonHeader,
+    IonInput,
+    IonInputPasswordToggle,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonNote,
+    IonText,
+    IonTitle,
+    IonToast,
+    IonToggle,
+    IonToolbar,
+  ]
 })
 
 export class AuthPage implements OnInit {

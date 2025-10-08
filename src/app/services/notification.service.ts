@@ -1,22 +1,25 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Auth } from '@angular/fire/auth';
 import { Messaging, getToken, onMessage } from '@angular/fire/messaging';
 import { Platform } from '@ionic/angular/standalone';
 import { Firestore, doc, setDoc, arrayUnion, serverTimestamp } from '@angular/fire/firestore';
-import { Auth } from '@angular/fire/auth';
 import { environment } from '../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class NotificationService {
-  private messaging = inject(Messaging);
-  private platform = inject(Platform);
-  private firestore = inject(Firestore);
-  private auth = inject(Auth);
 
   private currentToken: string | null = null;
 
-  constructor() {
+  constructor(
+    private messaging: Messaging,
+    private platform: Platform,
+    private firestore: Firestore,
+    private auth: Auth
+  ) {
     // Escuchar mensajes cuando la app está abierta
     this.listenToForegroundMessages();
   }
@@ -152,6 +155,7 @@ export class NotificationService {
    */
   private showForegroundNotification(payload: any): void {
     const title = payload.notification?.title || 'Escuela';
+
     const options: NotificationOptions = {
       body: payload.notification?.body || '',
       icon: payload.notification?.icon || '/assets/icons/icon-192x192.png',

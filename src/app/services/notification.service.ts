@@ -1,8 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
+import {
+  arrayUnion,
+  doc,
+  Firestore,
+  serverTimestamp,
+  setDoc
+} from '@angular/fire/firestore';
 import { Messaging, getToken, onMessage } from '@angular/fire/messaging';
 import { Platform } from '@ionic/angular/standalone';
-import { Firestore, doc, setDoc, arrayUnion, serverTimestamp } from '@angular/fire/firestore';
 import { environment } from '../../environments/environment';
 
 
@@ -119,14 +125,19 @@ export class NotificationService {
         return;
       }
 
-      const userRef = doc(this.firestore, `users/${userId}`);
+      const userRef = doc(this.firestore, `fcmUserTokens/${userId}`);
 
-      await setDoc(userRef, {
-        fcmTokens: arrayUnion(token),
-        lastTokenUpdate: serverTimestamp(),
-        platform: this.getPlatformInfo(),
-        userAgent: navigator.userAgent
-      }, { merge: true });
+      await setDoc(userRef,
+        {
+          tokens: arrayUnion(token),
+          lastTokenUpdate: serverTimestamp(),
+          platform: this.getPlatformInfo(),
+          userAgent: navigator.userAgent
+        },
+        {
+          merge: true
+        }
+      );
 
       console.log('✅ Token guardado en Firestore para el usuario:', userId);
     } catch (error) {
@@ -188,13 +199,18 @@ export class NotificationService {
     try {
       if (this.currentToken && this.auth.currentUser) {
         const userId = this.auth.currentUser.uid;
-        const userRef = doc(this.firestore, `users/${userId}`);
+        const userRef = doc(this.firestore, `fcmUserTokens/${userId}`);
 
         // Remover el token del array
-        await setDoc(userRef, {
-          fcmTokens: [],
-          lastTokenUpdate: serverTimestamp()
-        }, { merge: true });
+        await setDoc(userRef,
+          {
+            tokens: [],
+            lastTokenUpdate: serverTimestamp()
+          },
+          {
+            merge: true
+          }
+        );
 
         this.currentToken = null;
         console.log('✅ Token eliminado de Firestore');

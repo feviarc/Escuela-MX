@@ -125,7 +125,7 @@ export class NotificationService {
         return;
       }
 
-      const userRef = doc(this.firestore, `fcmUserTokens/${userId}`);
+      const userRef = doc(this.firestore, `usuarios/${userId}`);
 
       await setDoc(userRef,
         {
@@ -199,7 +199,7 @@ export class NotificationService {
     try {
       if (this.currentToken && this.auth.currentUser) {
         const userId = this.auth.currentUser.uid;
-        const userRef = doc(this.firestore, `fcmUserTokens/${userId}`);
+        const userRef = doc(this.firestore, `usuarios/${userId}`);
 
         // Remover el token del array
         await setDoc(userRef,

@@ -8,6 +8,7 @@ import {
   ReactiveFormsModule
 } from '@angular/forms';
 import {
+  AlertController,
   IonButton,
   IonContent,
   IonHeader,
@@ -26,6 +27,7 @@ import {
 import { User } from 'firebase/auth';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { NotificationService } from '../services/notification.service';
 import { UserProfileService } from '../services/user-profile.service';
 
 
@@ -74,8 +76,10 @@ export class AuthPage implements OnInit {
   };
 
   constructor(
+    private alertController: AlertController,
     private authService: AuthService,
     private formBuilder: FormBuilder,
+    private notificationService: NotificationService,
     private router: Router,
     private userProfileService: UserProfileService
   ) { }
@@ -206,6 +210,9 @@ export class AuthPage implements OnInit {
       const userProfile = await firstValueFrom(this.userProfileService.getUserProfile(user.uid));
 
       if(userProfile) {
+
+        await this.requestNotificationsAfterLogin();
+
         switch(userProfile.rol) {
           case 'administrador':
             this.router.navigateByUrl('/admin-dashboard');
@@ -240,4 +247,52 @@ export class AuthPage implements OnInit {
       this.authForm.removeControl('isTutor');
     }
   }
+
+  private async requestNotificationsAfterLogin() {
+    if(!this.notificationService.isNotificationSupported()) {
+      console.log('⚠️ Notificaciones no soportadas en este dispositivo');
+      return;
+    }
+
+    const permission = this.notificationService.getPermissionStatus();
+
+    if(permission === 'default') {
+      await this.showNotificationPermissionDialog();
+    } else if (permission === 'granted') {
+      console.log('✅ Permiso ya concedido, obteniendo token...');
+      await this.notificationService.requestPermission();
+    }
+  }
+
+  private async showNotificationPermissionDialog() {
+    const alert = await this.alertController.create({
+      header: '🔔 Notificaciones',
+      message: 'Presiona el botón ACTIVAR para recibir notificaciones sobre trabajos, disciplina y asistencia. A continuación pulsa el botón PERMITIR.',
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'ACTIVAR',
+          handler: () => {
+            console.log('✅ Usuario aceptó notificaciones');
+            alert.dismiss();
+            setTimeout(async () => {
+              const token = await this.notificationService.requestPermission();
+              if(token) {
+                await this.showNotificationSuccessToast();
+              }
+            }, 100);
+            return false;
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async showNotificationSuccessToast() {
+    this.toastMessage = '✅ Notificaciones activadas correctamente.';
+    this.setOpenToast(true);
+  }
+
 }

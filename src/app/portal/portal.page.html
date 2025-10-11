@@ -1,3 +1,15 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+    @if(isStandalone && !isLoading) {
+      Validación de escuela
+    } @else {
+      ESCUELA
+    }
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
 @if(isLoading) {
   <div class="loading-container">
     <ion-spinner color="primary"></ion-spinner>
@@ -50,7 +62,6 @@
 @if(!isStandalone && !isLoading) {
   <ion-content class="ion-padding ion-text-center" color="light">
 
-    <strong>ESCUELA</strong>
     <p class="app-description">
       Plataforma de notificaciones escolares para comunicación efectiva entre la escuela y padres de familia.
     </p>

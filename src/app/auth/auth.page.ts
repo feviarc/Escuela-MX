@@ -110,6 +110,7 @@ export class AuthPage implements OnInit {
       return;
     }
 
+    let role;
     const isFirstUser = await this.userProfileService.isFirstUser();
     const { email, password, isTutor } = this.authForm.value;
 
@@ -126,21 +127,16 @@ export class AuthPage implements OnInit {
         this.isLoginMode = true;
 
       } else {
-        let role = 'maestro';
-        const user = await this.authService.register(email, password);
 
         if(isTutor){
           role = 'tutor';
         } else if(isFirstUser) {
           role = 'administrador';
+        } else {
+          role = 'maestro';
         }
 
-        await this.userProfileService.createUserProfile({
-          uid: user.uid,
-          email: user.email!,
-          rol: role,
-          nombre: ''
-        });
+        const user = await this.authService.register(email, password, role);
 
         this.emailVerificationMessage = this.messages.emailVerification;
         this.isLoginMode = true;
@@ -202,7 +198,6 @@ export class AuthPage implements OnInit {
 
     if(!user.emailVerified) {
       this.emailVerificationMessage = this.messages.emailNotVerified;
-      // await firstValueFrom(this.authService.logout());
       return;
     }
 

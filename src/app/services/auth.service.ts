@@ -32,11 +32,10 @@ export class AuthService {
     });
   }
 
-  async register(email: string, password: string): Promise<User> {
+  async register(email: string, password: string, role: string): Promise<User> {
     const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
     const user = userCredential.user;
-    const rol = await this.getInitialUserRol();
-    await this.saveUserProfile(user, rol);
+    await this.saveUserProfile(user, role);
     await this.sendEmailVerification(user);
     return user;
   }

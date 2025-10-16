@@ -12,10 +12,7 @@ import { Platform } from '@ionic/angular/standalone';
 import { environment } from '../../environments/environment';
 
 
-@Injectable({
-  providedIn: 'root'
-})
-
+@Injectable({providedIn: 'root'})
 export class NotificationService {
 
   private currentToken: string | null = null;

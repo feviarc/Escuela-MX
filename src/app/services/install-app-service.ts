@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-
+import { LoadingService } from './loading-service';
 
 @Injectable({ providedIn: 'root' })
 export class InstallAppService {
 
   private installPromptEvent: any;
 
-  constructor() {
+  constructor(private loadingService: LoadingService) {
     this.installPromptEvent = null;
   }
 
@@ -24,6 +24,7 @@ export class InstallAppService {
       (chosenButton: any) => {
         if (chosenButton.outcome === 'accepted') {
           this.installPromptEvent = null;
+          this.loadingService.present('Instalando...', 15000);
         }
       }
     );

@@ -69,14 +69,18 @@
     <ion-img src="../../assets/img/logo-portal.png"></ion-img>
 
     @if(!isIOS) {
-      <ion-button
-        expand="block"
-        [disabled]="!installAppService.promptStatus"
-        (click)="showInstallAppBanner()"
-      >
-        <ion-icon slot="start" [name]="detectedOS"></ion-icon>
-        Instalar
-      </ion-button>
+      @if(installAppService.promptStatus) {
+        <ion-button
+         expand="block"
+         (click)="showInstallAppBanner()"
+        >
+          <ion-icon slot="start" [name]="detectedOS"></ion-icon>
+          Instalar
+        </ion-button>
+      }
+      @if(!installAppService.promptStatus) {
+        <p>ESCUELA está instalada y lista para usarse, búscala en tu pantalla de inicio.</p>
+      }
     }
 
     @if(isIOS) {

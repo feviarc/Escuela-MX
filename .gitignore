@@ -73,3 +73,7 @@ Thumbs.db
 .firebase
 *-debug.log
 .runtimeconfig.json
+
+#Firebase Functions
+/functions/node_modules
+/functions/lib

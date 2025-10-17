@@ -27,6 +27,7 @@ import {
 import { User } from 'firebase/auth';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { LoadingService } from '../services/loading-service';
 import { NotificationService } from '../services/notification.service';
 import { UserProfileService } from '../services/user-profile.service';
 
@@ -79,6 +80,7 @@ export class AuthPage implements OnInit {
     private alertController: AlertController,
     private authService: AuthService,
     private formBuilder: FormBuilder,
+    private loadingService: LoadingService,
     private notificationService: NotificationService,
     private router: Router,
     private userProfileService: UserProfileService
@@ -110,44 +112,46 @@ export class AuthPage implements OnInit {
       return;
     }
 
+    await this.loadingService.present();
+
+    let role;
     const isFirstUser = await this.userProfileService.isFirstUser();
     const { email, password, isTutor } = this.authForm.value;
 
     try {
       if(this.isLoginMode) {
+        await this.loadingService.updateMessage('Iniciando Sesión...');
         const userCredential = await firstValueFrom(this.authService.login(email, password));
         this.handleLoginRedirect(userCredential.user);
 
       } else if(this.isResetPasswordMode) {
+        await this.loadingService.updateMessage('Enviado email...');
         await firstValueFrom(this.authService.resetPassword(email));
+        await this.loadingService.dismiss();
         this.toastMessage = this.messages.passwordReset;
         this.setOpenToast(true);
         this.isResetPasswordMode = false;
         this.isLoginMode = true;
 
       } else {
-        let role = 'maestro';
-        const user = await this.authService.register(email, password);
 
         if(isTutor){
           role = 'tutor';
         } else if(isFirstUser) {
           role = 'administrador';
+        } else {
+          role = 'maestro';
         }
 
-        await this.userProfileService.createUserProfile({
-          uid: user.uid,
-          email: user.email!,
-          rol: role,
-          nombre: ''
-        });
-
+        await this.loadingService.updateMessage(`Registrando ${role}...`);
+        const user = await this.authService.register(email, password, role);
+        await this.loadingService.dismiss();
         this.emailVerificationMessage = this.messages.emailVerification;
         this.isLoginMode = true;
       }
 
     } catch(error: any) {
-      console.log(error.code);
+      this.loadingService.dismiss();
       switch(error.code) {
         case 'auth/invalid-credential':
           this.toastMessage = this.messages.invalidCredential;
@@ -202,7 +206,6 @@ export class AuthPage implements OnInit {
 
     if(!user.emailVerified) {
       this.emailVerificationMessage = this.messages.emailNotVerified;
-      // await firstValueFrom(this.authService.logout());
       return;
     }
 
@@ -235,6 +238,9 @@ export class AuthPage implements OnInit {
       await firstValueFrom(this.authService.logout());
       this.router.navigateByUrl('/auth');
     }
+
+    await this.loadingService.dismiss();
+
   }
 
   private updateFormControls() {
@@ -267,11 +273,11 @@ export class AuthPage implements OnInit {
   private async showNotificationPermissionDialog() {
     const alert = await this.alertController.create({
       header: '🔔 Notificaciones',
-      message: 'Presiona el botón ACTIVAR para recibir notificaciones sobre trabajos, disciplina y asistencia. A continuación pulsa el botón PERMITIR.',
+      message: 'Es importante que actives las notificaciones para recibir avisos sobre trabajos, disciplina y asistencia. Pulsa el botón Aceptar y después Permitir.',
       backdropDismiss: false,
       buttons: [
         {
-          text: 'ACTIVAR',
+          text: 'Aceptar',
           handler: () => {
             console.log('✅ Usuario aceptó notificaciones');
             alert.dismiss();

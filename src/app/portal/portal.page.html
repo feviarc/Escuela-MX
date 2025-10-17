@@ -1,3 +1,15 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+    @if(isStandalone && !isLoading) {
+      Validación de escuela
+    } @else {
+      ESCUELA
+    }
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
 @if(isLoading) {
   <div class="loading-container">
     <ion-spinner color="primary"></ion-spinner>
@@ -50,7 +62,6 @@
 @if(!isStandalone && !isLoading) {
   <ion-content class="ion-padding ion-text-center" color="light">
 
-    <strong>ESCUELA</strong>
     <p class="app-description">
       Plataforma de notificaciones escolares para comunicación efectiva entre la escuela y padres de familia.
     </p>
@@ -58,14 +69,18 @@
     <ion-img src="../../assets/img/logo-portal.png"></ion-img>
 
     @if(!isIOS) {
-      <ion-button
-        expand="block"
-        [disabled]="!installAppService.promptStatus"
-        (click)="showInstallAppBanner()"
-      >
-        <ion-icon slot="start" [name]="detectedOS"></ion-icon>
-        Instalar
-      </ion-button>
+      @if(installAppService.promptStatus) {
+        <ion-button
+         expand="block"
+         (click)="showInstallAppBanner()"
+        >
+          <ion-icon slot="start" [name]="detectedOS"></ion-icon>
+          Instalar
+        </ion-button>
+      }
+      @if(!installAppService.promptStatus) {
+        <p>ESCUELA está instalada y lista para usarse, búscala en tu pantalla de inicio.</p>
+      }
     }
 
     @if(isIOS) {

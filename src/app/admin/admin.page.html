@@ -1,29 +1,24 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Panel de Administración</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="onLogout()">
-        <ion-icon name="log-out-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-  <ion-list>
-    <ion-list-header>
-      <ion-label>Maestros registrados</ion-label>
-    </ion-list-header>
-    @if((teachers$ | async)?.length === 0) {
-      <ion-item>
-        <ion-label>No hay maestros registrados.</ion-label>
-      </ion-item>
-    } @else {
-      @for(teacher of teachers$ | async; track teacher.id) {
-        <ion-item>
-          <ion-label>{{ teacher.email }}</ion-label>
-        </ion-item>
-      }
-    }
-  </ion-list>
-</ion-content>
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="tab-users">
+      <ion-icon name="person"></ion-icon>
+      Usuarios
+    </ion-tab-button>
+    <ion-tab-button tab="tab-schools">
+      <ion-icon name="business"></ion-icon>
+      Escuelas
+    </ion-tab-button>
+    <ion-tab-button tab="tab-classes">
+      <ion-icon name="people"></ion-icon>
+      Grupos
+    </ion-tab-button>
+    <ion-tab-button tab="tab-courses">
+      <ion-icon name="school"></ion-icon>
+      Materias
+    </ion-tab-button>
+    <ion-tab-button tab="tab-notifications">
+      <ion-icon name="notifications"></ion-icon>
+      Notificaciones
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

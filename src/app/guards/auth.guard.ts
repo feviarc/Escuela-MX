@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   CanActivate,
+  CanActivateChild,
+  GuardResult,
+  MaybeAsync,
   Router,
   RouterStateSnapshot,
   UrlTree
@@ -13,7 +16,9 @@ import { UserProfileService } from '../services/user-profile.service';
 
 @Injectable({providedIn: 'root'})
 
-export class AuthGuard implements CanActivate {
+export class AuthGuard implements CanActivate, CanActivateChild {
+
+  private isCanActivate: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -35,7 +40,8 @@ export class AuthGuard implements CanActivate {
         return this.userProfileService.getUserProfile(user.uid).pipe(
           map(profile => {
             if(profile && profile.rol === expectedRole) {
-              return true;
+              this.isCanActivate = true;
+              return this.isCanActivate;
             } else {
               return this.router.createUrlTree(['/portal']);
             }
@@ -44,4 +50,9 @@ export class AuthGuard implements CanActivate {
       })
     );
   }
+
+  canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
+    return this.isCanActivate;
+  }
+
 }

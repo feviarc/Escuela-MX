@@ -3,12 +3,12 @@ import { validSchoolGuard } from './guards/valid-school-guard';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-    {
+  {
     path: '',
     redirectTo: 'portal',
     pathMatch: 'full',
   },
-    {
+  {
     path: 'portal',
     loadComponent: () => import('./portal/portal.page').then( m => m.PortalPage)
   },
@@ -21,7 +21,19 @@ export const routes: Routes = [
     path: 'admin-dashboard',
     loadComponent: () => import('./admin/admin.page').then( m => m.AdminPage),
     canActivate: [AuthGuard],
-    data: {expectedRole: 'administrador'}
+    canActivateChild: [AuthGuard],
+    data: {expectedRole: 'administrador'},
+    children: [
+      {
+        path: 'tab-users',
+        loadComponent: () => import('./admin/tab-users/tab-users.component').then((m) => m.TabUsersComponent)
+      },
+      {
+        path: '',
+        redirectTo: '/admin-dashboard/tab-users',
+        pathMatch: 'full'
+      }
+    ]
   },
   {
     path: 'teacher-dashboard',

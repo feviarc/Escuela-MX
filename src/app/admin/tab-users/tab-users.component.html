@@ -1,3 +1,24 @@
-<p>
-  tab-users works!
-</p>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Usuarios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Personal Registrado</ion-label>
+    </ion-list-header>
+    @if((teachers$ | async)?.length === 0) {
+      <ion-item>
+        <ion-label>No hay personal registrado.</ion-label>
+      </ion-item>
+    } @else {
+      @for(teacher of teachers$ | async; track teacher.id) {
+        <ion-item>
+          <ion-label>{{ teacher.email }}</ion-label>
+        </ion-item>
+      }
+    }
+  </ion-list>
+</ion-content>

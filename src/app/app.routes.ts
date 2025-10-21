@@ -33,6 +33,18 @@ export const routes: Routes = [
         loadComponent: () => import('./admin/tab-schools/tab-schools.component').then((m) => m.TabSchoolsComponent)
       },
       {
+        path: 'tab-classes',
+        loadComponent: () => import('./admin/tab-classes/tab-classes.component').then((m) => m.TabClassesComponent)
+      },
+      {
+        path: 'tab-courses',
+        loadComponent: () => import('./admin/tab-courses/tab-courses.component').then((m) => m.TabCoursesComponent)
+      },
+      {
+        path: 'tab-notifications',
+        loadComponent: () => import('./admin/tab-notifications/tab-notifications.component').then((m) => m.TabNotificationsComponent)
+      },
+      {
         path: '',
         redirectTo: '/admin-dashboard/tab-users',
         pathMatch: 'full'

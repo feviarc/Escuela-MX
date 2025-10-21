@@ -29,6 +29,10 @@ export const routes: Routes = [
         loadComponent: () => import('./admin/tab-users/tab-users.component').then((m) => m.TabUsersComponent)
       },
       {
+        path: 'tab-schools',
+        loadComponent: () => import('./admin/tab-schools/tab-schools.component').then((m) => m.TabSchoolsComponent)
+      },
+      {
         path: '',
         redirectTo: '/admin-dashboard/tab-users',
         pathMatch: 'full'

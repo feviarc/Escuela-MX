@@ -1,6 +1,9 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Usuarios</ion-title>
+    @if(isLoading) {
+      <ion-progress-bar type="indeterminate" color="warning"></ion-progress-bar>
+    }
   </ion-toolbar>
 </ion-header>
 
@@ -16,7 +19,10 @@
     } @else {
       @for(teacher of teachers$ | async; track teacher.id) {
         <ion-item>
-          <ion-label>{{ teacher.email }}</ion-label>
+          <ion-label>
+            <h2>{{ teacher.escuela }}</h2>
+            <p>{{ teacher.nombre }}</p>
+          </ion-label>
         </ion-item>
       }
     }

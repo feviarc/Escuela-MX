@@ -4,5 +4,5 @@ export interface UserProfile {
   email: string;
   rol: string;
   nombre?: string;
-  escuelaId?: string;
+  escuela?: string;
 }

@@ -11,6 +11,7 @@ import {
   IonLabel,
   IonList,
   IonListHeader,
+  IonProgressBar,
   IonToolbar,
   IonTitle,
 } from "@ionic/angular/standalone";
@@ -28,6 +29,7 @@ import {
     IonLabel,
     IonList,
     IonListHeader,
+    IonProgressBar,
     IonToolbar,
     IonTitle,
   ]
@@ -35,13 +37,23 @@ import {
 
 export class TabUsersComponent  implements OnInit {
 
+  isLoading: boolean;
   teachers$!: Observable<UserProfile[]>;
 
   constructor(
     private teacherDataService: TeacherDataService
-  ) { }
+  ) {
+    this.isLoading = true;
+  }
 
   ngOnInit() {
     this.teachers$ = this.teacherDataService.getTeachers();
+    this.teachers$.subscribe({
+      next: () => {
+        setTimeout(()=>{
+          this.isLoading = false;
+        }, 1000);
+      }
+    });
   }
 }

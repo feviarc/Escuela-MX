@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/services/auth.service';
 
 import {
+  IonActionSheet,
   IonButton,
   IonButtons,
   IonContent,
@@ -12,8 +12,11 @@ import {
   IonToolbar,
 } from "@ionic/angular/standalone";
 
+import type { OverlayEventDetail } from '@ionic/core/components';
 import { addIcons } from 'ionicons';
 import { logOutOutline } from 'ionicons/icons';
+import { AuthService } from 'src/app/services/auth.service';
+
 
 @Component({
   selector: 'app-tab-notifications',
@@ -21,6 +24,7 @@ import { logOutOutline } from 'ionicons/icons';
   styleUrls: ['./tab-notifications.component.scss'],
   standalone: true,
   imports: [
+    IonActionSheet,
     IonButton,
     IonButtons,
     IonContent,
@@ -33,6 +37,23 @@ import { logOutOutline } from 'ionicons/icons';
 
 export class TabNotificationsComponent  implements OnInit {
 
+  public actionSheetButtons = [
+    {
+      text: 'Aceptar',
+      role: 'accept',
+      data: {
+        action: 'accept',
+      },
+    },
+    {
+      text: 'Cancelar',
+      role: 'cancel',
+      data: {
+        action: 'cancel',
+      },
+    },
+  ];
+
   constructor(
     private router: Router,
     private authService: AuthService
@@ -42,7 +63,13 @@ export class TabNotificationsComponent  implements OnInit {
 
   ngOnInit() {}
 
-  onLogout() {
+  onLogout(event: CustomEvent<OverlayEventDetail>) {
+    const eventButton = event.detail.data;
+
+    if(!eventButton || eventButton.action === 'cancel') {
+      return;
+    }
+
     this.authService.logout().subscribe({
       next: () => {
         this.router.navigateByUrl('/auth');

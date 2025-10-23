@@ -2,9 +2,17 @@
   <ion-toolbar color="primary">
     <ion-title>Notificaciones</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="onLogout()">
+      <ion-button id="open-action-sheet">
         <ion-icon name="log-out-outline"></ion-icon>
       </ion-button>
+      <ion-action-sheet
+       trigger="open-action-sheet"
+       header="Estás a punto de cerrar sesión"
+       subHeader="¿Deseas continuar?"
+       [buttons]="actionSheetButtons"
+       (didDismiss)="onLogout($event)"
+      >
+      </ion-action-sheet>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

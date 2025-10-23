@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
+  <ion-list lines="none">
     <ion-list-header>
       <ion-label>Personal Registrado</ion-label>
     </ion-list-header>
@@ -18,7 +18,10 @@
       </ion-item>
     } @else {
       @for(teacher of teachers$ | async; track teacher.id) {
-        <ion-item>
+        <ion-item class="user-item-card">
+          <ion-avatar slot="start">
+            <img src="../../../assets/img/avatar.svg" alt="User Avatar">
+          </ion-avatar>
           <ion-label>
             <h2>{{ teacher.escuela }}</h2>
             <p>{{ teacher.nombre }}</p>

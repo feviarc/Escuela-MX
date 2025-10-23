@@ -5,6 +5,7 @@ import { UserProfile } from '../../models/user-profile.model';
 import { TeacherDataService } from 'src/app/services/teacher-data.service';
 
 import {
+  IonAvatar,
   IonContent,
   IonHeader,
   IonItem,
@@ -23,6 +24,7 @@ import {
   standalone: true,
   imports: [
     CommonModule,
+    IonAvatar,
     IonContent,
     IonHeader,
     IonItem,
@@ -50,9 +52,7 @@ export class TabUsersComponent  implements OnInit {
     this.teachers$ = this.teacherDataService.getTeachers();
     this.teachers$.subscribe({
       next: () => {
-        setTimeout(()=>{
-          this.isLoading = false;
-        }, 1000);
+        this.isLoading = false;
       }
     });
   }

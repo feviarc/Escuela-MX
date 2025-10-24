@@ -19,8 +19,6 @@ import {
   IonToast,
   IonToolbar, IonTitle } from '@ionic/angular/standalone';
 import { OverlayEventDetail } from '@ionic/core/components';
-import { addIcons } from 'ionicons';
-import { logoApple, logoAndroid, laptopOutline } from 'ionicons/icons';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { InstallAppService } from '../services/install-app-service';
@@ -73,9 +71,7 @@ export class PortalPage implements OnInit {
     public installAppService: InstallAppService,
     private schoolService: SchoolService,
     private userProfileService: UserProfileService
-  ) {
-    addIcons({laptopOutline, logoAndroid, logoApple});
-  }
+  ) {}
 
   async ngOnInit() {
     await this.checkUserStatus();

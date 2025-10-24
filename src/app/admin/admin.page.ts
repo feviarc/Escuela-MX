@@ -8,16 +8,6 @@ import {
   IonTabs
 } from '@ionic/angular/standalone';
 
-import { addIcons } from 'ionicons';
-
-import {
-  business,
-  notifications,
-  people,
-  person,
-  school
-} from 'ionicons/icons';
-
 
 @Component({
   selector: 'app-admin',
@@ -35,15 +25,7 @@ import {
 
 export class AdminPage implements OnInit {
 
-  constructor() {
-    addIcons({
-      business,
-      notifications,
-      people,
-      person,
-      school
-    });
-  }
+  constructor() {}
 
   ngOnInit() {}
 }

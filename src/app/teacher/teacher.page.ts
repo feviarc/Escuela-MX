@@ -16,8 +16,7 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { logOutOutline } from 'ionicons/icons';
+
 import { AuthService } from '../services/auth.service';
 
 
@@ -46,9 +45,7 @@ import { AuthService } from '../services/auth.service';
 
 export class TeacherPage implements OnInit {
 
-  constructor(private router: Router, private authService: AuthService) {
-    addIcons({logOutOutline});
-  }
+  constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit() {
   }

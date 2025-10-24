@@ -13,8 +13,6 @@ import {
 } from "@ionic/angular/standalone";
 
 import type { OverlayEventDetail } from '@ionic/core/components';
-import { addIcons } from 'ionicons';
-import { logOutOutline } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 
 
@@ -57,9 +55,7 @@ export class TabNotificationsComponent  implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService
-  ) {
-    addIcons({logOutOutline});
-  }
+  ) {}
 
   ngOnInit() {}
 

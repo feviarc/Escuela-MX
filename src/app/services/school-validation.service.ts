@@ -1,32 +1,37 @@
 import { Injectable } from '@angular/core';
+
 import {
   collection,
+  CollectionReference,
   getDocs,
   Firestore,
   query,
   where,
 } from '@angular/fire/firestore';
+
 import { BehaviorSubject } from 'rxjs';
 
 
 @Injectable({ providedIn: 'root' })
-export class SchoolService {
+export class SchoolValidationService {
 
-  private cctPinValidSource = new BehaviorSubject<boolean>(false);
-  cctPinValid$ = this.cctPinValidSource.asObservable();
+  private readonly COLLECTION_NAME = 'escuelas';
+  private collectionRef: CollectionReference;
+  private cctpinValidSource = new BehaviorSubject<boolean>(false);
+  cctpinValidSource$ = this.cctpinValidSource.asObservable();
 
-  constructor(private firestore: Firestore) { }
+  constructor(private firestore: Firestore) {
+    this.collectionRef = collection(this.firestore, this.COLLECTION_NAME);
+  }
 
   getValidationStatus(): boolean {
-    return this.cctPinValidSource.getValue();
+    return this.cctpinValidSource.getValue();
   }
 
   async validateCredentials(cct: string, pin: string): Promise<boolean> {
 
-    const escuelasCollection = collection(this.firestore, 'escuelas');
-
     const q = query(
-      escuelasCollection,
+      this.collectionRef,
       where('cct', '==', cct),
       where('pin', '==', pin)
     );
@@ -34,14 +39,13 @@ export class SchoolService {
     try {
       const querySnapshot = await getDocs(q);
       const isValid = !querySnapshot.empty;
-      this.cctPinValidSource.next(isValid);
+      this.cctpinValidSource.next(isValid);
       return isValid;
 
     } catch(error) {
       console.log('Error al validar la CCT y el PIN: ', error);
-      this.cctPinValidSource.next(false);
+      this.cctpinValidSource.next(false);
       return false;
     }
   }
-
 }

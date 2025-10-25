@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { SchoolService } from '../services/school.service';
+import { SchoolValidationService } from '../services/school-validation.service';
 import { firstValueFrom } from 'rxjs';
 
 
@@ -9,7 +9,7 @@ export const validSchoolGuard: CanActivateFn = async (route, state) => {
 
   const router = inject(Router);
   const authService = inject(AuthService);
-  const escuelaService = inject(SchoolService);
+  const schoolValidationService = inject(SchoolValidationService);
 
   try {
     const user = await firstValueFrom(authService.getCurrentUser());
@@ -20,10 +20,9 @@ export const validSchoolGuard: CanActivateFn = async (route, state) => {
     console.log('Error en la autenticación del usuario', error);
   }
 
-  if(escuelaService.getValidationStatus()) {
+  if(schoolValidationService.getValidationStatus()) {
     return true;
   }
 
-  console.log('Acceso denegado.');
   return router.createUrlTree(['/portal']);
 };

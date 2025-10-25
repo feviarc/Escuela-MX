@@ -23,7 +23,7 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { InstallAppService } from '../services/install-app-service';
 import { UserProfileService } from '../services/user-profile.service';
-import { SchoolService } from '../services/school.service';
+import { SchoolValidationService } from '../services/school-validation.service';
 
 
 @Component({
@@ -69,7 +69,7 @@ export class PortalPage implements OnInit {
     private router: Router,
     private authService: AuthService,
     public installAppService: InstallAppService,
-    private schoolService: SchoolService,
+    private schoolValidationService: SchoolValidationService,
     private userProfileService: UserProfileService
   ) {}
 
@@ -142,7 +142,7 @@ export class PortalPage implements OnInit {
 
   async onContinue() {
 
-    const isValid = await this.schoolService.validateCredentials(this.cct.toUpperCase(), this.pin);
+    const isValid = await this.schoolValidationService.validateCredentials(this.cct.toUpperCase(), this.pin);
 
     if(isValid) {
       this.router.navigateByUrl('/auth');

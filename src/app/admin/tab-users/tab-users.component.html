@@ -9,9 +9,6 @@
 
 <ion-content>
   <ion-list lines="none">
-    <ion-list-header>
-      <ion-label>Personal Registrado</ion-label>
-    </ion-list-header>
     @if((teachers$ | async)?.length === 0) {
       <ion-item>
         <ion-label>No hay personal registrado.</ion-label>

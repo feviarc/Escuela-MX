@@ -4,6 +4,7 @@ import { addIcons } from 'ionicons';
 import {
   add,
   business,
+  create,
   laptopOutline,
   logoAndroid,
   logoApple,
@@ -12,6 +13,7 @@ import {
   people,
   person,
   school,
+  trash,
 } from 'ionicons/icons';
 
 @Component({
@@ -25,6 +27,7 @@ export class AppComponent {
     addIcons({
       add,
       business,
+      create,
       laptopOutline,
       logoAndroid,
       logoApple,
@@ -33,6 +36,7 @@ export class AppComponent {
       people,
       person,
       school,
+      trash,
     });
   }
 }

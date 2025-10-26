@@ -1,0 +1,29 @@
+h2 {
+  color: #666666;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+ion-chip {
+  --background: #f6e338;
+  --color: #222d3a;
+}
+
+ion-chip strong {
+    font-size: 1.2rem;
+}
+
+ion-label {
+  color: #222d3a;
+}
+
+.custom-item {
+  --background: #f7f7f7; /* Fondo personalizado */
+}
+
+.sliding-item-card {
+  margin: 15px auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  width: 90%;
+}

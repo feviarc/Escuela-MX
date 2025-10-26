@@ -11,7 +11,6 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonListHeader,
   IonProgressBar,
   IonToolbar,
   IonTitle,

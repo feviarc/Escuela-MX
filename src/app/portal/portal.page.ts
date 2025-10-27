@@ -18,7 +18,7 @@ import {
   IonSpinner,
   IonToast,
   IonToolbar, IonTitle } from '@ionic/angular/standalone';
-import { OverlayEventDetail } from '@ionic/core/components';
+
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { InstallAppService } from '../services/install-app-service';

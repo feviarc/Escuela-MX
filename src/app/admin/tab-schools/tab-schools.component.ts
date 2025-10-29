@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChildren, QueryList } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import {
   IonActionSheet,
@@ -15,11 +16,11 @@ import {
   IonItemSliding,
   IonLabel,
   IonList,
+  IonModal,
   IonProgressBar,
   IonTitle,
   IonToast,
-  IonToolbar,
-} from "@ionic/angular/standalone";
+  IonToolbar, IonButtons, IonButton } from "@ionic/angular/standalone";
 
 import type { OverlayEventDetail } from '@ionic/core/components';
 import { Subscription } from 'rxjs';
@@ -31,8 +32,9 @@ import { SchoolCRUDService, School } from 'src/app/services/school-crud.service'
   templateUrl: './tab-schools.component.html',
   styleUrls: ['./tab-schools.component.scss'],
   standalone: true,
-  imports: [
+  imports: [IonButton, IonButtons,
     CommonModule,
+    FormsModule,
     IonActionSheet,
     IonChip,
     IonContent,
@@ -46,6 +48,7 @@ import { SchoolCRUDService, School } from 'src/app/services/school-crud.service'
     IonItemSliding,
     IonLabel,
     IonList,
+    IonModal,
     IonProgressBar,
     IonTitle,
     IonToast,
@@ -55,11 +58,14 @@ import { SchoolCRUDService, School } from 'src/app/services/school-crud.service'
 
 export class TabSchoolsComponent implements OnInit, OnDestroy {
 
+  @ViewChildren(IonModal) modals!: QueryList<IonModal>;
+
   isLoading = true;
-  isToastOpen = false;
   schools: School[] = [];
-  toastMessage = '';
   private subscription?: Subscription;
+
+  isToastOpen = false;
+  toastMessage = '';
 
   public actionSheetButtons = [
     {
@@ -95,9 +101,25 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(){
-    if(this.subscription) {
-      this.subscription.unsubscribe();
+    if(!this.subscription) {
+      return;
     }
+    this.subscription.unsubscribe();
+  }
+
+  closeModal(schoolId: string | undefined) {
+
+    if(!schoolId) {
+      return;
+    };
+
+    const modal = this.modals.find(m => m.trigger === schoolId);
+
+    if(!modal) {
+      return;
+    }
+
+    modal.dismiss();
   }
 
   onAddSchool() {
@@ -128,8 +150,8 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
 
   }
 
-  onUpdateSchool(slidingItem: IonItemSliding, school: School) {
-    slidingItem.close();
+  async onModalDismiss(event: any, slidingItem: IonItemSliding) {
+    await slidingItem.close();
   }
 
   setOpenToast(openStatus: boolean) {

@@ -43,9 +43,9 @@
       </ion-item-sliding>
       <ion-modal
        trigger="edit-{{school.id}}"
-       [initialBreakpoint]="0.75"
-       [breakpoints]="[0, 0.25, 0.50, 0.75, 1]"
-       (didDismiss)="onModalDismiss($event, slidingItem)"
+       [initialBreakpoint]="0.80"
+       [breakpoints]="[0, 0.20, 0.40, 0.60, 0.80, 1]"
+       (didDismiss)="onModalDismiss(slidingItem)"
       >
         <ng-template>
 
@@ -82,8 +82,9 @@
 
 <ion-modal
  trigger="new-school-btn"
- [initialBreakpoint]="0.75"
- [breakpoints]="[0, 0.25, 0.50, 0.75, 1]"
+ (willDismiss)="closeModal('new-school-btn')"
+ [initialBreakpoint]="0.80"
+ [breakpoints]="[0, 0.20, 0.40, 0.60, 0.80, 1]"
 >
   <ng-template>
 
@@ -94,13 +95,59 @@
         </ion-buttons>
         <ion-title>Nueva Escuela</ion-title>
         <ion-buttons slot="end">
-          <ion-button [strong]="true">Guardar</ion-button>
+          <ion-button
+           (click)="onAddSchool()"
+           [strong]="true"
+           [disabled]="!schoolForm.valid"
+           type="submit"
+          >
+            Guardar
+          </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
+    <ion-content class="ion-padding" color="light">
+      <form [formGroup]="schoolForm">
 
+        <ion-list [inset]="true">
+          <ion-item>
+            <ion-input
+             formControlName="cct"
+             label="CCT (Clave del Centro de Trabajo)"
+             labelPlacement="stacked"
+             maxlength="10"
+            >
+            </ion-input>
+          </ion-item>
+          @if(cct.invalid && cct.touched) {
+            <ion-text color="danger" class="ion-padding">
+              @if(cct.errors?.['cctExists']) {
+                <small>Esta clave ya fue registrada previamente.</small>
+              }
+            </ion-text>
+          }
+        </ion-list>
+
+        <ion-list [inset]="true">
+          <ion-item>
+            <ion-input
+             formControlName="nombre"
+             label="Nombre de la escuela"
+             labelPlacement="stacked"
+             maxlength="100"
+            >
+            </ion-input>
+          </ion-item>
+        </ion-list>
+
+        <ion-list [inset]="true">
+          <ion-input-otp [value]="pin" disabled>
+            <ion-label>PIN</ion-label>
+          </ion-input-otp>
+        </ion-list>
+
+      </form>
     </ion-content>
 
   </ng-template>

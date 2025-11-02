@@ -1,15 +1,34 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChildren, QueryList } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
+
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 
 import {
   IonActionSheet,
+  IonButton,
+  IonButtons,
   IonChip,
   IonContent,
   IonFab,
   IonFabButton,
   IonHeader,
   IonIcon,
+  IonInput,
+  IonInputOtp,
   IonItem,
   IonItemOption,
   IonItemOptions,
@@ -20,11 +39,12 @@ import {
   IonProgressBar,
   IonTitle,
   IonToast,
-  IonToolbar, IonButtons, IonButton } from "@ionic/angular/standalone";
+  IonToolbar, IonText } from "@ionic/angular/standalone";
 
 import type { OverlayEventDetail } from '@ionic/core/components';
-import { Subscription } from 'rxjs';
-import { SchoolCRUDService, School } from 'src/app/services/school-crud.service';
+import { Observable, of ,Subscription } from 'rxjs';
+import { catchError , debounceTime, map, switchMap } from 'rxjs/operators';
+import { School, SchoolCRUDService } from 'src/app/services/school-crud.service';
 
 
 @Component({
@@ -32,16 +52,19 @@ import { SchoolCRUDService, School } from 'src/app/services/school-crud.service'
   templateUrl: './tab-schools.component.html',
   styleUrls: ['./tab-schools.component.scss'],
   standalone: true,
-  imports: [IonButton, IonButtons,
+  imports: [IonText,
     CommonModule,
-    FormsModule,
     IonActionSheet,
+    IonButton,
+    IonButtons,
     IonChip,
     IonContent,
     IonFab,
     IonFabButton,
     IonHeader,
     IonIcon,
+    IonInput,
+    IonInputOtp,
     IonItem,
     IonItemOption,
     IonItemOptions,
@@ -53,6 +76,7 @@ import { SchoolCRUDService, School } from 'src/app/services/school-crud.service'
     IonTitle,
     IonToast,
     IonToolbar,
+    ReactiveFormsModule,
   ]
 })
 
@@ -61,11 +85,12 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   @ViewChildren(IonModal) modals!: QueryList<IonModal>;
 
   isLoading = true;
-  schools: School[] = [];
-  private subscription?: Subscription;
-
   isToastOpen = false;
+  pin = 1111;
+  schools: School[] = [];
   toastMessage = '';
+  schoolForm!: FormGroup;
+  private subscription?: Subscription;
 
   public actionSheetButtons = [
     {
@@ -84,7 +109,10 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
     },
   ];
 
-  constructor(private schoolCRUDService: SchoolCRUDService) {}
+  constructor(
+    private schoolCRUDService: SchoolCRUDService,
+    private formBuilder: FormBuilder,
+  ) {}
 
   ngOnInit() {
     this.subscription = this.schoolCRUDService.schools$.subscribe({
@@ -98,6 +126,8 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
         console.log('Error: ', e);
       }
     });
+
+    this.initForm();
   }
 
   ngOnDestroy(){
@@ -107,8 +137,28 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  closeModal(schoolId: string | undefined) {
+  get cct() {
+    return this.schoolForm.get('cct')!;
+  }
 
+  private cctExistsValidator(control: AbstractControl): Observable<ValidationErrors | null> {
+    if (!control.value || control.value.length !== 10) {
+      return of(null);
+    }
+
+    return this.schoolCRUDService.cctExists(control.value).pipe(
+      map(exists => {
+        console.log(`CCT "${control.value}" exists:`, exists);
+        return exists ? { cctExists: true } : null;
+      }),
+      catchError(error => {
+        console.error('Error validating CCT:', error);
+        return of(null);
+      })
+    );
+  }
+
+  closeModal(schoolId: string | undefined) {
     if(!schoolId) {
       return;
     };
@@ -120,21 +170,74 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
     }
 
     modal.dismiss();
+    this.pin = this.generatePin();
+    this.schoolForm.reset({cct: '', nombre: '', pin: this.pin});
+  }
+
+  private generatePin() {
+    const min = 1111;
+    const max = 9999;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  initForm() {
+    this.pin = this.generatePin();
+    console.log('onInit(): ', this.pin)
+
+    this.schoolForm = this.formBuilder.group({
+      nombre: ['', [
+        Validators.required,
+        Validators.minLength(15),
+        Validators.maxLength(100)
+      ]],
+      cct: ['', [
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(10),
+        ],
+        [this.cctExistsValidator.bind(this)]
+      ],
+      pin: [this.pin]
+    });
+
+    this.schoolForm.get('cct')?.valueChanges.subscribe(value => {
+      if (value) {
+        const upperValue = value.toUpperCase();
+        if (value !== upperValue) {
+          this.schoolForm.get('cct')?.setValue(upperValue, { emitEvent: false });
+        }
+      }
+    });
   }
 
   onAddSchool() {
-    console.log(Date.now());
+    if(!this.schoolForm) {
+      return;
+    }
+
+    const school = this.schoolForm.value;
+    console.log(school);
+
+    this.schoolCRUDService.addSchool(school).subscribe({
+      next: schoolId => {
+        this.closeModal('new-school-btn');
+      },
+      error: (error) => {
+        console.log('Error: ', error);
+      }
+    });
   }
 
   onDeleteSchool(event: CustomEvent<OverlayEventDetail>, slidingItem: IonItemSliding, school: School) {
-    const eventButton = event.detail.data;
     slidingItem.close();
 
     if(!school.id) {
       return;
     }
 
-    if(!eventButton || eventButton.action === 'cancel') {
+    const action = event.detail.data.action;
+
+    if(!action || action === 'cancel') {
       return;
     }
 
@@ -147,10 +250,9 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
         console.log('Error: ', error);
       },
     });
-
   }
 
-  async onModalDismiss(event: any, slidingItem: IonItemSliding) {
+  async onModalDismiss(slidingItem: IonItemSliding) {
     await slidingItem.close();
   }
 

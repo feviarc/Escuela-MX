@@ -56,13 +56,57 @@
               </ion-buttons>
               <ion-title>Editar Escuela</ion-title>
               <ion-buttons slot="end">
-                <ion-button [strong]="true">Guardar</ion-button>
+                <ion-button
+                 [strong]="true"
+                 [disabled]="isNotDataChanged(school, nameEditInput, pinEditInput)"
+                 (click)="onUpdateSchool(school, nameEditInput, pinEditInput)"
+                >
+                  Guardar
+                </ion-button>
               </ion-buttons>
             </ion-toolbar>
           </ion-header>
 
-          <ion-content>
-            <h2>{{ school.nombre }}</h2>
+          <ion-content color="light">
+            <!-- BEGIN EDIT SCHOOL ---------------------------------------------------------->
+
+              <form>
+
+                <ion-list [inset]="true">
+                  <ion-item>
+                    <ion-input
+                    label="CCT (Clave del Centro de Trabajo)"
+                    labelPlacement="stacked"
+                    value="{{ school.cct }}"
+                    disabled
+                    >
+                    </ion-input>
+                  </ion-item>
+                </ion-list>
+
+                <ion-list [inset]="true">
+                  <ion-item>
+                    <ion-input
+                    label="Nombre de la escuela"
+                    labelPlacement="stacked"
+                    maxlength="100"
+                    value = "{{ school.nombre }}"
+                    #nameEditInput
+                    >
+                    </ion-input>
+                  </ion-item>
+                </ion-list>
+
+                <ion-list [inset]="true">
+                  <ion-input-otp value="{{  school.pin }}" #pinEditInput>
+                    <ion-label>PIN</ion-label>
+                  </ion-input-otp>
+                </ion-list>
+
+              </form>
+
+
+            <!-- END EDIT SCHOOL ----------------------------------------------------->
           </ion-content>
 
         </ng-template>

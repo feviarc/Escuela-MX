@@ -210,19 +210,29 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
     });
   }
 
+  isNotDataChanged(school: any, updateNameInput: any, updatePinInput: any) {
+
+    if(+updatePinInput.value < 1111) {
+      return true;
+    }
+
+    const isSameSchoolName = school.nombre === updateNameInput.value ? true : false;
+    const isSameSchoolPin = school.pin === +updatePinInput.value ? true : false;
+    return (isSameSchoolName && isSameSchoolPin);
+  }
+
   onAddSchool() {
     if(!this.schoolForm) {
       return;
     }
 
     const school = this.schoolForm.value;
-    console.log(school);
 
     this.schoolCRUDService.addSchool(school).subscribe({
-      next: schoolId => {
+      next: () => {
         this.closeModal('new-school-btn');
       },
-      error: (error) => {
+      error: error => {
         console.log('Error: ', error);
       }
     });
@@ -254,6 +264,27 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
 
   async onModalDismiss(slidingItem: IonItemSliding) {
     await slidingItem.close();
+  }
+
+
+  onUpdateSchool(school: any, nameInput: any, pinInput: any) {
+    this.isLoading = true;
+
+    const updatedData = {
+      nombre: nameInput.value,
+      pin: +pinInput.value
+    };
+
+    this.schoolCRUDService.updateSchool(school.id, updatedData).subscribe({
+      next: () => {
+        this.isLoading = false;
+      },
+      error: error => {
+        console.log('Error: ', error);
+      }
+    });
+
+    this.closeModal('edit-' + school.id);
   }
 
   setOpenToast(openStatus: boolean) {

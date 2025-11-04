@@ -1,0 +1,204 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Escuelas</ion-title>
+    @if(isLoading) {
+      <ion-progress-bar color="warning" type="indeterminate"></ion-progress-bar>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    @for(school of schools; track school.id) {
+      <ion-item-sliding class="sliding-item-card" #slidingItem>
+
+        <ion-item class="custom-item">
+          <ion-label>
+            <h2>{{ school.nombre }}</h2>
+            <p>{{ school.cct }}</p>
+          </ion-label>
+          <ion-chip>PIN: <strong>{{ school.pin }}</strong></ion-chip>
+        </ion-item>
+
+        <ion-item-options side="end">
+
+          <ion-item-option id="edit-{{ school.id }}">
+            <ion-icon slot="icon-only" name="create"></ion-icon>
+          </ion-item-option>
+
+          <ion-item-option id="delete-{{ school.id }}" color="danger">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-item-option>
+
+          <ion-action-sheet
+           trigger="delete-{{ school.id }}"
+           header="Estás a punto de eliminar"
+           subHeader="{{ school.nombre }}"
+           [buttons]="actionSheetButtons"
+           (didDismiss)="onDeleteSchool($event, slidingItem, school)"
+          >
+          </ion-action-sheet>
+
+        </ion-item-options>
+      </ion-item-sliding>
+      <ion-modal
+       trigger="edit-{{school.id}}"
+       [initialBreakpoint]="0.80"
+       [breakpoints]="[0, 0.20, 0.40, 0.60, 0.80, 1]"
+       (didDismiss)="onModalDismiss(slidingItem)"
+      >
+        <ng-template>
+
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="start">
+                <ion-button (click)="closeModal('edit-'+school.id)">Cancelar</ion-button>
+              </ion-buttons>
+              <ion-title>Editar Escuela</ion-title>
+              <ion-buttons slot="end">
+                <ion-button
+                 [strong]="true"
+                 [disabled]="isNotDataChanged(school, nameEditInput, pinEditInput)"
+                 (click)="onUpdateSchool(school, nameEditInput, pinEditInput)"
+                >
+                  Guardar
+                </ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+
+          <ion-content color="light">
+            <!-- BEGIN EDIT SCHOOL ---------------------------------------------------------->
+
+              <form>
+
+                <ion-list [inset]="true">
+                  <ion-item>
+                    <ion-input
+                    label="CCT (Clave del Centro de Trabajo)"
+                    labelPlacement="stacked"
+                    value="{{ school.cct }}"
+                    disabled
+                    >
+                    </ion-input>
+                  </ion-item>
+                </ion-list>
+
+                <ion-list [inset]="true">
+                  <ion-item>
+                    <ion-input
+                    label="Nombre de la escuela"
+                    labelPlacement="stacked"
+                    maxlength="100"
+                    value = "{{ school.nombre }}"
+                    #nameEditInput
+                    >
+                    </ion-input>
+                  </ion-item>
+                </ion-list>
+
+                <ion-list [inset]="true">
+                  <ion-input-otp value="{{  school.pin }}" #pinEditInput>
+                    <ion-label>PIN</ion-label>
+                  </ion-input-otp>
+                </ion-list>
+
+              </form>
+
+
+            <!-- END EDIT SCHOOL ----------------------------------------------------->
+          </ion-content>
+
+        </ng-template>
+      </ion-modal>
+    }
+  </ion-list>
+
+  <ion-toast
+   cssClass="page__toast"
+   [message]="toastMessage"
+   [isOpen]="isToastOpen"
+   [duration]="5000"
+   (didDismiss)="setOpenToast(false)"
+  ></ion-toast>
+
+</ion-content>
+
+<ion-modal
+ trigger="new-school-btn"
+ (willDismiss)="closeModal('new-school-btn')"
+ [initialBreakpoint]="0.80"
+ [breakpoints]="[0, 0.20, 0.40, 0.60, 0.80, 1]"
+>
+  <ng-template>
+
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-button (click)="closeModal('new-school-btn')">Cancelar</ion-button>
+        </ion-buttons>
+        <ion-title>Nueva Escuela</ion-title>
+        <ion-buttons slot="end">
+          <ion-button
+           (click)="onAddSchool()"
+           [strong]="true"
+           [disabled]="!schoolForm.valid"
+           type="submit"
+          >
+            Guardar
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding" color="light">
+      <form [formGroup]="schoolForm">
+
+        <ion-list [inset]="true">
+          <ion-item>
+            <ion-input
+             formControlName="cct"
+             label="CCT (Clave del Centro de Trabajo)"
+             labelPlacement="stacked"
+             maxlength="10"
+            >
+            </ion-input>
+          </ion-item>
+          @if(cct.invalid && cct.touched) {
+            <ion-text color="danger" class="ion-padding">
+              @if(cct.errors?.['cctExists']) {
+                <small>Esta clave ya fue registrada previamente.</small>
+              }
+            </ion-text>
+          }
+        </ion-list>
+
+        <ion-list [inset]="true">
+          <ion-item>
+            <ion-input
+             formControlName="nombre"
+             label="Nombre de la escuela"
+             labelPlacement="stacked"
+             maxlength="100"
+            >
+            </ion-input>
+          </ion-item>
+        </ion-list>
+
+        <ion-list [inset]="true">
+          <ion-input-otp [value]="pin" disabled>
+            <ion-label>PIN</ion-label>
+          </ion-input-otp>
+        </ion-list>
+
+      </form>
+    </ion-content>
+
+  </ng-template>
+</ion-modal>
+
+<ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab-button size="small" id="new-school-btn">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

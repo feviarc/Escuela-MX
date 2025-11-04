@@ -10,8 +10,7 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { logOutOutline } from 'ionicons/icons';
+
 import { AuthService } from './../services/auth.service';
 
 
@@ -34,9 +33,7 @@ import { AuthService } from './../services/auth.service';
 
 export class CaregiverPage implements OnInit {
 
-  constructor(private authService: AuthService, private router: Router) {
-    addIcons({logOutOutline});
-  }
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() { }
 

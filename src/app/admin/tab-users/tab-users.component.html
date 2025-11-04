@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Usuarios</ion-title>
+    @if(isLoading) {
+      <ion-progress-bar type="indeterminate" color="warning"></ion-progress-bar>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list lines="none">
+    @if((teachers$ | async)?.length === 0) {
+      <ion-item>
+        <ion-label>No hay personal registrado.</ion-label>
+      </ion-item>
+    } @else {
+      @for(teacher of teachers$ | async; track teacher.id) {
+        <ion-item class="user-item-card">
+          <ion-avatar slot="start">
+            <img src="../../../assets/img/avatar.svg" alt="User Avatar">
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ teacher.escuela }}</h2>
+            <p>{{ teacher.nombre }}</p>
+          </ion-label>
+        </ion-item>
+      }
+    }
+  </ion-list>
+</ion-content>

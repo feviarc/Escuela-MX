@@ -13,8 +13,14 @@ ion-chip strong {
     font-size: 1.2rem;
 }
 
-ion-label {
-  color: #222d3a;
+ion-modal.modal-classes__item ion-label{
+  --color: #666666 !important;
+  font-size: 1rem !important;
+  font-weight: 600;
+}
+
+ion-modal.modal-classes__item ion-label > p {
+  text-align: center;
 }
 
 .custom-item {

@@ -12,6 +12,7 @@ import {
   AbstractControl,
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   ValidationErrors,
   Validators,
@@ -22,9 +23,11 @@ import {
   IonButton,
   IonButtons,
   IonChip,
+  IonCol,
   IonContent,
   IonFab,
   IonFabButton,
+  IonGrid,
   IonHeader,
   IonIcon,
   IonInput,
@@ -37,13 +40,16 @@ import {
   IonList,
   IonModal,
   IonProgressBar,
+  IonRow,
+  IonText,
   IonTitle,
   IonToast,
-  IonToolbar, IonText } from "@ionic/angular/standalone";
+  IonToolbar,
+} from "@ionic/angular/standalone";
 
 import type { OverlayEventDetail } from '@ionic/core/components';
 import { Observable, of ,Subscription } from 'rxjs';
-import { catchError , debounceTime, map, switchMap } from 'rxjs/operators';
+import { catchError , map } from 'rxjs/operators';
 import { School, SchoolCRUDService } from 'src/app/services/school-crud.service';
 
 
@@ -52,8 +58,9 @@ import { School, SchoolCRUDService } from 'src/app/services/school-crud.service'
   templateUrl: './tab-schools.component.html',
   styleUrls: ['./tab-schools.component.scss'],
   standalone: true,
-  imports: [IonText,
+  imports: [IonCol, IonRow, IonGrid,
     CommonModule,
+    FormsModule,
     IonActionSheet,
     IonButton,
     IonButtons,
@@ -73,6 +80,7 @@ import { School, SchoolCRUDService } from 'src/app/services/school-crud.service'
     IonList,
     IonModal,
     IonProgressBar,
+    IonText,
     IonTitle,
     IonToast,
     IonToolbar,
@@ -84,13 +92,17 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
 
   @ViewChildren(IonModal) modals!: QueryList<IonModal>;
 
+  breakpoints = [0, 0.20, 0.40, 0.60, 0.80, 1];
+  initialBreakpoint = 0.80;
+  classGrade = '';
+  classLetter = '';
   isLoading = true;
   isToastOpen = false;
   pin = 1111;
-  schools: School[] = [];
-  toastMessage = '';
   schoolForm!: FormGroup;
+  schools: School[] = [];
   private subscription?: Subscription;
+  toastMessage = '';
 
   public actionSheetButtons = [
     {
@@ -110,8 +122,8 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   ];
 
   constructor(
-    private schoolCRUDService: SchoolCRUDService,
     private formBuilder: FormBuilder,
+    private schoolCRUDService: SchoolCRUDService,
   ) {}
 
   ngOnInit() {
@@ -182,7 +194,6 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
 
   initForm() {
     this.pin = this.generatePin();
-    console.log('onInit(): ', this.pin)
 
     this.schoolForm = this.formBuilder.group({
       nombre: ['', [
@@ -221,6 +232,16 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
     return (isSameSchoolName && isSameSchoolPin);
   }
 
+  isValidClass() {
+    return (this.classGrade && this.classLetter ? true : false);
+  }
+
+  onAddClass() {
+    console.log(this.classGrade, this.classLetter);
+    this.classGrade = '';
+    this.classLetter = '';
+  }
+
   onAddSchool() {
     if(!this.schoolForm) {
       return;
@@ -241,20 +262,19 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   onDeleteSchool(event: CustomEvent<OverlayEventDetail>, slidingItem: IonItemSliding, school: School) {
     slidingItem.close();
 
-    if(!school.id) {
+    if(!school.id || !event.detail.data) {
       return;
     }
 
     const action = event.detail.data.action;
 
-    if(!action || action === 'cancel') {
+    if(action === 'cancel') {
       return;
     }
 
     this.schoolCRUDService.deleteSchool(school.id).subscribe({
       next: () => {
-        this.toastMessage = `✅ Se eliminó ${school.nombre}`;
-        this.setOpenToast(true);
+        this.showToast(`🗑️ Se eliminó ${school.nombre}`);
       },
       error: error => {
         console.log('Error: ', error);
@@ -287,7 +307,12 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
     this.closeModal('edit-' + school.id);
   }
 
-  setOpenToast(openStatus: boolean) {
-    this.isToastOpen = openStatus;
+  setOpenToast(isOpen: boolean) {
+    this.isToastOpen = isOpen;
+  }
+
+  private showToast(message: string) {
+    this.toastMessage = message;
+    this.isToastOpen = true;
   }
 }

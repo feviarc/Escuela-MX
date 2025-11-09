@@ -13,6 +13,10 @@ ion-chip strong {
     font-size: 1.2rem;
 }
 
+ion-grid.background--light {
+  background-color: #f4f5f8;
+}
+
 ion-modal.modal-classes__item ion-label{
   --color: #666666 !important;
   font-size: 1rem !important;

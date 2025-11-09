@@ -96,6 +96,7 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   initialBreakpoint = 0.80;
   classGrade = '';
   classLetter = '';
+  courseName = '';
   isLoading = true;
   isToastOpen = false;
   pin = 1111;
@@ -236,10 +237,19 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
     return (this.classGrade && this.classLetter ? true : false);
   }
 
+  isValidCourse() {
+    return (this.courseName !== '' ? true : false);
+  }
+
   onAddClass() {
     console.log(this.classGrade, this.classLetter);
     this.classGrade = '';
     this.classLetter = '';
+  }
+
+  onAddCourse() {
+    console.log(this.courseName);
+    this.courseName = '';
   }
 
   onAddSchool() {

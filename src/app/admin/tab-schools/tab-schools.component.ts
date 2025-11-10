@@ -51,7 +51,7 @@ import type { OverlayEventDetail } from '@ionic/core/components';
 import { Observable, of ,Subscription } from 'rxjs';
 import { catchError , map } from 'rxjs/operators';
 import { School, SchoolCRUDService } from 'src/app/services/school-crud.service';
-
+import { Group, GroupCRUDService } from 'src/app/services/group-crud.service';
 
 @Component({
   selector: 'app-tab-schools',
@@ -97,12 +97,14 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   classGrade = '';
   classLetter = '';
   courseName = '';
-  isLoading = true;
+  isLoadingData = true;
   isToastOpen = false;
   pin = 1111;
   schoolForm!: FormGroup;
+  groups: Group[] = [];
   schools: School[] = [];
-  private subscription?: Subscription;
+  private schoolSubscription?: Subscription;
+  private groupSubscription?: Subscription;
   toastMessage = '';
 
   public actionSheetButtons = [
@@ -124,15 +126,16 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
+    private groupCRUDService: GroupCRUDService,
     private schoolCRUDService: SchoolCRUDService,
   ) {}
 
   ngOnInit() {
-    this.subscription = this.schoolCRUDService.schools$.subscribe({
+    this.schoolSubscription = this.schoolCRUDService.schools$.subscribe({
       next: schools => {
         this.schools = schools;
         if(schools.length !== 0){
-          this.isLoading = false;
+          this.isLoadingData = false;
         }
       },
       error: (e) => {
@@ -140,14 +143,30 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.groupSubscription = this.groupCRUDService.groups$.subscribe({
+      next: groups => {
+        this.groups = groups;
+        console.log('Grupos: ', groups);
+      },
+      error: (e) => {
+        console.log('Error:', e);
+      }
+    });
+
     this.initForm();
   }
 
   ngOnDestroy(){
-    if(!this.subscription) {
+    if(!this.schoolSubscription) {
       return;
     }
-    this.subscription.unsubscribe();
+
+    if(!this.groupSubscription) {
+      return;
+    }
+
+    this.schoolSubscription.unsubscribe();
+    this.groupSubscription.unsubscribe();
   }
 
   get cct() {
@@ -242,7 +261,21 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   }
 
   onAddClass() {
-    console.log(this.classGrade, this.classLetter);
+    const group = {
+      grado: this.classGrade,
+      letra: this.classLetter.toLocaleUpperCase(),
+      nombre: `Grupo ${this.classGrade}° "${this.classLetter.toUpperCase()}"`
+    };
+
+    this.groupCRUDService.addGroup(group).subscribe({
+      next: id => {
+        console.log(`Se creo ${id}`);
+      },
+      error: (e) => {
+        console.log(e);
+      }
+    });
+
     this.classGrade = '';
     this.classLetter = '';
   }
@@ -263,8 +296,20 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
       next: () => {
         this.closeModal('new-school-btn');
       },
-      error: error => {
-        console.log('Error: ', error);
+      error: (e) => {
+        console.log('Error: ', e);
+      }
+    });
+  }
+
+  onDeleteGroup(group: Group) {
+    console.log(group);
+    this.groupCRUDService.deleteGroup(group.id!).subscribe({
+      next: () => {
+        console.log('Se eliminó ', group.nombre);
+      },
+      error: (e) => {
+        console.log('Error:', e);
       }
     });
   }
@@ -286,8 +331,8 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
       next: () => {
         this.showToast(`🗑️ Se eliminó ${school.nombre}`);
       },
-      error: error => {
-        console.log('Error: ', error);
+      error: (e) => {
+        console.log('Error: ', e);
       },
     });
   }
@@ -298,7 +343,6 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
 
 
   onUpdateSchool(school: any, nameInput: any, pinInput: any) {
-    this.isLoading = true;
 
     const updatedData = {
       nombre: nameInput.value,
@@ -307,10 +351,10 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
 
     this.schoolCRUDService.updateSchool(school.id, updatedData).subscribe({
       next: () => {
-        this.isLoading = false;
+
       },
-      error: error => {
-        console.log('Error: ', error);
+      error: (e) => {
+        console.log('Error: ', e);
       }
     });
 

@@ -24,7 +24,7 @@
 <ion-content>
   <ion-list>
     @for(school of schools; track school.id) {
-      <ion-item-sliding class="sliding-item-card" #slidingItem>
+      <ion-item-sliding class="sliding-item-card" #schoolSlidingItem>
 
         <ion-item class="custom-item">
           <ion-label>
@@ -49,7 +49,7 @@
            header="Estás a punto de eliminar"
            subHeader="{{ school.nombre }}"
            [buttons]="actionSheetButtons"
-           (didDismiss)="onDeleteSchool($event, slidingItem, school)"
+           (didDismiss)="onDeleteSchool($event, schoolSlidingItem, school)"
           >
           </ion-action-sheet>
 
@@ -59,7 +59,7 @@
        trigger="edit-{{school.id}}"
        [initialBreakpoint]="initialBreakpoint"
        [breakpoints]="breakpoints"
-       (didDismiss)="onModalDismiss(slidingItem)"
+       (didDismiss)="onModalDismiss(schoolSlidingItem)"
       >
         <ng-template>
 
@@ -272,36 +272,18 @@
     <ion-content class="ion-padding" color="light">
 
       <ion-list>
-        <ion-item-sliding>
-          <ion-item>
-            <ion-label>1RO / "A"</ion-label>
-          </ion-item>
-          <ion-item-options side="end">
-            <ion-item-option color="danger">
-              <ion-icon slot="icon-only" name="trash"></ion-icon>
-            </ion-item-option>
-          </ion-item-options>
-        </ion-item-sliding>
-        <ion-item-sliding>
-          <ion-item>
-            <ion-label>2DO / "B"</ion-label>
-          </ion-item>
-          <ion-item-options side="end">
-            <ion-item-option color="danger">
-              <ion-icon slot="icon-only" name="trash"></ion-icon>
-            </ion-item-option>
-          </ion-item-options>
-        </ion-item-sliding>
-        <ion-item-sliding>
-          <ion-item>
-            <ion-label>3RO / "C"</ion-label>
-          </ion-item>
-          <ion-item-options side="end">
-            <ion-item-option color="danger">
-              <ion-icon slot="icon-only" name="trash"></ion-icon>
-            </ion-item-option>
-          </ion-item-options>
-        </ion-item-sliding>
+        @for(group of groups; track group.id) {
+          <ion-item-sliding #groupSlidingItem>
+            <ion-item>
+              <ion-label>{{ group.nombre }}</ion-label>
+            </ion-item>
+            <ion-item-options side="end">
+              <ion-item-option color="danger" (click)="onDeleteGroup(group)">
+                <ion-icon slot="icon-only" name="trash"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        }
       </ion-list>
 
     </ion-content>

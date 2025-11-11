@@ -41,6 +41,7 @@ import {
   IonModal,
   IonProgressBar,
   IonRow,
+  IonSpinner,
   IonText,
   IonTitle,
   IonToast,
@@ -80,6 +81,7 @@ import { Group, GroupCRUDService } from 'src/app/services/group-crud.service';
     IonList,
     IonModal,
     IonProgressBar,
+    IonSpinner,
     IonText,
     IonTitle,
     IonToast,
@@ -106,6 +108,9 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   private schoolSubscription?: Subscription;
   private groupSubscription?: Subscription;
   toastMessage = '';
+  isSpinnerActive = false;
+  spinnerText = '';
+  isSaveButtonDisabled = false;
 
   public actionSheetButtons = [
     {
@@ -239,6 +244,15 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    this.schoolForm.get('nombre')?.valueChanges.subscribe(value => {
+      if (value) {
+        const upperValue = value.toUpperCase();
+        if (value !== upperValue) {
+          this.schoolForm.get('nombre')?.setValue(upperValue, { emitEvent: false });
+        }
+      }
+    });
   }
 
   isNotDataChanged(school: any, updateNameInput: any, updatePinInput: any) {
@@ -290,11 +304,13 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.isSaveButtonDisabled = true;
     const school = this.schoolForm.value;
 
     this.schoolCRUDService.addSchool(school).subscribe({
       next: () => {
         this.closeModal('new-school-btn');
+        this.isSaveButtonDisabled = false;
       },
       error: (e) => {
         console.log('Error: ', e);
@@ -327,9 +343,13 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.spinnerText = 'Eliminando...';
+    this.isSpinnerActive = true;
+
     this.schoolCRUDService.deleteSchool(school.id).subscribe({
       next: () => {
         this.showToast(`🗑️ Se eliminó ${school.nombre}`);
+        this.isSpinnerActive = false;
       },
       error: (e) => {
         console.log('Error: ', e);
@@ -345,13 +365,15 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   onUpdateSchool(school: any, nameInput: any, pinInput: any) {
 
     const updatedData = {
-      nombre: nameInput.value,
+      nombre: nameInput.value.toUpperCase(),
       pin: +pinInput.value
     };
 
+    this.isSaveButtonDisabled = true;
+
     this.schoolCRUDService.updateSchool(school.id, updatedData).subscribe({
       next: () => {
-
+        this.isSaveButtonDisabled = false;
       },
       error: (e) => {
         console.log('Error: ', e);

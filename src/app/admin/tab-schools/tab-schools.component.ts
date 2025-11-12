@@ -53,6 +53,7 @@ import { Observable, of ,Subscription } from 'rxjs';
 import { catchError , map } from 'rxjs/operators';
 import { School, SchoolCRUDService } from 'src/app/services/school-crud.service';
 import { Group, GroupCRUDService } from 'src/app/services/group-crud.service';
+import { Subject, SubjectCRUDService } from 'src/app/services/subject-crud.service';
 
 @Component({
   selector: 'app-tab-schools',
@@ -95,22 +96,24 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   @ViewChildren(IonModal) modals!: QueryList<IonModal>;
 
   breakpoints = [0, 0.20, 0.40, 0.60, 0.80, 1];
-  initialBreakpoint = 0.80;
   classGrade = '';
   classLetter = '';
-  courseName = '';
+  subjectName = '';
+  groups: Group[] = [];
+  initialBreakpoint = 0.80;
   isLoadingData = true;
+  isSaveButtonDisabled = false;
+  isSpinnerActive = false;
   isToastOpen = false;
   pin = 1111;
-  schoolForm!: FormGroup;
-  groups: Group[] = [];
-  schools: School[] = [];
-  private schoolSubscription?: Subscription;
   private groupSubscription?: Subscription;
-  toastMessage = '';
-  isSpinnerActive = false;
+  private schoolSubscription?: Subscription;
+  private subjectSubscription?: Subscription;
+  schoolForm!: FormGroup;
+  schools: School[] = [];
+  subjects: Subject[] = [];
   spinnerText = '';
-  isSaveButtonDisabled = false;
+  toastMessage = '';
 
   public actionSheetButtons = [
     {
@@ -133,6 +136,7 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private groupCRUDService: GroupCRUDService,
     private schoolCRUDService: SchoolCRUDService,
+    private subjectCRUDService: SubjectCRUDService
   ) {}
 
   ngOnInit() {
@@ -152,6 +156,16 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
       next: groups => {
         this.groups = groups;
         console.log('Grupos: ', groups);
+      },
+      error: (e) => {
+        console.log('Error:', e);
+      }
+    });
+
+    this.subjectSubscription = this.subjectCRUDService.subjects$.subscribe({
+      next: subjects => {
+        this.subjects = subjects;
+        console.log('Materias:', subjects);
       },
       error: (e) => {
         console.log('Error:', e);
@@ -270,8 +284,8 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
     return (this.classGrade && this.classLetter ? true : false);
   }
 
-  isValidCourse() {
-    return (this.courseName !== '' ? true : false);
+  isValidSubject() {
+    return (this.subjectName !== '' ? true : false);
   }
 
   onAddClass() {
@@ -281,6 +295,9 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
       nombre: `Grupo ${this.classGrade}° "${this.classLetter.toUpperCase()}"`
     };
 
+    this.classGrade = '';
+    this.classLetter = '';
+
     this.groupCRUDService.addGroup(group).subscribe({
       next: id => {
         console.log(`Se creo ${id}`);
@@ -289,14 +306,23 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
         console.log(e);
       }
     });
-
-    this.classGrade = '';
-    this.classLetter = '';
   }
 
-  onAddCourse() {
-    console.log(this.courseName);
-    this.courseName = '';
+  onAddSubject() {
+    const subject = {
+      nombre: this.subjectName.toUpperCase()
+    };
+
+    this.subjectName = '';
+
+    this.subjectCRUDService.addSubject(subject).subscribe({
+      next: id => {
+        console.log(`Se creo ${id}`);
+      },
+      error: (e) => {
+        console.log('Error: ', e);
+      }
+    });
   }
 
   onAddSchool() {
@@ -354,6 +380,18 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
       error: (e) => {
         console.log('Error: ', e);
       },
+    });
+  }
+
+  onDeleteSubject(subject: Subject) {
+    console.log(subject);
+    this.subjectCRUDService.deleteSubject(subject.id!).subscribe({
+      next: () => {
+        console.log('Se eliminó ', subject.nombre);
+      },
+      error: (e) => {
+        console.log('Error:', e);
+      }
     });
   }
 

@@ -63,6 +63,7 @@
 
           </ion-item-options>
         </ion-item-sliding>
+        <!-- Modal (Actualizar escuela) -->
         <ion-modal
         trigger="edit-{{school.id}}"
         [initialBreakpoint]="initialBreakpoint"
@@ -109,7 +110,7 @@
                   <ion-list [inset]="true">
                     <ion-item>
                       <ion-input
-                      style="text-transform: uppercase;"
+                      class="input__text--uppercase"
                       label="Nombre de la escuela"
                       labelPlacement="stacked"
                       maxlength="100"
@@ -150,7 +151,7 @@
 }
 
 
-<!-- Modal de Nueva Escuela -->
+<!-- Modal (Nueva Escuela) -->
 <ion-modal
  trigger="new-school-btn"
  (willDismiss)="closeModal('new-school-btn')"
@@ -224,7 +225,7 @@
   </ng-template>
 </ion-modal>
 
-<!-- Modal de Grupos -->
+<!-- Modal (Grupos) -->
 <ion-modal
  class="modal-classes__item"
  trigger="classes-btn"
@@ -302,7 +303,7 @@
   </ng-template>
 </ion-modal>
 
-<!-- Modal de Materias -->
+<!-- Modal (Materias) -->
 <ion-modal
  trigger="courses-btn"
  (willDismiss)="closeModal('courses-btn')"
@@ -328,7 +329,8 @@
                   label="Nueva materia"
                   labelPlacement="stacked"
                   placeholder="Nombre"
-                  [(ngModel)]="courseName"
+                  class="input__text--uppercase"
+                  [(ngModel)]="subjectName"
                 >
                 </ion-input>
               </ion-item>
@@ -338,8 +340,8 @@
             <ion-fab vertical="center" horizontal="center">
               <ion-fab-button
                 size="small"
-                [disabled]="!isValidCourse()"
-                (click)="onAddCourse()"
+                [disabled]="!isValidSubject()"
+                (click)="onAddSubject()"
               >
                 <ion-icon name="add"></ion-icon>
               </ion-fab-button>
@@ -351,36 +353,18 @@
     <ion-content class="ion-padding" color="light">
 
       <ion-list>
-        <ion-item-sliding>
+      @for(subject of subjects; track subject.id) {
+        <ion-item-sliding #subjectSlidingItem>
           <ion-item>
-            <ion-label>ESPAÑOL</ion-label>
+            <ion-label>{{ subject.nombre }}</ion-label>
           </ion-item>
           <ion-item-options side="end">
-            <ion-item-option color="danger">
+            <ion-item-option color="danger" (click)="onDeleteSubject(subject)">
               <ion-icon slot="icon-only" name="trash"></ion-icon>
             </ion-item-option>
           </ion-item-options>
         </ion-item-sliding>
-        <ion-item-sliding>
-          <ion-item>
-            <ion-label>MATEMÁTICAS</ion-label>
-          </ion-item>
-          <ion-item-options side="end">
-            <ion-item-option color="danger">
-              <ion-icon slot="icon-only" name="trash"></ion-icon>
-            </ion-item-option>
-          </ion-item-options>
-        </ion-item-sliding>
-        <ion-item-sliding>
-          <ion-item>
-            <ion-label>TECNOLOGÍA</ion-label>
-          </ion-item>
-          <ion-item-options side="end">
-            <ion-item-option color="danger">
-              <ion-icon slot="icon-only" name="trash"></ion-icon>
-            </ion-item-option>
-          </ion-item-options>
-        </ion-item-sliding>
+      }
       </ion-list>
 
     </ion-content>

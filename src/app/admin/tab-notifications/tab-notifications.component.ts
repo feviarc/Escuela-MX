@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
 
 import {
   IonActionSheet,
@@ -8,12 +9,15 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
+  IonProgressBar,
   IonTitle,
-  IonToolbar,
-} from "@ionic/angular/standalone";
+  IonToolbar, IonList, IonItemSliding, IonItem, IonLabel } from "@ionic/angular/standalone";
 
 import type { OverlayEventDetail } from '@ionic/core/components';
+import { Subscription } from 'rxjs';
+import { DateFormatPipe } from 'src/app/pipes/date-format.pipe';
 import { AuthService } from 'src/app/services/auth.service';
+import { AdminNotificationsCRUDService, Notification } from 'src/app/services/admin-notifications-crud.service';
 
 
 @Component({
@@ -22,18 +26,29 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./tab-notifications.component.scss'],
   standalone: true,
   imports: [
+    DateFormatPipe,
     IonActionSheet,
     IonButton,
     IonButtons,
     IonContent,
     IonHeader,
     IonIcon,
+    IonItem,
+    IonItemSliding,
+    IonLabel,
+    IonList,
+    IonProgressBar,
     IonTitle,
     IonToolbar,
   ]
 })
 
-export class TabNotificationsComponent  implements OnInit {
+export class TabNotificationsComponent  implements OnInit, OnDestroy {
+
+  isLoadingData = false;
+  notifications: Notification[] = [];
+  private notificationsSubscription?: Subscription;
+  private getUserSubscription?: Subscription;
 
   public actionSheetButtons = [
     {
@@ -54,10 +69,40 @@ export class TabNotificationsComponent  implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private notificationsCRUDService: AdminNotificationsCRUDService,
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.getUserSubscription = this.authService.getCurrentUser()
+    .pipe(
+      switchMap(user => {
+        const uid = user?.uid ?? '';
+        console.log('Usuario obtenido:', user?.uid);
+        // Ahora ejecutar el segundo observable con el uid
+        return this.notificationsCRUDService.getNotifications(uid);
+      })
+    )
+    .subscribe({
+      next: notifications => {
+        this.notifications = notifications;
+        console.log(this.notifications);
+      },
+      error: (e) => {
+        console.log('Error:', e);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.getUserSubscription) {
+      this.getUserSubscription.unsubscribe();
+    }
+
+    if(this.notificationsSubscription) {
+      this.notificationsSubscription.unsubscribe();
+    }
+  }
 
   onLogout(event: CustomEvent<OverlayEventDetail>) {
     const eventButton = event.detail.data;

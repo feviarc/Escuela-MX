@@ -44,10 +44,25 @@
  * Global customized rules
  */
 
+ .custom-item {
+  --background: #f7f7f7; /* Fondo personalizado */
+}
+
+.item-background__color--warm-glow {
+  --background: #fff4d3;
+}
+
 .page__toast {
   font-size: 1.2rem;
 }
 
 .input__text--uppercase {
   text-transform: uppercase;
+}
+
+.sliding-item-card {
+  margin: 15px auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  width: 90%;
 }

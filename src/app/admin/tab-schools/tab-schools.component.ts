@@ -176,16 +176,21 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(){
-    if(!this.schoolSubscription) {
-      return;
-    }
-
     if(!this.groupSubscription) {
       return;
     }
 
-    this.schoolSubscription.unsubscribe();
+    if(!this.schoolSubscription) {
+      return;
+    }
+
+    if(!this.subjectSubscription) {
+      return;
+    }
+
     this.groupSubscription.unsubscribe();
+    this.schoolSubscription.unsubscribe();
+    this.subjectSubscription.unsubscribe();
   }
 
   get cct() {

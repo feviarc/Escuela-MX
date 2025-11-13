@@ -20,8 +20,9 @@
             <img src="../../../assets/img/avatar.svg" alt="User Avatar">
           </ion-avatar>
           <ion-label>
-            <h2>{{ teacher.escuela }}</h2>
-            <p>{{ teacher.nombre }}</p>
+            <h2>{{ teacher.nombre || 'USUARIO REGISTRADO'}}</h2>
+            <p>{{ teacher.email }}</p>
+            <p>{{ teacher.escuela || 'Correo electrónico no verificado'}}</p>
           </ion-label>
         </ion-item>
       }

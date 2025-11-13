@@ -74,6 +74,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.isLoadingData = true;
     this.getUserSubscription = this.authService.getCurrentUser()
     .pipe(
       switchMap(user => {
@@ -86,6 +87,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     .subscribe({
       next: notifications => {
         this.notifications = notifications;
+        this.isLoadingData = false;
         console.log(this.notifications);
       },
       error: (e) => {

@@ -74,6 +74,17 @@ Thumbs.db
 *-debug.log
 .runtimeconfig.json
 
+<<<<<<< HEAD
 #Firebase Functions
 /functions/node_modules
 /functions/lib
+=======
+# Environments
+/src/environments/environment.ts
+/src/environments/environment.prod.ts
+
+# Keep only templates
+!/src/environments/environment.template.ts
+!/src/environments/environment.prod.template.ts
+
+>>>>>>> develop

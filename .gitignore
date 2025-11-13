@@ -73,3 +73,12 @@ Thumbs.db
 .firebase
 *-debug.log
 .runtimeconfig.json
+
+# Environments
+/src/environments/environment.ts
+/src/environments/environment.prod.ts
+
+# Keep only templates
+!/src/environments/environment.template.ts
+!/src/environments/environment.prod.template.ts
+

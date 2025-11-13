@@ -321,8 +321,9 @@
         <ion-title>Materias</ion-title>
       </ion-toolbar>
       <ion-grid class="background--light">
-        <ion-row>
-          <ion-col size="auto">
+        <ion-row class="ion-align-items-center">
+          <!-- Input ocupa todo el espacio disponible -->
+          <ion-col>
             <ion-list [inset]="true">
               <ion-item>
                 <ion-input
@@ -331,21 +332,22 @@
                   placeholder="Nombre"
                   class="input__text--uppercase"
                   [(ngModel)]="subjectName"
-                >
-                </ion-input>
+                  (keyup.enter)="onAddSubject()"
+                ></ion-input>
               </ion-item>
             </ion-list>
           </ion-col>
-          <ion-col size="3">
-            <ion-fab vertical="center" horizontal="center">
-              <ion-fab-button
-                size="small"
-                [disabled]="!isValidSubject()"
-                (click)="onAddSubject()"
-              >
-                <ion-icon name="add"></ion-icon>
-              </ion-fab-button>
-            </ion-fab>
+          <!-- Botón con tamaño automático -->
+          <ion-col size="auto">
+            <ion-button
+              shape="round"
+              color="primary"
+              [disabled]="!isValidSubject()"
+              (click)="onAddSubject()"
+              class="add-subject-btn"
+            >
+              <ion-icon slot="icon-only" name="add"></ion-icon>
+            </ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>

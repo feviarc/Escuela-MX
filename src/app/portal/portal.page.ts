@@ -21,6 +21,7 @@ import {
 
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { CctStorageService } from '../services/cct-storage.service';
 import { InstallAppService } from '../services/install-app-service';
 import { UserProfileService } from '../services/user-profile.service';
 import { SchoolValidationService } from '../services/school-validation.service';
@@ -66,16 +67,24 @@ export class PortalPage implements OnInit {
 
 
   constructor(
-    private router: Router,
     private authService: AuthService,
-    public installAppService: InstallAppService,
+    private cctStorageService: CctStorageService,
+    private router: Router,
     private schoolValidationService: SchoolValidationService,
-    private userProfileService: UserProfileService
+    private userProfileService: UserProfileService,
+    public installAppService: InstallAppService,
   ) {}
 
   async ngOnInit() {
+    const cct = this.cctStorageService.getCCT();
+
+    if(cct) {
+      this.cct = cct;
+    }
+
     await this.checkUserStatus();
-    this.detectedOS =  this.getOperatingSystem();
+
+    this.detectedOS = this.getOperatingSystem();
     this.isIOS = this.detectedOS === 'logo-apple' ? true : false;
 
     setTimeout(() => {
@@ -141,10 +150,10 @@ export class PortalPage implements OnInit {
   }
 
   async onContinue() {
+    const areValidCredentials = await this.schoolValidationService.validateCredentials(this.cct.toUpperCase(), this.pin);
+    const isCctSaved = this.cctStorageService.saveCCT(this.cct.toLocaleUpperCase());
 
-    const isValid = await this.schoolValidationService.validateCredentials(this.cct.toUpperCase(), this.pin);
-
-    if(isValid) {
+    if(areValidCredentials && isCctSaved) {
       this.router.navigateByUrl('/auth');
     } else {
       this.setOpenToast(true);

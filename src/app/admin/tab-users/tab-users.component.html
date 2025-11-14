@@ -20,9 +20,22 @@
             <img src="../../../assets/img/avatar.svg" alt="User Avatar">
           </ion-avatar>
           <ion-label>
-            <h2>{{ teacher.nombre || 'USUARIO REGISTRADO'}}</h2>
-            <p>{{ teacher.email }}</p>
-            <p>{{ teacher.escuela || 'Correo electrónico no verificado'}}</p>
+            <h2>{{ teacher.nombre || 'NUEVO USUARIO'}}</h2>
+            <p>{{ teacher.escuela || 'No ha registrado sus datos aún'}}</p>
+            <a href="mailto://{{ teacher.email }}" target="_blank">
+              <ion-chip color="primary" outline>
+                <ion-icon name="mail"></ion-icon>
+                <ion-label>{{ teacher.email }}</ion-label>
+              </ion-chip>
+            </a>
+            @if(teacher.celular) {
+            <a href="https://api.whatsapp.com/send/?phone={{ teacher.celular }}" target="_blank">
+              <ion-chip color="success" outline>
+                <ion-icon name="logo-whatsapp"></ion-icon>
+                <ion-label>{{ teacher.celular }}</ion-label>
+              </ion-chip>
+            </a>
+            }
           </ion-label>
         </ion-item>
       }

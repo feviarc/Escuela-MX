@@ -18,6 +18,8 @@ import {
 } from '@ionic/angular/standalone';
 
 import { AuthService } from '../services/auth.service';
+import { CctStorageService } from '../services/cct-storage.service';
+import { School, SchoolCRUDService } from '../services/school-crud.service';
 
 
 @Component({
@@ -35,8 +37,6 @@ import { AuthService } from '../services/auth.service';
     IonCardTitle,
     IonContent,
     IonHeader,
-    IonLabel,
-    IonListHeader,
     IonIcon,
     IonTitle,
     IonToolbar,
@@ -45,9 +45,25 @@ import { AuthService } from '../services/auth.service';
 
 export class TeacherPage implements OnInit {
 
-  constructor(private router: Router, private authService: AuthService) {}
+  cct = '';
+  school?: School | null;
+
+  constructor(
+    private authService: AuthService,
+    private cctStorageService: CctStorageService,
+    private router: Router,
+    private schoolCRUDService: SchoolCRUDService
+  ) {}
 
   ngOnInit() {
+    const cct = this.cctStorageService.getCCT();
+    this.cct = (cct !== null ? cct : '');
+
+    this.schoolCRUDService.getSchoolByCCT(this.cct).subscribe({
+      next: school => {
+        this.school = school;
+      }
+    });
   }
 
   onLogout() {

@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Panel de maestro</ion-title>
+    <ion-title>Bienvenido</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="onLogout()">
         <ion-icon name="log-out-outline"></ion-icon>
@@ -11,13 +11,9 @@
 
 <ion-content class="ion-padding">
 
-  <ion-list-header>
-    <ion-label>Bienvenido, maestro</ion-label>
-  </ion-list-header>
-
   <ion-card>
     <ion-card-header>
-      <ion-card-title>Mis alumnos</ion-card-title>
+      <ion-card-title>{{ school?.nombre }}</ion-card-title>
     </ion-card-header>
     <ion-card-content>
 

@@ -37,14 +37,12 @@ export class CctStorageService {
   getCCT(): string | null {
     try {
       const cct = localStorage.getItem(this.CCT_KEY);
-
-      if (!cct) {
-        console.log('No hay CCT almacenada');
-        return null;
-      }
+      if (cct) {
         console.log('CCT recuperada:', cct);
         return cct;
-
+      }
+      console.log('No hay CCT almacenada');
+      return null;
     } catch (error) {
       console.error('Error al recuperar CCT:', error);
       return null;

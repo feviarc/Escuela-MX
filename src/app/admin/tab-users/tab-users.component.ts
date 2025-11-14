@@ -13,15 +13,14 @@ import {
   IonList,
   IonProgressBar,
   IonToolbar,
-  IonTitle,
-} from "@ionic/angular/standalone";
+  IonTitle, IonChip, IonIcon } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-tab-users',
   templateUrl: './tab-users.component.html',
   styleUrls: ['./tab-users.component.scss'],
   standalone: true,
-  imports: [
+  imports: [IonIcon, IonChip,
     CommonModule,
     IonAvatar,
     IonContent,

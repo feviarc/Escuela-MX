@@ -154,6 +154,7 @@ export class TeacherPage implements OnInit {
 
     this.schoolCRUDService.getSchoolByCCT(this.cct).subscribe({
       next: school => {
+        console.log('School', school);
         this.school = school;
         const escuela = this.school?.nombre;
         if(!escuela) {
@@ -185,6 +186,7 @@ export class TeacherPage implements OnInit {
     fields.nombre = this.nombre?.value ?? '';
     fields.telefono = this.telefono?.value ?? '';
     fields.escuela = this.escuela?.value ?? '';
+    fields.cct = this.cct;
     fields.activo = true;
 
     await this.userProfileService.updateUserProfile(this.uid, fields);

@@ -3,9 +3,10 @@ export interface UserProfile {
   email: string;
   rol: string;
   activo?: boolean;
-  id?: string;
+  cct?: string;
+  celular?: string;
   escuela?: string;
+  id?: string;
   nombre?: string;
   telefono?: string;
-  celular?: string;
 }

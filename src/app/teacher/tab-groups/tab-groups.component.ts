@@ -1,8 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 
 import {
+  IonAccordion,
+  IonAccordionGroup,
+  IonButton,
   IonContent,
+  IonFab,
+  IonFabButton,
   IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
   IonProgressBar,
   IonTitle,
   IonToolbar,
@@ -14,8 +22,16 @@ import {
   styleUrls: ['./tab-groups.component.scss'],
   standalone: true,
   imports: [
+    IonAccordion,
+    IonAccordionGroup,
+    IonButton,
     IonContent,
+    IonFab,
+    IonFabButton,
     IonHeader,
+    IonIcon,
+    IonItem,
+    IonLabel,
     IonProgressBar,
     IonTitle,
     IonToolbar,
@@ -24,10 +40,14 @@ import {
 
 export class TabGroupsComponent  implements OnInit {
 
-  isLoading = true;
+  isLoading = false;
 
   constructor() { }
 
   ngOnInit() {}
 
+  onAddStudent(event: MouseEvent) {
+    event.stopPropagation();
+
+  }
 }

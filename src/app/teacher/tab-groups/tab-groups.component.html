@@ -8,4 +8,49 @@
 </ion-header>
 
 <ion-content>
+  <ion-accordion-group expand="inset">
+
+    <ion-accordion value="1A" toggleIconSlot="start">
+      <ion-item slot="header" color="light">
+        <ion-label>Grupo 1° "A"</ion-label>
+        <ion-button shape="round" (click)="onAddStudent($event)">
+          <ion-icon slot="icon-only" name="person-add"></ion-icon>
+        </ion-button>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        No hay alumnos en este grupo.
+      </div>
+    </ion-accordion>
+
+    <ion-accordion value="2A" toggleIconSlot="start">
+      <ion-item slot="header" color="light">
+        <ion-label>Grupo 2° "A"</ion-label>
+        <ion-button shape="round" (click)="onAddStudent($event)">
+          <ion-icon slot="icon-only" name="person-add"></ion-icon>
+        </ion-button>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        No hay alumnos en este grupo.
+      </div>
+    </ion-accordion>
+
+    <ion-accordion value="3A" toggleIconSlot="start">
+      <ion-item slot="header" color="light">
+        <ion-label>Grupo 3° "A"</ion-label>
+        <ion-button shape="round" (click)="onAddStudent($event)">
+          <ion-icon slot="icon-only" name="person-add"></ion-icon>
+        </ion-button>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        No hay alumnos en este grupo.
+      </div>
+    </ion-accordion>
+
+  </ion-accordion-group>
 </ion-content>
+
+<ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab-button size="small" id="new-group-btn">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

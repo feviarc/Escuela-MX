@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
 import {
+  IonAccordion,
+  IonAccordionGroup,
   IonContent,
   IonHeader,
+  IonItem,
+  IonLabel,
   IonProgressBar,
   IonTitle,
   IonToolbar,
@@ -14,8 +18,12 @@ import {
   styleUrls: ['./tab-notifications.component.scss'],
   standalone: true,
   imports: [
+    IonAccordion,
+    IonAccordionGroup,
     IonContent,
     IonHeader,
+    IonItem,
+    IonLabel,
     IonProgressBar,
     IonTitle,
     IonToolbar,
@@ -24,10 +32,13 @@ import {
 
 export class TabNotificationsComponent  implements OnInit {
 
-  isLoading = true;
+  isLoading = false;
 
   constructor() { }
 
   ngOnInit() {}
 
+  // onAddStudent(event: MouseEvent) {
+  //   event.stopPropagation();
+  // }
 }

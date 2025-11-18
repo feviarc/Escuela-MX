@@ -1,20 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 
 import {
-  IonAccordion,
-  IonAccordionGroup,
-  IonButton,
   IonContent,
   IonFab,
   IonFabButton,
   IonHeader,
   IonIcon,
-  IonItem,
-  IonLabel,
   IonProgressBar,
   IonTitle,
   IonToolbar,
 } from "@ionic/angular/standalone";
+
+import { School } from '../../services/school-crud.service';
+import { SchoolStateService } from 'src/app/services/school-state-service';
 
 @Component({
   selector: 'app-teacher-tab-groups',
@@ -22,16 +20,11 @@ import {
   styleUrls: ['./tab-groups.component.scss'],
   standalone: true,
   imports: [
-    IonAccordion,
-    IonAccordionGroup,
-    IonButton,
     IonContent,
     IonFab,
     IonFabButton,
     IonHeader,
     IonIcon,
-    IonItem,
-    IonLabel,
     IonProgressBar,
     IonTitle,
     IonToolbar,
@@ -41,13 +34,18 @@ import {
 export class TabGroupsComponent  implements OnInit {
 
   isLoading = false;
+  school: School | null = null;
 
-  constructor() { }
+  constructor(
+    private schoolStateService: SchoolStateService,
+  ) { }
 
-  ngOnInit() {}
-
-  onAddStudent(event: MouseEvent) {
-    event.stopPropagation();
-
+  ngOnInit() {
+    this.schoolStateService.school$.subscribe(
+      school => {
+        this.school = school;
+        console.log('tab-groups.component.ts', this.school);
+      }
+    );
   }
 }

@@ -33,7 +33,8 @@ import {
   import { UserProfile } from '../models/user-profile.model'
   import { AuthService } from '../services/auth.service';
   import { CctStorageService } from '../services/cct-storage.service';
-  import { School, SchoolCRUDService } from '../services/school-crud.service';
+  import { SchoolCRUDService, School } from '../services/school-crud.service';
+  import { SchoolStateService } from '../services/school-state-service';
   import { UserProfileService } from './../services/user-profile.service';
 
 
@@ -95,6 +96,7 @@ export class TeacherPage implements OnInit {
     private cctStorageService: CctStorageService,
     private formBuilder: FormBuilder,
     private router: Router,
+    private schoolStateService: SchoolStateService,
     private schoolCRUDService: SchoolCRUDService,
     private userProfileService: UserProfileService,
   ) {}
@@ -154,13 +156,12 @@ export class TeacherPage implements OnInit {
 
     this.schoolCRUDService.getSchoolByCCT(this.cct).subscribe({
       next: school => {
-        console.log('School', school);
-        this.school = school;
-        const escuela = this.school?.nombre;
-        if(!escuela) {
+        if(!school) {
           return;
         }
-        this.form.get('escuela')?.setValue(escuela);
+        console.log('teacher.page.ts:', school);
+        this.schoolStateService.setSchool(school);
+        this.form.get('escuela')?.setValue(school?.nombre);
       }
     });
   }

@@ -8,11 +8,129 @@
 </ion-header>
 
 <ion-content>
+  <ion-list>
 
+    <ion-item-sliding class="sliding-item-card" #groupSlidingItem>
+      <ion-item class="custom-item">
+        <ion-label>
+          <h2>Grupo 1° "A"</h2>
+        </ion-label>
+        <ion-chip>23</ion-chip>
+      </ion-item>
+      <ion-item-options side="end">
+        <ion-item-option id="add-student.1a" color="primary">
+          <ion-icon slot="icon-only" name="person-add"></ion-icon>
+        </ion-item-option>
+        <ion-item-option id="delete-group.1a" color="danger">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+    <ion-item-sliding class="sliding-item-card" #groupSlidingItem>
+      <ion-item class="custom-item">
+        <ion-label>
+          <h2>Grupo 1° "B"</h2>
+        </ion-label>
+        <ion-chip>23</ion-chip>
+      </ion-item>
+      <ion-item-options side="end">
+        <ion-item-option id="add-student.1b" color="primary">
+          <ion-icon slot="icon-only" name="person-add"></ion-icon>
+        </ion-item-option>
+        <ion-item-option id="delete-group.1b" color="danger">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+    <ion-item-sliding class="sliding-item-card" #groupSlidingItem>
+      <ion-item class="custom-item">
+        <ion-label>
+          <h2>Grupo 2° "A"</h2>
+        </ion-label>
+        <ion-chip>23</ion-chip>
+      </ion-item>
+      <ion-item-options side="end">
+        <ion-item-option id="add-student.2a" color="primary">
+          <ion-icon slot="icon-only" name="person-add"></ion-icon>
+        </ion-item-option>
+        <ion-item-option id="delete-group.2a" color="danger">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+    <ion-item-sliding class="sliding-item-card" #groupSlidingItem>
+      <ion-item class="custom-item">
+        <ion-label>
+          <h2>Grupo 2° "B"</h2>
+        </ion-label>
+        <ion-chip>23</ion-chip>
+      </ion-item>
+      <ion-item-options side="end">
+        <ion-item-option id="add-student.2b" color="primary">
+          <ion-icon slot="icon-only" name="person-add"></ion-icon>
+        </ion-item-option>
+        <ion-item-option id="delete-group.2b" color="danger">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+  </ion-list>
 </ion-content>
 
+<!-- Botón (Agregar grupo) -->
 <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-  <ion-fab-button size="small" id="new-group-btn">
+  <ion-fab-button size="small" id="add-group-btn">
     <ion-icon name="add"></ion-icon>
   </ion-fab-button>
 </ion-fab>
+
+<!-- Modal (Agregar grupo) -->
+<ion-modal
+ trigger="add-group-btn"
+ [initialBreakpoint]="initialBreakpoint"
+ [breakpoints]="breakpoints"
+ (didDismiss)="onDidDismiss($event)"
+ #addGroupModal
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-button
+           (click)="addGroupModal.dismiss(null, 'cancel')"
+          >
+            Cerrar
+          </ion-button>
+        </ion-buttons>
+        <ion-title>Grupo</ion-title>
+        <ion-buttons slot="end">
+          <ion-button
+           [strong]="true"
+           [disabled]="!pickerValue"
+           (click)="addGroupModal.dismiss(pickerValue, 'confirm')"
+          >
+            Agregar
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-picker>
+        <ion-picker-column [value]="" (ionChange)="onIonChange($event)">
+          <ion-picker-column-option value=""></ion-picker-column-option>
+          @for(group of groups; track group.id) {
+            <ion-picker-column-option
+             value="{{group.id}}"
+            >
+              {{ group.nombre }}
+            </ion-picker-column-option>
+          }
+        </ion-picker-column>
+      </ion-picker>
+    </ion-content>
+  </ng-template>
+</ion-modal>

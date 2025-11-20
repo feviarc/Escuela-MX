@@ -214,12 +214,12 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
     );
   }
 
-  closeModal(schoolId: string | undefined) {
-    if(!schoolId) {
+  closeModal(triggerId: string | undefined) {
+    if(!triggerId) {
       return;
     };
 
-    const modal = this.modals.find(m => m.trigger === schoolId);
+    const modal = this.modals.find(m => m.trigger === triggerId);
 
     if(!modal) {
       return;

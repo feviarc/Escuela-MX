@@ -27,13 +27,13 @@ import {
   IonPickerColumnOption,
   IonProgressBar,
   IonTitle,
-  IonToolbar,
-} from "@ionic/angular/standalone";
+  IonToolbar, IonToast } from "@ionic/angular/standalone";
 
+import { Subscription } from 'rxjs';
 import { School } from '../../services/school-crud.service';
 import { GroupCRUDService, Group } from 'src/app/services/group-crud.service';
 import { SchoolStateService } from 'src/app/services/school-state-service';
-import { Subscription } from 'rxjs';
+import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-group-crud.service';
 
 
 @Component({
@@ -41,7 +41,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './tab-groups.component.html',
   styleUrls: ['./tab-groups.component.scss'],
   standalone: true,
-  imports: [
+  imports: [IonToast,
     IonButton,
     IonButtons,
     IonChip,
@@ -71,23 +71,26 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
   @ViewChildren(IonModal) modals!: QueryList<IonModal>;
 
   breakpoints = [0, 0.40];
-  pickerValue!: string;
   groups: Group[] = [];
+  groupSubscription!: Subscription;
   initialBreakpoint = 0.40;
   isLoading = false;
+  isToastOpen = false;
+  pickerValue!: string;
   school: School | null = null;
-  groupSubscription!: Subscription;
+  toastMessage = '🛑';
 
   constructor(
     private groupCRUDService: GroupCRUDService,
     private schoolStateService: SchoolStateService,
+    private studentGroupCRUDService: StudentGroupCRUDService,
   ) { }
 
   ngOnInit() {
     this.schoolStateService.school$.subscribe(
       school => {
         this.school = school;
-        console.log('tab-groups.component.ts', this.school);
+        console.log('tab-groups.component.ts', 'school', this.school);
       }
     );
 
@@ -122,21 +125,38 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
     modal.dismiss();
   }
 
+  generateGroupId(group: Group | undefined) {
+    return `${this.school?.cct}-${group?.grado}${group?.letra}`;
+  }
+
   onDidDismiss(event: CustomEvent) {
     if(!event.detail.data) {
       return;
     }
 
     const selectedGroup = this.groups.find(g => g.id === this.pickerValue);
-    const group = {
-      grado: selectedGroup?.grado,
-      letra: selectedGroup?.letra,
-      nombre: selectedGroup?.nombre,
+
+    const newGroup: StudentGroup = {
+      gid: this.generateGroupId(selectedGroup) ?? '',
+      cct: this.school?.cct ?? '',
+      grado: selectedGroup?.grado ?? '',
+      letra: selectedGroup?.letra ?? '',
+      alumnos: []
     };
-    console.log(group);
+
+    this.studentGroupCRUDService.addStudentGroup(newGroup).subscribe({
+      error: (error) => {
+        this.showToast(`🛑 El ${selectedGroup?.nombre} ya existe.` );
+      }
+    });
   }
 
   onIonChange(event: CustomEvent) {
     this.pickerValue = event.detail.value;
+  }
+
+  private showToast(message: string) {
+    this.toastMessage = message;
+    this.isToastOpen = true;
   }
 }

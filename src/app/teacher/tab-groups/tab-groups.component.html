@@ -134,3 +134,12 @@
     </ion-content>
   </ng-template>
 </ion-modal>
+
+<ion-toast
+ cssClass="page__toast"
+ [message]="toastMessage"
+ [isOpen]="isToastOpen"
+ [duration]="5000"
+ (didDismiss)="isToastOpen = false"
+>
+</ion-toast>

@@ -72,13 +72,15 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
 
   breakpoints = [0, 0.40];
   groups: Group[] = [];
-  groupSubscription!: Subscription;
+  groupsSubscription!: Subscription;
+  studentGroupsSubscription!: Subscription;
   initialBreakpoint = 0.40;
   isLoading = false;
   isToastOpen = false;
   pickerValue!: string;
   school: School | null = null;
   toastMessage = '🛑';
+  studentGroups: StudentGroup[] = [];
 
   constructor(
     private groupCRUDService: GroupCRUDService,
@@ -87,27 +89,17 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.schoolStateService.school$.subscribe(
-      school => {
-        this.school = school;
-        console.log('tab-groups.component.ts', 'school', this.school);
-      }
-    );
-
-    this.groupSubscription = this.groupCRUDService.getGroups().subscribe({
-      next: groups => {
-        this.groups = groups;
-        console.log(groups);
-      },
-      error: (e) => {
-        console.log('Error:', e)
-      }
-    });
+    this.loadSchoolInfo();
+    this.loadGroupsInfo();
+    this.loadSchoolGroups();
   }
 
-  ngOnDestroy(): void {
-    if(this.groupSubscription) {
-      this.groupSubscription.unsubscribe();
+  ngOnDestroy() {
+    if(this.groupsSubscription) {
+      this.groupsSubscription.unsubscribe();
+    }
+    if(this.studentGroupsSubscription) {
+      this.studentGroupsSubscription.unsubscribe();
     }
   }
 
@@ -127,6 +119,39 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
 
   generateGroupId(group: Group | undefined) {
     return `${this.school?.cct}-${group?.grado}${group?.letra}`;
+  }
+
+  loadGroupsInfo() {
+    this.groupsSubscription = this.groupCRUDService.getGroups().subscribe({
+      next: groups => {
+        this.groups = groups;
+        console.log(groups);
+      },
+      error: (e) => {
+        console.log('Error:', e)
+      }
+    });
+  }
+
+  loadSchoolGroups() {
+    this.studentGroupsSubscription = this.studentGroupCRUDService.studentGroups$.subscribe({
+      next: groups => {
+        console.log('studentGroups:', groups);
+        this.studentGroups = groups;
+      },
+      error: (error) => {
+        console.log('Error:', error);
+      }
+    });
+  }
+
+  loadSchoolInfo() {
+    this.schoolStateService.school$.subscribe(
+      school => {
+        this.school = school;
+        console.log('tab-groups.component.ts', 'school', this.school);
+      }
+    );
   }
 
   onDidDismiss(event: CustomEvent) {

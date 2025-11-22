@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import {
   IonAccordion,
@@ -11,6 +11,10 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/angular/standalone";
+
+import { Subscription } from 'rxjs';
+import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-group-crud.service';
+
 
 @Component({
   selector: 'app-teacher-tab-notifications',
@@ -30,13 +34,37 @@ import {
   ]
 })
 
-export class TabNotificationsComponent  implements OnInit {
+export class TabNotificationsComponent  implements OnInit, OnDestroy {
 
   isLoading = false;
+  studentGroupsSubscription!: Subscription;
+  studentGroups: StudentGroup[] = [];
 
-  constructor() { }
+  constructor(
+    private studentGroupCRUDService: StudentGroupCRUDService,
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loadSchoolGroups();
+  }
+
+  ngOnDestroy() {
+    if(this.studentGroupsSubscription) {
+      this.studentGroupsSubscription.unsubscribe();
+    }
+  }
+
+  loadSchoolGroups() {
+    this.studentGroupsSubscription = this.studentGroupCRUDService.studentGroups$.subscribe({
+      next: groups => {
+        console.log('studentGroups:', groups);
+        this.studentGroups = groups;
+      },
+      error: (error) => {
+        console.log('Error:', error);
+      }
+    });
+  }
 
   // onAddStudent(event: MouseEvent) {
   //   event.stopPropagation();

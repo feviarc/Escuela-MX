@@ -15,6 +15,7 @@ import {
   people,
   person,
   personAdd,
+  personRemove,
   school,
   trash,
 } from 'ionicons/icons';
@@ -40,9 +41,10 @@ export class AppComponent {
       notifications,
       people,
       person,
+      personAdd,
+      personRemove,
       school,
       trash,
-      personAdd,
     });
   }
 }

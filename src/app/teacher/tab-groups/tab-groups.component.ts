@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 
 import {
+  IonActionSheet,
   IonButton,
   IonButtons,
   IonChip,
@@ -26,14 +27,18 @@ import {
   IonPickerColumn,
   IonPickerColumnOption,
   IonProgressBar,
+  IonSpinner,
   IonTitle,
-  IonToolbar, IonToast } from "@ionic/angular/standalone";
+  IonToast,
+  IonToolbar,
+} from "@ionic/angular/standalone";
 
-import { Subscription } from 'rxjs';
-import { School } from '../../services/school-crud.service';
-import { GroupCRUDService, Group } from 'src/app/services/group-crud.service';
-import { SchoolStateService } from 'src/app/services/school-state-service';
-import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-group-crud.service';
+  import { OverlayEventDetail } from '@ionic/core/components';
+  import { Subscription } from 'rxjs';
+  import { School } from '../../services/school-crud.service';
+  import { GroupCRUDService, Group } from 'src/app/services/group-crud.service';
+  import { SchoolStateService } from 'src/app/services/school-state-service';
+  import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-group-crud.service';
 
 
 @Component({
@@ -41,7 +46,8 @@ import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-
   templateUrl: './tab-groups.component.html',
   styleUrls: ['./tab-groups.component.scss'],
   standalone: true,
-  imports: [IonToast,
+  imports: [
+    IonActionSheet,
     IonButton,
     IonButtons,
     IonChip,
@@ -61,7 +67,9 @@ import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-
     IonPickerColumn,
     IonPickerColumnOption,
     IonProgressBar,
+    IonSpinner,
     IonTitle,
+    IonToast,
     IonToolbar,
   ]
 })
@@ -73,14 +81,33 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
   breakpoints = [0, 0.40];
   groups: Group[] = [];
   groupsSubscription!: Subscription;
-  studentGroupsSubscription!: Subscription;
   initialBreakpoint = 0.40;
-  isLoading = false;
+  isLoading = true;
+  isSpinnerActive = false;
   isToastOpen = false;
   pickerValue!: string;
   school: School | null = null;
-  toastMessage = '🛑';
+  spinnerText = '';
   studentGroups: StudentGroup[] = [];
+  studentGroupsSubscription!: Subscription;
+  toastMessage = '🛑';
+
+  public actionSheetButtons = [
+    {
+      text: 'Eliminar',
+      role: 'destructive',
+      data: {
+        action: 'delete',
+      }
+    },
+    {
+      text: 'Cancelar',
+      role: 'cancel',
+      data: {
+        action: 'cancel',
+      },
+    },
+  ];
 
   constructor(
     private groupCRUDService: GroupCRUDService,
@@ -91,7 +118,7 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadSchoolInfo();
     this.loadGroupsInfo();
-    this.loadSchoolGroups();
+    this.loadStudentGroups();
   }
 
   ngOnDestroy() {
@@ -133,11 +160,12 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
     });
   }
 
-  loadSchoolGroups() {
+  loadStudentGroups() {
     this.studentGroupsSubscription = this.studentGroupCRUDService.studentGroups$.subscribe({
       next: groups => {
         console.log('studentGroups:', groups);
         this.studentGroups = groups;
+        this.isLoading = false;
       },
       error: (error) => {
         console.log('Error:', error);
@@ -154,26 +182,68 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
     );
   }
 
+  onAddStudent(slidingItem: IonItemSliding) {
+    slidingItem.close();
+  }
+
+  onDeleteStudent(slidingItem: IonItemSliding) {
+    slidingItem.close();
+  }
+
+  onDeleteGroup(
+   event: CustomEvent<OverlayEventDetail>,
+   slidingItem: IonItemSliding,
+   group: StudentGroup
+  ) {
+    slidingItem.close();
+
+    if(!event.detail.data) {
+      return;
+    }
+
+    const action = event.detail.data.action;
+
+    if(action === 'cancel') {
+      return;
+    }
+
+    this.spinnerText = 'Eliminando...';
+    this.isSpinnerActive = true;
+
+    this.studentGroupCRUDService.deleteStudentGroup(group.gid).subscribe({
+      next: () => {
+        this.showToast(`🗑️ Se eliminó Grupo ${group.grado}° "${group.letra}"`);
+        this.isSpinnerActive = false;
+      },
+      error: (error) => {
+        console.log('Error:', error);
+      }
+    });
+  }
+
   onDidDismiss(event: CustomEvent) {
     if(!event.detail.data) {
       return;
     }
 
     const selectedGroup = this.groups.find(g => g.id === this.pickerValue);
+    const gid = this.generateGroupId(selectedGroup) ?? '';
+    const groupExists = this.studentGroups.some(g => g.gid === gid);
+
+    if(groupExists) {
+      this.showToast(`🛑 El ${selectedGroup?.nombre} ya existe.` );
+      return;
+    }
 
     const newGroup: StudentGroup = {
-      gid: this.generateGroupId(selectedGroup) ?? '',
+      gid,
       cct: this.school?.cct ?? '',
       grado: selectedGroup?.grado ?? '',
       letra: selectedGroup?.letra ?? '',
       alumnos: []
     };
 
-    this.studentGroupCRUDService.addStudentGroup(newGroup).subscribe({
-      error: (error) => {
-        this.showToast(`🛑 El ${selectedGroup?.nombre} ya existe.` );
-      }
-    });
+    this.studentGroupCRUDService.addStudentGroup(newGroup).subscribe();
   }
 
   onIonChange(event: CustomEvent) {

@@ -48,6 +48,14 @@ ion-modal ion-title {
   text-align: center;
 }
 
+.container__spinner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
 .custom-item {
   --background: #f7f7f7; /* Fondo personalizado */
 }

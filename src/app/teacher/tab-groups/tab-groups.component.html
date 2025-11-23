@@ -7,81 +7,61 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-list>
+@if(isSpinnerActive) {
+  <div class="container__spinner">
+    <ion-spinner color="primary"></ion-spinner>
+    <p>{{ spinnerText }}</p>
+  </div>
+}
 
-    @for(group of studentGroups; track group.gid) {
-      <ion-item-sliding class="sliding-item-card" #groupSlidingItem>
-        <ion-item class="custom-item">
-          <ion-label>
-            <h2>Grupo {{ group.grado }}° "{{ group.letra }}"</h2>
-          </ion-label>
-          <ion-chip>{{ group.alumnos.length }}</ion-chip>
-        </ion-item>
-        <ion-item-options side="end">
-          <ion-item-option id="add-{{ group.gid }}" color="primary">
-            <ion-icon slot="icon-only" name="person-add"></ion-icon>
-          </ion-item-option>
-          <ion-item-option id="delete-{{ group.gid }}" color="danger">
-            <ion-icon slot="icon-only" name="trash"></ion-icon>
-          </ion-item-option>
-        </ion-item-options>
-      </ion-item-sliding>
-    }
-
-    <!-- <ion-item-sliding class="sliding-item-card" #groupSlidingItem>
-      <ion-item class="custom-item">
-        <ion-label>
-          <h2>Grupo 1° "B"</h2>
-        </ion-label>
-        <ion-chip>23</ion-chip>
-      </ion-item>
-      <ion-item-options side="end">
-        <ion-item-option id="add-student.1b" color="primary">
-          <ion-icon slot="icon-only" name="person-add"></ion-icon>
-        </ion-item-option>
-        <ion-item-option id="delete-group.1b" color="danger">
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-
-    <ion-item-sliding class="sliding-item-card" #groupSlidingItem>
-      <ion-item class="custom-item">
-        <ion-label>
-          <h2>Grupo 2° "A"</h2>
-        </ion-label>
-        <ion-chip>23</ion-chip>
-      </ion-item>
-      <ion-item-options side="end">
-        <ion-item-option id="add-student.2a" color="primary">
-          <ion-icon slot="icon-only" name="person-add"></ion-icon>
-        </ion-item-option>
-        <ion-item-option id="delete-group.2a" color="danger">
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-
-    <ion-item-sliding class="sliding-item-card" #groupSlidingItem>
-      <ion-item class="custom-item">
-        <ion-label>
-          <h2>Grupo 2° "B"</h2>
-        </ion-label>
-        <ion-chip>23</ion-chip>
-      </ion-item>
-      <ion-item-options side="end">
-        <ion-item-option id="add-student.2b" color="primary">
-          <ion-icon slot="icon-only" name="person-add"></ion-icon>
-        </ion-item-option>
-        <ion-item-option id="delete-group.2b" color="danger">
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding> -->
-
-  </ion-list>
-</ion-content>
+@if(!isSpinnerActive) {
+  <ion-content>
+    <ion-list>
+      @for(group of studentGroups; track group.gid) {
+        <ion-item-sliding class="sliding-item-card" #groupSlidingItem>
+          <ion-item-options side="start">
+            <ion-item-option
+             color="primary"
+             id="add-student-{{ group.gid }}"
+             (click)="onAddStudent(groupSlidingItem)"
+            >
+              <ion-icon slot="icon-only" name="person-add"></ion-icon>
+            </ion-item-option>
+            <ion-item-option
+             color="danger"
+             id="delete-student-{{ group.gid }}"
+             (click)="onDeleteStudent(groupSlidingItem)"
+            >
+              <ion-icon slot="icon-only" name="person-remove"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+          <ion-item class="custom-item">
+            <ion-label>
+              <h2>Grupo {{ group.grado }}° "{{ group.letra }}"</h2>
+            </ion-label>
+            <ion-chip>{{ group.alumnos.length }}</ion-chip>
+          </ion-item>
+          <ion-item-options side="end">
+            <ion-item-option
+             color="danger"
+             id="delete-{{ group.gid }}"
+            >
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+            </ion-item-option>
+            <ion-action-sheet
+             trigger="delete-{{ group.gid }}"
+             header="Estás a punto de eliminar"
+             subHeader='Grupo {{ group.grado }}° "{{ group.letra }}"'
+             [buttons]="actionSheetButtons"
+             (didDismiss)="onDeleteGroup($event, groupSlidingItem, group)"
+            >
+            </ion-action-sheet>
+          </ion-item-options>
+        </ion-item-sliding>
+      }
+    </ion-list>
+  </ion-content>
+}
 
 <!-- Botón (Agregar grupo) -->
 <ion-fab slot="fixed" vertical="bottom" horizontal="end">

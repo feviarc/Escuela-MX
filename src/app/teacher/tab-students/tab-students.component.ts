@@ -5,8 +5,7 @@ import {
   IonHeader,
   IonProgressBar,
   IonTitle,
-  IonToolbar,
-} from "@ionic/angular/standalone";
+  IonToolbar, IonFab, IonFabButton, IonIcon, IonModal } from "@ionic/angular/standalone";
 
 
 @Component({
@@ -14,7 +13,7 @@ import {
   templateUrl: './tab-students.component.html',
   styleUrls: ['./tab-students.component.scss'],
   standalone: true,
-  imports: [
+  imports: [IonModal, IonIcon, IonFabButton, IonFab,
     IonContent,
     IonHeader,
     IonProgressBar,
@@ -25,7 +24,9 @@ import {
 
 export class TabStudentsComponent  implements OnInit {
 
-  isLoading = true;
+  isLoading = false;
+  breakpoints = [0, 0.20, 0.40, 0.60, 0.80, 1];
+  initialBreakpoint = 0.80;
 
   constructor() { }
 

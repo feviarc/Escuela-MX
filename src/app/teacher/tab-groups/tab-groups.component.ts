@@ -165,7 +165,9 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
       next: groups => {
         console.log('studentGroups:', groups);
         this.studentGroups = groups;
-        this.isLoading = false;
+        if(groups.length > 0) {
+          this.isLoading = false;
+        }
       },
       error: (error) => {
         console.log('Error:', error);

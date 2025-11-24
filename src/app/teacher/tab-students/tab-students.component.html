@@ -9,3 +9,25 @@
 
 <ion-content>
 </ion-content>
+
+<ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab-button size="small" id="add-student-btn">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
+<ion-modal
+ trigger="add-student-btn"
+  [initialBreakpoint]="initialBreakpoint"
+  [breakpoints]="breakpoints"
+  #addStudentModal
+>
+  <ng-template>
+    <ion-header>
+
+    </ion-header>
+    <ion-content>
+
+    </ion-content>
+  </ng-template>
+</ion-modal>

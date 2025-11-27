@@ -36,9 +36,12 @@ import {
  */
 export interface Student {
   id?: string; // Autogenerado por Firestore
-  nombre: string; // Requerido en creación
-  tid?: string; // ID del tutor (opcional, se asigna después)
   gid?: string; // ID del grupo (opcional, se asigna después)
+  tid?: string; // ID del tutor (opcional, se asigna después)
+  nombre: string; // Requerido en creación
+  apellidoPaterno: string;
+  apellidoMaterno: string;
+  nombreCompleto: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -125,18 +128,20 @@ export class StudentCRUDService {
    * @param nombre - Student name
    * @returns Promise with the created student ID
    */
-  async addStudent(nombre: string): Promise<string> {
+  async addStudent(student: Student): Promise<string> {
     try {
-      const studentData = {
-        nombre,
+      const timeStamp = {
         createdAt: new Date(),
         updatedAt: new Date()
       };
 
+      const studentData = {...timeStamp, ...student};
       const docRef = await addDoc(this.studentsCollection, studentData);
       console.log('Student added with ID:', docRef.id);
       this.loadStudents(); // Refresh list
+
       return docRef.id;
+
     } catch (error) {
       console.error('Error adding student:', error);
       throw new Error('Could not add student');

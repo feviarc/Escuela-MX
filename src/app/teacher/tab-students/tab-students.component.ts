@@ -1,5 +1,6 @@
 import {
   Component,
+  OnDestroy,
   OnInit,
   QueryList,
   ViewChildren,
@@ -13,6 +14,7 @@ import {
 } from '@angular/forms';
 
 import {
+  IonActionSheet,
   IonButton,
   IonButtons,
   IonContent,
@@ -22,15 +24,24 @@ import {
   IonIcon,
   IonInput,
   IonItem,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
+  IonLabel,
   IonList,
   IonListHeader,
   IonModal,
   IonNote,
   IonProgressBar,
+  IonSpinner,
   IonTitle,
+  IonToast,
   IonToolbar,
 } from "@ionic/angular/standalone";
 
+import { OverlayEventDetail } from '@ionic/core';
+import { Subscription } from 'rxjs';
+import { StudentCRUDService, Student } from 'src/app/services/student-crud.service';
 
 @Component({
   selector: 'app-teacher-tab-students',
@@ -39,6 +50,7 @@ import {
   standalone: true,
   imports: [
     FormsModule,
+    IonActionSheet,
     IonButton,
     IonButtons,
     IonContent,
@@ -48,24 +60,58 @@ import {
     IonIcon,
     IonInput,
     IonItem,
+    IonItemOption,
+    IonItemOptions,
+    IonItemSliding,
+    IonLabel,
     IonList,
     IonListHeader,
     IonModal,
     IonNote,
     IonProgressBar,
+    IonSpinner,
     IonTitle,
+    IonToast,
     IonToolbar,
     ReactiveFormsModule,
   ]
 })
 
-export class TabStudentsComponent  implements OnInit {
+export class TabStudentsComponent  implements OnInit, OnDestroy {
 
   @ViewChildren(IonModal) modals!: QueryList<IonModal>;
 
-  isLoading = false;
   breakpoints = [0, 0.20, 0.40, 0.50, 0.80, 1];
+  filteredStudents: Student[] = [];
+  formSnapshot: any;
   initialBreakpoint = 0.50;
+  isFirstEmission = true;
+  isLoading = true;
+  isSaving = false;
+  isSpinnerActive = false;
+  isToastOpen = false;
+  isUpdateButtonDisable = true;
+  spinnerText = '';
+  students: Student[] = [];
+  studentSubscription?: Subscription;
+  toastMessage = '';
+
+  public actionSheetButtons = [
+    {
+      text: 'Eliminar',
+      role: 'destructive',
+      data: {
+        action: 'delete',
+      }
+    },
+    {
+      text: 'Cancelar',
+      role: 'cancel',
+      data: {
+        action: 'cancel',
+      },
+    },
+  ];
 
   form = this.formBuilder.group({
     nombre: ['',[
@@ -83,11 +129,35 @@ export class TabStudentsComponent  implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-  ) { }
+    private studentCRUDService: StudentCRUDService,
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.studentSubscription = this.studentCRUDService.getStudents().subscribe({
+      next: students => {
+        this.students = students;
+        this.filteredStudents = [...this.students];
 
-  closeModal(triggerId: string) {
+        if(this.isFirstEmission) {
+          this.isFirstEmission = false;
+          this.isLoading = false;
+        }
+
+      },
+      error: (error) => {
+        console.log('Error:', error);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if(this.studentSubscription) {
+      this.studentSubscription.unsubscribe();
+    }
+  }
+
+  closeModal(triggerId: string | undefined) {
+
     if(!triggerId) {
       return;
     }
@@ -100,30 +170,108 @@ export class TabStudentsComponent  implements OnInit {
 
     modal.dismiss();
     this.form.reset();
-
   }
 
   generateFullName() {
-    const apellidoPaterno = this.form.get('apellidoPaterno')?.value?.trim();
-    const apellidoMaterno = this.form.get('apellidoMaterno')?.value?.trim();
-    const nombre = this.form.get('nombre')?.value?.trim();
-    let fullName;
+    const apellidoPaterno = this.form.get('apellidoPaterno')?.value?.trim().toUpperCase() ?? '';
+    const apellidoMaterno = this.form.get('apellidoMaterno')?.value?.trim().toUpperCase() ?? '';
+    const nombre = this.form.get('nombre')?.value?.trim().toUpperCase() ?? '';
+    let nombreCompleto;
 
     if(apellidoMaterno) {
-      fullName = `${apellidoPaterno} ${apellidoMaterno} ${nombre}`.trim().toUpperCase();
+      nombreCompleto = `${apellidoPaterno} ${apellidoMaterno} ${nombre}`.trim().toUpperCase();
     } else {
-      fullName =  `${apellidoPaterno} ${nombre}`.trim().toUpperCase();
+      nombreCompleto =  `${apellidoPaterno} ${nombre}`.trim().toUpperCase();
     }
 
-    return fullName;
+    return {nombre, apellidoPaterno, apellidoMaterno, nombreCompleto};
   }
 
-  onAddStudent() {
-    const student = this.form.value;
-    const studentFullName = this.generateFullName();
-    console.log(studentFullName);
+  isSameStudentData() {
+    return JSON.stringify(this.formSnapshot) === JSON.stringify(this.form.value);
+  }
 
-    this.closeModal('add-student-btn');
+  loadStudentData(student: Student) {
+    const studentFields = {
+      nombre: student.nombre,
+      apellidoPaterno: student.apellidoPaterno,
+      apellidoMaterno: student.apellidoMaterno,
+    };
+
+    this.form.patchValue(studentFields);
+    this.formSnapshot = {...studentFields};
+  }
+
+  async onAddStudent() {
+    this.spinnerText = 'Guardando...';
+    this.isSpinnerActive = true;
+    this.isSaving = true;
+    const studentFullName = this.generateFullName();
+
+    try {
+      this.closeModal('add-student-btn');
+      const studentId = await this.studentCRUDService.addStudent(studentFullName);
+    } catch (error) {
+      console.log('Error:', error);
+    }
+
+    this.isSpinnerActive = false;
+    this.isSaving = false;
+  }
+
+  async onDeleteStudent(event: CustomEvent<OverlayEventDetail>, slidingItem: IonItemSliding, student: Student) {
+    slidingItem.close();
+
+    if(!event.detail.data || !student.id) {
+      return;
+    }
+
+    const action = event.detail.data.action;
+
+    if(action === 'cancel') {
+      return;
+    }
+
+    if(student.gid) {
+      this.showToast('⚠️ Primero debes eliminar al estudiante de su grupo.');
+      return;
+    }
+
+    this.spinnerText = 'Eliminando...';
+    this.isSpinnerActive = true;
+    await this.studentCRUDService.deleteStudent(student.id);
+    this.isSpinnerActive = false;
+    this.showToast(`🗑️ Se eliminó a ${student.nombreCompleto}`);
+  }
+
+  async onModalDismiss(slidingItem: IonItemSliding) {
+    await slidingItem.close();
     this.form.reset();
+  }
+
+  async onUpdateStudent(student: Student) {
+    if(!student.id){
+      return;
+    }
+
+    this.spinnerText = 'Actualizando...';
+    this.isSpinnerActive = true;
+    this.isSaving = true;
+    const modifiedStudentName = this.generateFullName();
+
+    try {
+      this.closeModal('update-' + student.id);
+      await this.studentCRUDService.updateStudent(student.id, modifiedStudentName);
+    } catch(error) {
+      console.log('Error:', error);
+    }
+
+    this.isSpinnerActive = false;
+    this.isSaving = false;
+  }
+
+  private showToast(message: string) {
+    this.toastMessage = message;
+    this.isToastOpen = true;
   }
 }

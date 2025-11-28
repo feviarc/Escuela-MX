@@ -16,6 +16,11 @@
 
 @if(!isSpinnerActive) {
   <ion-content>
+    @if(studentGroups.length === 0) {
+      <div class="center-box">
+        <p>No hay grupos registrados todavía.</p>
+      </div>
+    }
     <ion-list>
       @for(group of studentGroups; track group.gid) {
         <ion-item-sliding class="sliding-item-card" #groupSlidingItem>

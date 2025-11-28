@@ -82,6 +82,7 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
   groups: Group[] = [];
   groupsSubscription!: Subscription;
   initialBreakpoint = 0.40;
+  isFirstEmission = true;
   isLoading = true;
   isSpinnerActive = false;
   isToastOpen = false;
@@ -165,9 +166,12 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
       next: groups => {
         console.log('studentGroups:', groups);
         this.studentGroups = groups;
-        if(groups.length > 0) {
+
+        if(this.isFirstEmission) {
+          this.isFirstEmission = false;
           this.isLoading = false;
         }
+
       },
       error: (error) => {
         console.log('Error:', error);

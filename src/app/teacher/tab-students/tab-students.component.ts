@@ -143,7 +143,7 @@ export class TabStudentsComponent  implements OnInit, OnDestroy {
     const cct = this.cctStorageService.getCCT();
     this.cct = (cct !== null ? cct : '');
 
-    this.studentSubscription = this.studentCRUDService.getStudents().subscribe({
+    this.studentSubscription = this.studentCRUDService.getStudentsByCCT(this.cct).subscribe({
       next: students => {
         this.students = students;
         this.filteredStudents = [...this.students];

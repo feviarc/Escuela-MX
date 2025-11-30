@@ -278,6 +278,28 @@ export class StudentCRUDService {
   }
 
   /**
+   * Get students by group ID
+   * ⚠️ REQUIERE UNSUBSCRIBE: Usa async pipe o unsubscribe en ngOnDestroy
+   * @param cct - School CCT
+   * @returns Observable with array of students
+   */
+  getStudentsByCCT(cct: string): Observable<Student[]> {
+    const q = query(
+      this.studentsCollection,
+      where('cct', '==', cct),
+      orderBy('nombre', 'asc')
+    );
+
+    return collectionData(q, { idField: 'id' }).pipe(
+      map(students => students as Student[]),
+      catchError(error => {
+        console.error('Error getting students by CCT:', error);
+        throw error;
+      })
+    );
+  }
+
+  /**
    * Get students without tutor assigned
    * ⚠️ REQUIERE UNSUBSCRIBE: Usa async pipe o unsubscribe en ngOnDestroy
    * @returns Observable with array of students without tid

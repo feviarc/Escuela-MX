@@ -42,6 +42,8 @@ import {
 import { OverlayEventDetail } from '@ionic/core';
 import { Subscription } from 'rxjs';
 import { StudentCRUDService, Student } from 'src/app/services/student-crud.service';
+import { CctStorageService } from 'src/app/services/cct-storage.service';
+
 
 @Component({
   selector: 'app-teacher-tab-students',
@@ -83,6 +85,7 @@ export class TabStudentsComponent  implements OnInit, OnDestroy {
   @ViewChildren(IonModal) modals!: QueryList<IonModal>;
 
   breakpoints = [0, 0.20, 0.40, 0.50, 0.80, 1];
+  cct!: string;
   filteredStudents: Student[] = [];
   formSnapshot: any;
   initialBreakpoint = 0.50;
@@ -130,11 +133,16 @@ export class TabStudentsComponent  implements OnInit, OnDestroy {
   });
 
   constructor(
+    private cctStorageService: CctStorageService,
     private formBuilder: FormBuilder,
     private studentCRUDService: StudentCRUDService,
   ) {}
 
   ngOnInit() {
+
+    const cct = this.cctStorageService.getCCT();
+    this.cct = (cct !== null ? cct : '');
+
     this.studentSubscription = this.studentCRUDService.getStudents().subscribe({
       next: students => {
         this.students = students;
@@ -223,11 +231,15 @@ export class TabStudentsComponent  implements OnInit, OnDestroy {
     this.spinnerText = 'Guardando...';
     this.isSpinnerActive = true;
     this.isSaving = true;
-    const studentFullName = this.generateFullName();
+
+    const studentData = {
+      ...this.generateFullName(),
+      cct: this.cct,
+    };
 
     try {
       this.closeModal('add-student-btn');
-      const studentId = await this.studentCRUDService.addStudent(studentFullName);
+      const studentId = await this.studentCRUDService.addStudent(studentData);
     } catch (error) {
       console.log('Error:', error);
     }

@@ -3,6 +3,7 @@ import {
   OnDestroy,
   OnInit,
   QueryList,
+  ViewChild,
   ViewChildren,
 } from '@angular/core';
 
@@ -36,8 +37,7 @@ import {
   IonSpinner,
   IonTitle,
   IonToast,
-  IonToolbar,
-} from "@ionic/angular/standalone";
+  IonToolbar, IonSearchbar } from "@ionic/angular/standalone";
 
 import { OverlayEventDetail } from '@ionic/core';
 import { Subscription } from 'rxjs';
@@ -48,7 +48,7 @@ import { StudentCRUDService, Student } from 'src/app/services/student-crud.servi
   templateUrl: './tab-students.component.html',
   styleUrls: ['./tab-students.component.scss'],
   standalone: true,
-  imports: [
+  imports: [IonSearchbar,
     FormsModule,
     IonActionSheet,
     IonButton,
@@ -79,6 +79,7 @@ import { StudentCRUDService, Student } from 'src/app/services/student-crud.servi
 
 export class TabStudentsComponent  implements OnInit, OnDestroy {
 
+  @ViewChild(IonSearchbar) searchbar!: IonSearchbar;
   @ViewChildren(IonModal) modals!: QueryList<IonModal>;
 
   breakpoints = [0, 0.20, 0.40, 0.50, 0.80, 1];
@@ -95,6 +96,7 @@ export class TabStudentsComponent  implements OnInit, OnDestroy {
   students: Student[] = [];
   studentSubscription?: Subscription;
   toastMessage = '';
+  tabMessage = 'No hay alumnos registrados todavía.';
 
   public actionSheetButtons = [
     {
@@ -143,6 +145,9 @@ export class TabStudentsComponent  implements OnInit, OnDestroy {
           this.isLoading = false;
         }
 
+        if(this.searchbar) {
+          this.searchbar.value = '';
+        }
       },
       error: (error) => {
         console.log('Error:', error);
@@ -189,6 +194,18 @@ export class TabStudentsComponent  implements OnInit, OnDestroy {
 
   isSameStudentData() {
     return JSON.stringify(this.formSnapshot) === JSON.stringify(this.form.value);
+  }
+
+  handleInput(event: Event) {
+    const target = event.target as HTMLIonSearchbarElement;
+    const query = target.value?.toUpperCase() || '';
+    this.filteredStudents = this.students.filter(
+      (student) => student.nombreCompleto.includes(query)
+    );
+
+    if(this.filteredStudents.length === 0) {
+      this.tabMessage = `No se encontraron alumnos con la frase "${query}". Puedes intentar buscar colocando o quitando acentos en tu búsqueda.`;
+    }
   }
 
   loadStudentData(student: Student) {

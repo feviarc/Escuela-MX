@@ -5,6 +5,14 @@
       <ion-progress-bar type="indeterminate" color="warning"></ion-progress-bar>
     }
   </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-searchbar
+     placeholder="Buscar..."
+     [debounce]="500"
+     (ionInput)="handleInput($event)"
+    >
+    </ion-searchbar>
+  </ion-toolbar>
 </ion-header>
 
 @if(isSpinnerActive) {
@@ -18,7 +26,7 @@
   <ion-content>
     @if(filteredStudents.length === 0 && !isLoading) {
       <div class="center-box">
-        <p>No hay alumnos registrados todavía.</p>
+        <p>{{ tabMessage }}</p>
       </div>
     }
     <ion-list>

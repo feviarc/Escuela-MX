@@ -6,6 +6,8 @@ import {
   ViewChildren,
 } from '@angular/core';
 
+import { Router } from '@angular/router';
+
 import {
   IonActionSheet,
   IonButton,
@@ -35,7 +37,8 @@ import {
 
   import { OverlayEventDetail } from '@ionic/core/components';
   import { Subscription } from 'rxjs';
-  import { School } from '../../services/school-crud.service';
+  import { AuthService } from 'src/app/services/auth.service';
+  import { School } from 'src/app/services/school-crud.service';
   import { GroupCRUDService, Group } from 'src/app/services/group-crud.service';
   import { SchoolStateService } from 'src/app/services/school-state-service';
   import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-group-crud.service';
@@ -110,7 +113,26 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
     },
   ];
 
+  public logoutActionSheetButtons = [
+    {
+      text: 'Aceptar',
+      role: 'accept',
+      data: {
+        action: 'accept',
+      }
+    },
+    {
+      text: 'Cancelar',
+      role: 'cancel',
+      data: {
+        action: 'cancel',
+      },
+    },
+  ];
+
   constructor(
+    private router: Router,
+    private authService: AuthService,
     private groupCRUDService: GroupCRUDService,
     private schoolStateService: SchoolStateService,
     private studentGroupCRUDService: StudentGroupCRUDService,
@@ -254,6 +276,23 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
 
   onIonChange(event: CustomEvent) {
     this.pickerValue = event.detail.value;
+  }
+
+  onLogout(event: CustomEvent<OverlayEventDetail>) {
+    const eventButton = event.detail.data;
+
+    if(!eventButton || eventButton.action === 'cancel') {
+      return;
+    }
+
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigateByUrl('/auth');
+      },
+      error: error => {
+        console.log('Error al cerrar sesión: ',  error);
+      }
+    });
   }
 
   private showToast(message: string) {

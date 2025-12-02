@@ -29,6 +29,7 @@ import {
   IonPickerColumn,
   IonPickerColumnOption,
   IonProgressBar,
+  IonSearchbar,
   IonSpinner,
   IonTitle,
   IonToast,
@@ -71,6 +72,7 @@ import {
     IonPickerColumn,
     IonPickerColumnOption,
     IonProgressBar,
+    IonSearchbar,
     IonSpinner,
     IonTitle,
     IonToast,
@@ -213,12 +215,10 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
 
   onAddStudent(slidingItem: IonItemSliding, group: StudentGroup) {
     console.log('Add student to', group);
-    slidingItem.close();
   }
 
   onDeleteStudent(slidingItem: IonItemSliding, group: StudentGroup) {
     console.log('Delete student from', group);
-    slidingItem.close();
   }
 
   onDeleteGroup(

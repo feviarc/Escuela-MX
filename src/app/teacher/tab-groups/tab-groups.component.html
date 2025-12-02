@@ -33,14 +33,12 @@
             <ion-item-option
              color="primary"
              id="add-student-{{ group.gid }}"
-             (click)="onAddStudent(groupSlidingItem, group)"
             >
               <ion-icon slot="icon-only" name="person-add"></ion-icon>
             </ion-item-option>
             <ion-item-option
              color="danger"
              id="delete-student-{{ group.gid }}"
-             (click)="onDeleteStudent(groupSlidingItem, group)"
             >
               <ion-icon slot="icon-only" name="person-remove"></ion-icon>
             </ion-item-option>
@@ -58,16 +56,87 @@
             >
               <ion-icon slot="icon-only" name="trash"></ion-icon>
             </ion-item-option>
-            <ion-action-sheet
-             trigger="delete-{{ group.gid }}"
-             header="Estás a punto de eliminar"
-             subHeader='Grupo {{ group.grado }}° "{{ group.letra }}"'
-             [buttons]="actionSheetButtons"
-             (didDismiss)="onDeleteGroup($event, groupSlidingItem, group)"
-            >
-            </ion-action-sheet>
           </ion-item-options>
         </ion-item-sliding>
+        <!-- Action Sheet (Eliminar Grupo) -->
+        <ion-action-sheet
+         trigger="delete-{{ group.gid }}"
+         header="Estás a punto de eliminar"
+         subHeader='Grupo {{ group.grado }}° "{{ group.letra }}"'
+         [buttons]="actionSheetButtons"
+         (didDismiss)="onDeleteGroup($event, groupSlidingItem, group)"
+        >
+        </ion-action-sheet>
+        <!-- Modal (Agregar estudiante) -->
+        <ion-modal
+          trigger="add-student-{{ group.gid }}"
+          [initialBreakpoint]="1.0"
+          [breakpoints]="[0, 1.0]"
+          (willDismiss)="groupSlidingItem.close()"
+          #addStudentsModal
+        >
+          <ng-template>
+            <ion-header>
+              <ion-toolbar>
+                <ion-buttons slot="start">
+                  <ion-button
+                  (click)="addStudentsModal.dismiss(null, 'cancel')"
+                  >
+                    Cerrar
+                  </ion-button>
+                </ion-buttons>
+                <ion-title>Agregar a {{ group.grado }}° "{{ group.letra }}"</ion-title>
+              </ion-toolbar>
+              <ion-toolbar>
+                <ion-searchbar
+                 placeholder="Buscar..."
+                >
+                </ion-searchbar>
+              </ion-toolbar>
+            </ion-header>
+            <ion-content>
+
+
+
+
+            </ion-content>
+          </ng-template>
+        </ion-modal>
+        <!-- Modal (Elimnar estudiante) -->
+        <ion-modal
+          trigger="delete-student-{{ group.gid }}"
+          [initialBreakpoint]="1.0"
+          [breakpoints]="[0, 1.0]"
+          (willDismiss)="groupSlidingItem.close()"
+          #deleteStudentsModal
+        >
+          <ng-template>
+            <ion-header>
+              <ion-toolbar>
+                <ion-buttons slot="start">
+                  <ion-button
+                  (click)="deleteStudentsModal.dismiss(null, 'cancel')"
+                  >
+                    Cerrar
+                  </ion-button>
+                </ion-buttons>
+                <ion-title>Eliminar de {{ group.grado }}° "{{ group.letra }}"</ion-title>
+              </ion-toolbar>
+              <ion-toolbar>
+                <ion-searchbar
+                 placeholder="Buscar..."
+                >
+                </ion-searchbar>
+              </ion-toolbar>
+            </ion-header>
+            <ion-content>
+
+
+
+
+            </ion-content>
+          </ng-template>
+        </ion-modal>
       }
     </ion-list>
   </ion-content>
@@ -127,6 +196,7 @@
   </ng-template>
 </ion-modal>
 
+<!-- Action Sheet (Cerrar sesión) -->
 <ion-action-sheet
  trigger="open-action-sheet"
  header="Estás a punto de cerrar sesión"

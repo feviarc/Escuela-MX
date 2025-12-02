@@ -12,9 +12,10 @@ import {
   Firestore,
   getDoc,
   getDocs,
+  onSnapshot,
   orderBy,
   query,
-  setDoc, // ✅ AGREGADO
+  setDoc,
   updateDoc,
   where,
 } from '@angular/fire/firestore';
@@ -314,11 +315,47 @@ export class StudentGroupCRUDService {
   }
 
   /**
-   * Get student groups by CCT
+   * Get student groups by CCT (real-time)
+   * @param cct - Clave del Centro de Trabajo
+   * @returns Observable with array of student groups that updates automatically
+   */
+  getStudentGroupsByCCT(cct: string): Observable<StudentGroup[]> {
+    const q = query(
+      this.studentGroupsCollection,
+      where('cct', '==', cct),
+      orderBy('grado', 'asc'),
+      orderBy('letra', 'asc')
+    );
+
+    return new Observable<StudentGroup[]>(observer => {
+      const unsubscribe = onSnapshot(q,
+        (querySnapshot) => {
+          const groups: StudentGroup[] = [];
+          querySnapshot.forEach(doc => {
+            groups.push({
+              gid: doc.id,
+              ...doc.data()
+            } as StudentGroup);
+          });
+          observer.next(groups);
+        },
+        (error) => {
+          console.error('Error getting student groups by CCT:', error);
+          observer.next([]); // Emitir array vacío en caso de error
+        }
+      );
+
+      // Cleanup: se ejecuta cuando el componente se destruye
+      return () => unsubscribe();
+    });
+  }
+
+  /**
+   * Get student groups by CCT (snapshot)
    * @param cct - Clave del Centro de Trabajo
    * @returns Observable with array of student groups
    */
-  getStudentGroupsByCCT(cct: string): Observable<StudentGroup[]> {
+  getStudentGroupsByCCTSnapshot(cct: string): Observable<StudentGroup[]> {
     const q = query(
       this.studentGroupsCollection,
       where('cct', '==', cct),

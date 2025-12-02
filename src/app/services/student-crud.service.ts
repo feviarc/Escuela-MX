@@ -300,6 +300,30 @@ export class StudentCRUDService {
   }
 
   /**
+   * Get students with group assigned filtered by CCT (real-time)
+   * ⚠️ REQUIERE UNSUBSCRIBE: Usa async pipe o unsubscribe en ngOnDestroy
+   * @param cct - School CCT
+   * @returns Observable with array of students that have gid
+   */
+  getStudentsWithGroupByCCT(cct: string): Observable<Student[]> {
+    return this.getStudentsByCCT(cct).pipe(
+      map(students => students.filter(s => s.gid))
+    );
+  }
+
+  /**
+   * Get students without group assigned filtered by CCT (real-time)
+   * ⚠️ REQUIERE UNSUBSCRIBE: Usa async pipe o unsubscribe en ngOnDestroy
+   * @param cct - School CCT
+   * @returns Observable with array of students that don't have gid
+   */
+  getStudentsWithoutGroupByCCT(cct: string): Observable<Student[]> {
+    return this.getStudentsByCCT(cct).pipe(
+      map(students => students.filter(s => !s.gid))
+    );
+  }
+
+  /**
    * Get students without tutor assigned
    * ⚠️ REQUIERE UNSUBSCRIBE: Usa async pipe o unsubscribe en ngOnDestroy
    * @returns Observable with array of students without tid

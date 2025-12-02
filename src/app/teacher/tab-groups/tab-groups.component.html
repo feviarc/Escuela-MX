@@ -21,9 +21,9 @@
 
 @if(!isSpinnerActive) {
   <ion-content>
-    @if(studentGroups.length === 0) {
+    @if(studentGroups.length === 0 && !isLoading) {
       <div class="center-box">
-        <p>No hay grupos registrados todavía.</p>
+        <p>No hay grupos registrados todavía.</p>!
       </div>
     }
     <ion-list>
@@ -33,14 +33,14 @@
             <ion-item-option
              color="primary"
              id="add-student-{{ group.gid }}"
-             (click)="onAddStudent(groupSlidingItem)"
+             (click)="onAddStudent(groupSlidingItem, group)"
             >
               <ion-icon slot="icon-only" name="person-add"></ion-icon>
             </ion-item-option>
             <ion-item-option
              color="danger"
              id="delete-student-{{ group.gid }}"
-             (click)="onDeleteStudent(groupSlidingItem)"
+             (click)="onDeleteStudent(groupSlidingItem, group)"
             >
               <ion-icon slot="icon-only" name="person-remove"></ion-icon>
             </ion-item-option>

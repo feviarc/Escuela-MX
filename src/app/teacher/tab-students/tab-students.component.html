@@ -1,9 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Alumnos</ion-title>
-    @if(isLoading) {
-      <ion-progress-bar type="indeterminate" color="warning"></ion-progress-bar>
-    }
   </ion-toolbar>
   <ion-toolbar color="primary">
     <ion-searchbar
@@ -12,6 +9,9 @@
      (ionInput)="handleInput($event)"
     >
     </ion-searchbar>
+    @if(isLoading) {
+      <ion-progress-bar type="indeterminate" color="warning"></ion-progress-bar>
+    }
   </ion-toolbar>
 </ion-header>
 

@@ -37,8 +37,9 @@ import {
 
   import { OverlayEventDetail } from '@ionic/core/components';
   import { Subscription } from 'rxjs';
-  import { AuthService } from 'src/app/services/auth.service';
   import { School } from 'src/app/services/school-crud.service';
+  import { AuthService } from 'src/app/services/auth.service';
+  import { CctStorageService } from 'src/app/services/cct-storage.service';
   import { GroupCRUDService, Group } from 'src/app/services/group-crud.service';
   import { SchoolStateService } from 'src/app/services/school-state-service';
   import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-group-crud.service';
@@ -82,6 +83,7 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
   @ViewChildren(IonModal) modals!: QueryList<IonModal>;
 
   breakpoints = [0, 0.40];
+  cct!: string;
   groups: Group[] = [];
   groupsSubscription!: Subscription;
   initialBreakpoint = 0.40;
@@ -133,15 +135,19 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private cctStorageService: CctStorageService,
     private groupCRUDService: GroupCRUDService,
     private schoolStateService: SchoolStateService,
     private studentGroupCRUDService: StudentGroupCRUDService,
   ) { }
 
   ngOnInit() {
+    const cct = this.cctStorageService.getCCT();
+    this.cct = (cct !== null ? cct : '');
+
     this.loadSchoolInfo();
     this.loadGroupsInfo();
-    this.loadStudentGroups();
+    this.loadStudentGroups(this.cct);
   }
 
   ngOnDestroy() {
@@ -183,17 +189,12 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
     });
   }
 
-  loadStudentGroups() {
-    this.studentGroupsSubscription = this.studentGroupCRUDService.studentGroups$.subscribe({
+  loadStudentGroups(cct: string) {
+    this.studentGroupsSubscription = this.studentGroupCRUDService.getStudentGroupsByCCT(cct).subscribe({
       next: groups => {
         console.log('studentGroups:', groups);
         this.studentGroups = groups;
-
-        if(this.isFirstEmission) {
-          this.isFirstEmission = false;
-          this.isLoading = false;
-        }
-
+        this.isLoading = false;
       },
       error: (error) => {
         console.log('Error:', error);
@@ -210,11 +211,13 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
     );
   }
 
-  onAddStudent(slidingItem: IonItemSliding) {
+  onAddStudent(slidingItem: IonItemSliding, group: StudentGroup) {
+    console.log('Add student to', group);
     slidingItem.close();
   }
 
-  onDeleteStudent(slidingItem: IonItemSliding) {
+  onDeleteStudent(slidingItem: IonItemSliding, group: StudentGroup) {
+    console.log('Delete student from', group);
     slidingItem.close();
   }
 

@@ -13,8 +13,8 @@ import {
 } from "@ionic/angular/standalone";
 
 import { Subscription } from 'rxjs';
+import { CctStorageService } from 'src/app/services/cct-storage.service';
 import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-group-crud.service';
-
 
 @Component({
   selector: 'app-teacher-tab-notifications',
@@ -36,11 +36,13 @@ import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-
 
 export class TabNotificationsComponent  implements OnInit, OnDestroy {
 
+  cct!: string;
   isLoading = false;
   studentGroupsSubscription!: Subscription;
   studentGroups: StudentGroup[] = [];
 
   constructor(
+    private cctStorageService: CctStorageService,
     private studentGroupCRUDService: StudentGroupCRUDService,
   ) { }
 
@@ -55,7 +57,10 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
   }
 
   loadSchoolGroups() {
-    this.studentGroupsSubscription = this.studentGroupCRUDService.studentGroups$.subscribe({
+    const cct = this.cctStorageService.getCCT();
+    this.cct = (cct !== null ? cct : '');
+
+    this.studentGroupsSubscription = this.studentGroupCRUDService.getStudentGroupsByCCT(this.cct).subscribe({
       next: groups => {
         console.log('studentGroups:', groups);
         this.studentGroups = groups;

@@ -58,6 +58,7 @@
             </ion-item-option>
           </ion-item-options>
         </ion-item-sliding>
+
         <!-- Action Sheet (Eliminar Grupo) -->
         <ion-action-sheet
          trigger="delete-{{ group.gid }}"
@@ -67,12 +68,14 @@
          (didDismiss)="onDeleteGroup($event, groupSlidingItem, group)"
         >
         </ion-action-sheet>
+
         <!-- Modal (Agregar estudiante) -->
         <ion-modal
           trigger="add-student-{{ group.gid }}"
           [initialBreakpoint]="1.0"
           [breakpoints]="[0, 1.0]"
           (willDismiss)="groupSlidingItem.close()"
+          (didDismiss)="onDidDismissAddStudentModal()"
           #addStudentsModal
         >
           <ng-template>
@@ -90,24 +93,50 @@
               <ion-toolbar>
                 <ion-searchbar
                  placeholder="Buscar..."
+                 [debounce]="500"
+                 (ionInput)="handleInputAddStudent($event)"
                 >
                 </ion-searchbar>
+
               </ion-toolbar>
             </ion-header>
             <ion-content>
-
-
-
-
+               @if(filteredStudentsWithoutGroup.length === 0) {
+                <div class="center-box">
+                  <p>{{ tabMessage }}</p>
+                </div>
+              }
+              <ion-list>
+                <ion-radio-group [compareWith]="selectStudentCompareWith" (ionChange)="selectStudentHandleChange($event)">
+                  @for (student of filteredStudentsWithoutGroup; track student.id) {
+                  <ion-item>
+                    <ion-radio [value]="student">{{ student.nombreCompleto }}</ion-radio>
+                  </ion-item>
+                  }
+                </ion-radio-group>
+              </ion-list>
             </ion-content>
+            <ion-footer>
+              <ion-toolbar>
+                <ion-button
+                 expand="block"
+                 [disabled]="!selectedStudent"
+                 (click)="onAddStudent(group)"
+                >
+                  Agregar
+                </ion-button>
+              </ion-toolbar>
+            </ion-footer>
           </ng-template>
         </ion-modal>
+
         <!-- Modal (Elimnar estudiante) -->
         <ion-modal
           trigger="delete-student-{{ group.gid }}"
           [initialBreakpoint]="1.0"
           [breakpoints]="[0, 1.0]"
           (willDismiss)="groupSlidingItem.close()"
+          (willPresent)="loadStudentsListByGroup(group)"
           #deleteStudentsModal
         >
           <ng-template>
@@ -125,16 +154,34 @@
               <ion-toolbar>
                 <ion-searchbar
                  placeholder="Buscar..."
+                 [debounce]="500"
+                 (ionInput)="handleInputDeleteStudent($event, group)"
                 >
                 </ion-searchbar>
               </ion-toolbar>
             </ion-header>
             <ion-content>
-
-
-
-
+              <ion-list>
+                <ion-radio-group [compareWith]="selectStudentCompareWith" (ionChange)="selectStudentHandleChange($event)">
+                  @for (student of studentsListByGroup; track student.id) {
+                  <ion-item>
+                    <ion-radio [value]="student">{{ student.nombreCompleto }}</ion-radio>
+                  </ion-item>
+                  }
+                </ion-radio-group>
+              </ion-list>
             </ion-content>
+            <ion-footer>
+              <ion-toolbar>
+                <ion-button
+                 expand="block"
+                 [disabled]="!selectedStudent"
+                 (click)="onDeleteStudent(group)"
+                >
+                  Eliminar
+                </ion-button>
+              </ion-toolbar>
+            </ion-footer>
           </ng-template>
         </ion-modal>
       }
@@ -183,7 +230,7 @@
       <ion-picker>
         <ion-picker-column [value]="" (ionChange)="onIonChange($event)">
           <ion-picker-column-option value=""></ion-picker-column-option>
-          @for(group of groups; track group.id) {
+          @for(group of groupsInfo; track group.id) {
             <ion-picker-column-option
              value="{{group.id}}"
             >

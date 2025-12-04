@@ -36,6 +36,9 @@
           <ion-label>
             <h2>{{ filteredStudent.nombreCompleto }}</h2>
           </ion-label>
+          @if(filteredStudent.gid) {
+            <ion-chip>{{ filteredStudent.gid.slice(-2)}}</ion-chip>
+          }
         </ion-item>
         <ion-item-options side="end">
           <ion-item-option

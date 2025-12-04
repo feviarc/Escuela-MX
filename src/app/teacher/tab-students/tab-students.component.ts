@@ -18,6 +18,7 @@ import {
   IonActionSheet,
   IonButton,
   IonButtons,
+  IonChip,
   IonContent,
   IonFab,
   IonFabButton,
@@ -34,10 +35,12 @@ import {
   IonModal,
   IonNote,
   IonProgressBar,
+  IonSearchbar,
   IonSpinner,
   IonTitle,
   IonToast,
-  IonToolbar, IonSearchbar } from "@ionic/angular/standalone";
+  IonToolbar,
+} from "@ionic/angular/standalone";
 
 import { OverlayEventDetail } from '@ionic/core';
 import { Subscription } from 'rxjs';
@@ -50,11 +53,12 @@ import { CctStorageService } from 'src/app/services/cct-storage.service';
   templateUrl: './tab-students.component.html',
   styleUrls: ['./tab-students.component.scss'],
   standalone: true,
-  imports: [IonSearchbar,
+  imports: [
     FormsModule,
     IonActionSheet,
     IonButton,
     IonButtons,
+    IonChip,
     IonContent,
     IonFab,
     IonFabButton,
@@ -71,6 +75,7 @@ import { CctStorageService } from 'src/app/services/cct-storage.service';
     IonModal,
     IonNote,
     IonProgressBar,
+    IonSearchbar,
     IonSpinner,
     IonTitle,
     IonToast,
@@ -97,9 +102,9 @@ export class TabStudentsComponent  implements OnInit, OnDestroy {
   isUpdateButtonDisable = true;
   spinnerText = '';
   students: Student[] = [];
-  studentSubscription?: Subscription;
-  toastMessage = '';
   tabMessage = 'No hay alumnos registrados todavía.';
+  toastMessage = '';
+  private subscriptions: Subscription[] = [];
 
   public actionSheetButtons = [
     {
@@ -139,38 +144,16 @@ export class TabStudentsComponent  implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-
     const cct = this.cctStorageService.getCCT();
     this.cct = (cct !== null ? cct : '');
-
-    this.studentSubscription = this.studentCRUDService.getStudentsByCCT(this.cct).subscribe({
-      next: students => {
-        this.students = students;
-        this.filteredStudents = [...this.students];
-
-        if(this.isFirstEmission) {
-          this.isFirstEmission = false;
-          this.isLoading = false;
-        }
-
-        if(this.searchbar) {
-          this.searchbar.value = '';
-        }
-      },
-      error: (error) => {
-        console.log('Error:', error);
-      }
-    });
+    this.loadStudents();
   }
 
   ngOnDestroy() {
-    if(this.studentSubscription) {
-      this.studentSubscription.unsubscribe();
-    }
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   closeModal(triggerId: string | undefined) {
-
     if(!triggerId) {
       return;
     }
@@ -225,6 +208,32 @@ export class TabStudentsComponent  implements OnInit, OnDestroy {
 
     this.form.patchValue(studentFields);
     this.formSnapshot = {...studentFields};
+  }
+
+  loadStudents() {
+    const sub = this.studentCRUDService.getStudentsByCCT(this.cct).subscribe({
+      next: students => {
+        students.sort(
+          (a, b) => a.nombreCompleto.localeCompare(b.nombreCompleto)
+        );
+        this.students = students;
+        this.filteredStudents = [...this.students];
+
+        if(this.isFirstEmission) {
+          this.isFirstEmission = false;
+          this.isLoading = false;
+        }
+
+        if(this.searchbar) {
+          this.searchbar.value = '';
+        }
+      },
+      error: (error) => {
+        console.log('Error:', error);
+      }
+    });
+
+    this.subscriptions.push(sub);
   }
 
   async onAddStudent() {

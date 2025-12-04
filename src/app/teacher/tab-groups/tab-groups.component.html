@@ -47,7 +47,7 @@
             <ion-label>
               <h2>Grupo {{ group.grado }}° "{{ group.letra }}"</h2>
             </ion-label>
-            <ion-chip>{{ group.alumnos.length }}</ion-chip>
+            <ion-chip>{{ studentsCounterByGroup[group.gid] || 0 }}</ion-chip>
           </ion-item>
           <ion-item-options side="end">
             <ion-item-option
@@ -123,6 +123,7 @@
                  [disabled]="!selectedStudent"
                  (click)="onAddStudent(group)"
                 >
+                  <ion-icon slot="start" name="person-add"></ion-icon>
                   Agregar
                 </ion-button>
               </ion-toolbar>
@@ -178,6 +179,7 @@
                  [disabled]="!selectedStudent"
                  (click)="onDeleteStudent(group)"
                 >
+                  <ion-icon slot="start" name="person-add"></ion-icon>
                   Eliminar
                 </ion-button>
               </ion-toolbar>

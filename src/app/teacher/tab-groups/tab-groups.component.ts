@@ -105,6 +105,7 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
   schoolInfo: School | null = null;
   selectedStudent!: any;
   spinnerText = '';
+  studentsCounterByGroup: any;
   studentGroups: StudentGroup[] = [];
   studentsListByGroup: Student[] = [];
   studentsWithGroup: Student[] = [];
@@ -265,9 +266,21 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
         students.sort(
           (a, b) => a.nombreCompleto.localeCompare(b.nombreCompleto)
         );
+
         this.studentsWithGroup = students;
         this.filteredStudentsWithGroup = [...students];
         console.log('filteredStudentsWithGroup', this.filteredStudentsWithGroup);
+
+        this.studentsCounterByGroup = this.studentsWithGroup.reduce(
+          (acc: { [key: string]: number }, student) => {
+            const gid = student.gid || '';
+            acc[gid] = (acc[gid] || 0) + 1;
+            return acc;
+          },{}
+        );
+
+        console.log('studentsCounter', this.studentsCounterByGroup);
+
       },
       error: (error) => {
         console.log('Error', error);

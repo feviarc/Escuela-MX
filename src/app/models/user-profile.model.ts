@@ -1,8 +1,12 @@
 export interface UserProfile {
-  id?: string;
   uid: string;
   email: string;
   rol: string;
-  nombre?: string;
+  activo?: boolean;
+  cct?: string;
+  celular?: string;
   escuela?: string;
+  id?: string;
+  nombre?: string;
+  telefono?: string;
 }

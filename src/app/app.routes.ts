@@ -47,7 +47,27 @@ export const routes: Routes = [
     path: 'teacher-dashboard',
     loadComponent: () => import('./teacher/teacher.page').then( m => m.TeacherPage),
     canActivate: [AuthGuard],
-    data: {expectedRole: 'maestro'}
+    canActivateChild: [AuthGuard],
+    data: {expectedRole: 'maestro'},
+    children: [
+      {
+        path: 'tab-notifications',
+        loadComponent: () => import('./teacher/tab-notifications/tab-notifications.component').then((m) => m.TabNotificationsComponent)
+      },
+      {
+        path: 'tab-students',
+        loadComponent: () => import('./teacher/tab-students/tab-students.component').then((m) => m.TabStudentsComponent)
+      },
+      {
+        path: 'tab-groups',
+        loadComponent: () => import('./teacher/tab-groups/tab-groups.component').then((m) => m.TabGroupsComponent)
+      },
+      {
+        path: '',
+        redirectTo: '/teacher-dashboard/tab-notifications',
+        pathMatch: 'full'
+      }
+    ]
   },
   {
     path: 'caregiver-dashboard',

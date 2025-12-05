@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Notificaciones</ion-title>
+    @if(isLoading) {
+      <ion-progress-bar type="indeterminate" color="warning"></ion-progress-bar>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if(studentGroups.length === 0 && !isLoading) {
+    <div class="center-box">
+      <p>Para crear notificaciones primero debes registrar a los alumnos y grupos de tu Centro de Trabajo.</p>
+    </div>
+  }
+  <ion-accordion-group expand="inset">
+    @for(group of studentGroups; track group.gid) {
+      <ion-accordion value="{{ group.grado }}{{ group.letra }}" toggleIconSlot="start">
+        <ion-item slot="header" color="light">
+          <ion-label>Grupo {{ group.grado }}° "{{ group.letra }}"</ion-label>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          No hay alumnos en este grupo.
+        </div>
+      </ion-accordion>
+    }
+    <!--
+      <ion-accordion value="1A" toggleIconSlot="start">
+        <ion-item slot="header" color="light">
+          <ion-label>Grupo 1° "A"</ion-label>
+          <ion-button shape="round" (click)="onAddStudent($event)">
+            <ion-icon slot="icon-only" name="person-add"></ion-icon>
+          </ion-button>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          No hay alumnos en este grupo.
+        </div>
+      </ion-accordion>
+    -->
+  </ion-accordion-group>
+</ion-content>

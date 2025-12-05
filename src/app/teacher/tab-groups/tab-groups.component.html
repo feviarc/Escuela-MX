@@ -47,7 +47,7 @@
             <ion-label>
               <h2>Grupo {{ group.grado }}° "{{ group.letra }}"</h2>
             </ion-label>
-            <ion-chip>{{ studentsCounterByGroup[group.gid] || 0 }}</ion-chip>
+            <ion-chip>{{ studentsCounterByGroup?.[group.gid] || 0 }}</ion-chip>
           </ion-item>
           <ion-item-options side="end">
             <ion-item-option
@@ -94,7 +94,8 @@
                 <ion-searchbar
                  placeholder="Buscar..."
                  [debounce]="500"
-                 (ionInput)="handleInputAddStudent($event)"
+                 (ionInput)="handleInputAddModalSearchbar($event)"
+                 #addSearchbar
                 >
                 </ion-searchbar>
 
@@ -121,7 +122,7 @@
                 <ion-button
                  expand="block"
                  [disabled]="!selectedStudent"
-                 (click)="onAddStudent(group)"
+                 (click)="onAddStudent(group, addSearchbar)"
                 >
                   <ion-icon slot="start" name="person-add"></ion-icon>
                   Agregar
@@ -131,7 +132,7 @@
           </ng-template>
         </ion-modal>
 
-        <!-- Modal (Elimnar estudiante) -->
+        <!-- Modal (Eliminar estudiante) -->
         <ion-modal
           trigger="delete-student-{{ group.gid }}"
           [initialBreakpoint]="1.0"
@@ -156,7 +157,8 @@
                 <ion-searchbar
                  placeholder="Buscar..."
                  [debounce]="500"
-                 (ionInput)="handleInputDeleteStudent($event, group)"
+                 (ionInput)="handleInputDeleteModalSearchbar($event, group)"
+                 #deleteSearchbar
                 >
                 </ion-searchbar>
               </ion-toolbar>
@@ -177,7 +179,7 @@
                 <ion-button
                  expand="block"
                  [disabled]="!selectedStudent"
-                 (click)="onDeleteStudent(group)"
+                 (click)="onDeleteStudent(group, deleteSearchbar)"
                 >
                   <ion-icon slot="start" name="person-add"></ion-icon>
                   Eliminar

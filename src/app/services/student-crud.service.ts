@@ -427,7 +427,7 @@ export class StudentCRUDService {
    * @returns Promise<void>
    */
   async removeGroup(studentId: string): Promise<void> {
-    await this.updateStudent(studentId, { gid: undefined });
+    await this.updateStudent(studentId, { gid: '' });
   }
 
   // ==================== STUDENTS CRUD (DELETE) ====================

@@ -105,8 +105,8 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
   schoolInfo: School | null = null;
   selectedStudent!: any;
   spinnerText = '';
-  studentsCounterByGroup: any;
   studentGroups: StudentGroup[] = [];
+  studentsCounterByGroup: any;
   studentsListByGroup: Student[] = [];
   studentsWithGroup: Student[] = [];
   studentsWithoutGroup: Student[] = [];
@@ -172,8 +172,6 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
      this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
-
-
   closeModal(triggerId: string) {
     if(!triggerId) {
       return;
@@ -192,7 +190,7 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
     return `${this.schoolInfo?.cct}-${group?.grado}${group?.letra}`;
   }
 
-  handleInputAddStudent(event: Event) {
+  handleInputAddModalSearchbar(event: CustomEvent) {
     const target = event.target as HTMLIonSearchbarElement;
     const query = target.value?.toUpperCase() || '';
     console.log('event', event);
@@ -206,11 +204,9 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
     }
   }
 
-  handleInputDeleteStudent(event: CustomEvent, group: StudentGroup) {
+  handleInputDeleteModalSearchbar(event: CustomEvent, group: StudentGroup) {
     if(!event.detail.event || !event.detail.value) {
-      this.studentsListByGroup = this.studentsWithGroup.filter(
-      (student) => student.gid === group.gid
-    );
+      this.loadStudentsListByGroup(group);
       return;
     }
 
@@ -312,15 +308,9 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
   }
 
   loadStudentsListByGroup(group: StudentGroup) {
-    console.log('(willPresent) mapStudentGroup:', group);
-    console.log('studentsWithGroup', this.studentsWithGroup);
-
     this.studentsListByGroup = this.studentsWithGroup.filter(
       (student) => student.gid === group.gid
     );
-
-    console.log('studentsListByGroup', this.studentsListByGroup);
-
   }
 
   loadSchoolInfo() {
@@ -334,21 +324,16 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
-  onAddStudent(group: StudentGroup) {
-    console.log('student:', this.selectedStudent);
-    console.log('gid:', group.gid);
-
-    // update here the student and group info in Firestore
-
+  async onAddStudent(group: StudentGroup, searchbar: IonSearchbar) {
+    searchbar.value = '';
+    await this.studentCRUDService.assignGroup(this.selectedStudent.id, group.gid);
     this.selectedStudent = null;
   }
 
-  onDeleteStudent(group: StudentGroup) {
-    console.log('student:', this.selectedStudent);
-    console.log('gid:', group.gid);
-
-    // update here the student and group info in Firestore
-
+  async onDeleteStudent(group: StudentGroup, searchbar: IonSearchbar) {
+    searchbar.value = '';
+    await this.studentCRUDService.removeGroup(this.selectedStudent.id);
+    this.loadStudentsListByGroup(group);
     this.selectedStudent = null;
   }
 

@@ -3,7 +3,9 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   add,
+  book,
   business,
+  calendarNumber,
   create,
   laptopOutline,
   logoAndroid,
@@ -16,6 +18,7 @@ import {
   person,
   personAdd,
   personRemove,
+  sad,
   school,
   trash,
 } from 'ionicons/icons';
@@ -30,7 +33,9 @@ export class AppComponent {
   constructor() {
     addIcons({
       add,
+      book,
       business,
+      calendarNumber,
       create,
       laptopOutline,
       logoAndroid,
@@ -43,6 +48,7 @@ export class AppComponent {
       person,
       personAdd,
       personRemove,
+      sad,
       school,
       trash,
     });

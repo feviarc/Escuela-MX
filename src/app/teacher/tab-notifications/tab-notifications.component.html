@@ -54,6 +54,90 @@
                   </ion-item-option>
                 </ion-item-options>
               </ion-item-sliding>
+
+              <!-- Modal (Faltas) -->
+              <ion-modal
+               trigger="absence-{{ student.id }}"
+               [initialBreakpoint]="initialBreakpoint"
+               [breakpoints]="breakpoints"
+               #addAbsenseModal
+              >
+                <ng-template>
+                  <ion-header>
+                    <ion-toolbar>
+                      <ion-buttons slot="start">
+                        <ion-button>
+                          Cancelar
+                        </ion-button>
+                      </ion-buttons>
+                      <ion-title>Inasistencia</ion-title>
+                      <ion-buttons slot="end">
+                        <ion-button
+                         [strong]="true"
+                        >
+                          Agregar
+                        </ion-button>
+                      </ion-buttons>
+                    </ion-toolbar>
+                  </ion-header>
+                </ng-template>
+              </ion-modal>
+
+              <!-- Modal (Incumplimiento de tareas) -->
+              <ion-modal
+               trigger="homework-{{ student.id }}"
+               [initialBreakpoint]="initialBreakpoint"
+               [breakpoints]="breakpoints"
+               #addHomeworkModal
+              >
+                <ng-template>
+                  <ion-header>
+                    <ion-toolbar>
+                      <ion-buttons slot="start">
+                        <ion-button>
+                          Cancelar
+                        </ion-button>
+                      </ion-buttons>
+                      <ion-title>Incumplimiento</ion-title>
+                      <ion-buttons slot="end">
+                        <ion-button
+                         [strong]="true"
+                        >
+                          Agregar
+                        </ion-button>
+                      </ion-buttons>
+                    </ion-toolbar>
+                  </ion-header>
+                </ng-template>
+              </ion-modal>
+
+              <!-- Modal (Indisciplina) -->
+              <ion-modal
+               trigger="misconduct-{{ student.id }}"
+               [initialBreakpoint]="initialBreakpoint"
+               [breakpoints]="breakpoints"
+               #addMisconductModal
+              >
+                <ng-template>
+                  <ion-header>
+                    <ion-toolbar>
+                      <ion-buttons slot="start">
+                        <ion-button>
+                          Cancelar
+                        </ion-button>
+                      </ion-buttons>
+                      <ion-title>Indisciplina</ion-title>
+                      <ion-buttons slot="end">
+                        <ion-button
+                         [strong]="true"
+                        >
+                          Agregar
+                        </ion-button>
+                      </ion-buttons>
+                    </ion-toolbar>
+                  </ion-header>
+                </ng-template>
+              </ion-modal>
             }
           }
         </div>
@@ -61,9 +145,6 @@
     }
   </ion-accordion-group>
 </ion-content>
-
-
-
 
 
 

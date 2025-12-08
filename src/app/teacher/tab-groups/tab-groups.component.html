@@ -31,16 +31,10 @@
         <ion-item-sliding class="sliding-item-card" #groupSlidingItem>
           <ion-item-options side="start">
             <ion-item-option
-             color="primary"
-             id="add-student-{{ group.gid }}"
-            >
-              <ion-icon slot="icon-only" name="person-add"></ion-icon>
-            </ion-item-option>
-            <ion-item-option
              color="danger"
-             id="delete-student-{{ group.gid }}"
+             id="delete-{{ group.gid }}"
             >
-              <ion-icon slot="icon-only" name="person-remove"></ion-icon>
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
             </ion-item-option>
           </ion-item-options>
           <ion-item class="custom-item">
@@ -51,10 +45,16 @@
           </ion-item>
           <ion-item-options side="end">
             <ion-item-option
-             color="danger"
-             id="delete-{{ group.gid }}"
+             color="primary"
+             id="add-student-{{ group.gid }}"
             >
-              <ion-icon slot="icon-only" name="trash"></ion-icon>
+              <ion-icon slot="icon-only" name="person-add"></ion-icon>
+            </ion-item-option>
+            <ion-item-option
+             color="danger"
+             id="delete-student-{{ group.gid }}"
+            >
+              <ion-icon slot="icon-only" name="person-remove"></ion-icon>
             </ion-item-option>
           </ion-item-options>
         </ion-item-sliding>

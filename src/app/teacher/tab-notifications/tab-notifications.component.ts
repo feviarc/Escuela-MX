@@ -3,6 +3,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
   IonAccordion,
   IonAccordionGroup,
+  IonButton,
+  IonButtons,
   IonContent,
   IonHeader,
   IonIcon,
@@ -11,6 +13,7 @@ import {
   IonItemOptions,
   IonItemSliding,
   IonLabel,
+  IonModal,
   IonProgressBar,
   IonTitle,
   IonToolbar,
@@ -29,6 +32,8 @@ import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-
   imports: [
     IonAccordion,
     IonAccordionGroup,
+    IonButton,
+    IonButtons,
     IonContent,
     IonHeader,
     IonIcon,
@@ -37,6 +42,7 @@ import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-
     IonItemOptions,
     IonItemSliding,
     IonLabel,
+    IonModal,
     IonProgressBar,
     IonTitle,
     IonToolbar,
@@ -45,11 +51,14 @@ import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-
 
 export class TabNotificationsComponent  implements OnInit, OnDestroy {
 
+  breakpoints = [0, 0.20, 0.40, 0.50, 0.80, 1];
   cct!: string;
+  initialBreakpoint = 0.80;
   isLoading = false;
   studentGroups: StudentGroup[] = [];
   studentsWithGroup: Student[] = [];
   private subscriptions: Subscription[] = [];
+
 
   constructor(
     private cctStorageService: CctStorageService,

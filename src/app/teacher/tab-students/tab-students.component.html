@@ -32,6 +32,14 @@
     <ion-list>
     @for(filteredStudent of filteredStudents; track filteredStudent.id) {
       <ion-item-sliding class="sliding-item-card" #studentSlidingItem>
+        <ion-item-options side="start">
+          <ion-item-option
+            color="danger"
+            id="delete-{{ filteredStudent.id }}"
+          >
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
         <ion-item class="custom-item">
           <ion-label>
             <h2>{{ filteredStudent.nombreCompleto }}</h2>
@@ -45,12 +53,6 @@
             id="update-{{ filteredStudent.id }}"
           >
             <ion-icon slot="icon-only" name="create"></ion-icon>
-          </ion-item-option>
-          <ion-item-option
-            color="danger"
-            id="delete-{{ filteredStudent.id }}"
-          >
-            <ion-icon slot="icon-only" name="trash"></ion-icon>
           </ion-item-option>
           <ion-action-sheet
             trigger="delete-{{ filteredStudent.id }}"

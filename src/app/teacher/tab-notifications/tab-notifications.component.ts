@@ -1,4 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 
 import {
   IonAccordion,
@@ -6,6 +12,8 @@ import {
   IonButton,
   IonButtons,
   IonContent,
+  IonDatetime,
+  IonDatetimeButton,
   IonHeader,
   IonIcon,
   IonItem,
@@ -13,6 +21,8 @@ import {
   IonItemOptions,
   IonItemSliding,
   IonLabel,
+  IonList,
+  IonListHeader,
   IonModal,
   IonProgressBar,
   IonTitle,
@@ -35,6 +45,8 @@ import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-
     IonButton,
     IonButtons,
     IonContent,
+    IonDatetime,
+    IonDatetimeButton,
     IonHeader,
     IonIcon,
     IonItem,
@@ -42,6 +54,8 @@ import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-
     IonItemOptions,
     IonItemSliding,
     IonLabel,
+    IonList,
+    IonListHeader,
     IonModal,
     IonProgressBar,
     IonTitle,
@@ -51,14 +65,31 @@ import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-
 
 export class TabNotificationsComponent  implements OnInit, OnDestroy {
 
-  breakpoints = [0, 0.20, 0.40, 0.50, 0.80, 1];
+  @ViewChildren(IonModal) modals!: QueryList<IonModal>;
+
+  breakpoints = [0, 1];
   cct!: string;
-  initialBreakpoint = 0.80;
+  initialBreakpoint = 1;
   isLoading = false;
+  selectedDate!: string | null;
   studentGroups: StudentGroup[] = [];
   studentsWithGroup: Student[] = [];
   private subscriptions: Subscription[] = [];
 
+  dateFormatOptions = {
+    date: {
+      weekday: 'short',
+      month: 'long',
+      day: '2-digit',
+      year: 'numeric'
+    }
+  };
+
+  isWeekday = (dateString: string) => {
+    const date = new Date(dateString);
+    const utcDay = date.getUTCDay();
+    return utcDay !== 0 && utcDay !== 6;
+  };
 
   constructor(
     private cctStorageService: CctStorageService,
@@ -72,12 +103,51 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
 
     this.isLoading = true;
 
+    this.resetDate();
     this.loadSchoolGroups();
     this.loadStudents();
   }
 
   ngOnDestroy() {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  closeModal(triggerId: string | undefined) {
+    if(!triggerId) {
+      return;
+    }
+
+    const modal = this.modals.find(m => m.trigger === triggerId);
+
+    if(!modal) {
+      return;
+    }
+
+    try {
+      modal.dismiss();
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
+  formatTimestampToISO(timestamp: number) {
+    const date = new Date(timestamp);
+
+    const dateFormatter = new Intl.DateTimeFormat('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+      timeZone: 'America/Belize'
+    });
+
+    let formattedDate = dateFormatter.format(date);
+    formattedDate = formattedDate.replace(', ', 'T').replace(/ /g, '');
+
+    return formattedDate;
   }
 
   loadSchoolGroups() {
@@ -120,15 +190,29 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
   }
 
   onAddAbsence(student: Student) {
-    console.log('onAddAbsence', student);
+
+
+    this.closeModal('absence-' + student.id);
+    console.log('selectedDate', this.selectedDate)
+    this.resetDate();
   }
 
-  onAddHomework(student: Student) {
-    console.log('onAddHomework', student);
+  onAddNoncompliance(student: Student) {
+    console.log('onAddNoncompliance', student);
+    this.closeModal('noncompliance-' + student.id);
   }
 
   onAddMisconduct(student: Student) {
     console.log('onAddMisconduct', student);
+    this.closeModal('misconduct-' + student.id);
+  }
+
+  async onModalDismiss(slidingItem: IonItemSliding) {
+    await slidingItem.close();
+  }
+
+  onSelectedDate(event: CustomEvent) {
+    this.selectedDate = event.detail.value;
   }
 
   studentsListByGroup(groupGid: string) {
@@ -142,8 +226,8 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
 
     return students;
   }
-}
 
-// onAddStudent(event: MouseEvent) {
-//   event.stopPropagation();
-// }
+  resetDate() {
+    this.selectedDate = this.formatTimestampToISO(Date.now());
+  }
+}

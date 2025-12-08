@@ -69,7 +69,7 @@
        trigger="update-{{ filteredStudent.id }}"
        [initialBreakpoint]="initialBreakpoint"
        [breakpoints]="breakpoints"
-       (didDismiss)="onModalDismiss(studentSlidingItem)"
+       (willDismiss)="onModalDismiss(studentSlidingItem)"
        (willPresent)="loadStudentData(filteredStudent)"
        #updateStudentModal
       >

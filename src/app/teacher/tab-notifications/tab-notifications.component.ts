@@ -11,6 +11,7 @@ import {
   IonAccordionGroup,
   IonButton,
   IonButtons,
+  IonCheckbox,
   IonContent,
   IonDatetime,
   IonDatetimeButton,
@@ -24,8 +25,11 @@ import {
   IonList,
   IonListHeader,
   IonModal,
+  IonNote,
   IonProgressBar,
+  IonTextarea,
   IonTitle,
+  IonToggle,
   IonToolbar,
 } from "@ionic/angular/standalone";
 
@@ -44,6 +48,7 @@ import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-
     IonAccordionGroup,
     IonButton,
     IonButtons,
+    IonCheckbox,
     IonContent,
     IonDatetime,
     IonDatetimeButton,
@@ -57,8 +62,11 @@ import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-
     IonList,
     IonListHeader,
     IonModal,
+    IonNote,
     IonProgressBar,
+    IonTextarea,
     IonTitle,
+    IonToggle,
     IonToolbar,
   ]
 })
@@ -66,15 +74,32 @@ import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-
 export class TabNotificationsComponent  implements OnInit, OnDestroy {
 
   @ViewChildren(IonModal) modals!: QueryList<IonModal>;
+  @ViewChildren(IonCheckbox) checkboxes!: QueryList<IonCheckbox>;
 
   breakpoints = [0, 1];
   cct!: string;
   initialBreakpoint = 1;
+  isAbsenceButtonDisabled = false;
   isLoading = false;
   selectedDate!: string | null;
+  selectedSubjects: string[] = [];
+  studentDidntShowUp = true;
   studentGroups: StudentGroup[] = [];
   studentsWithGroup: Student[] = [];
+  teacherComments = '';
   private subscriptions: Subscription[] = [];
+
+  // Temporal
+  subjects = [
+    { nombre: 'Matemáticas', selected: false },
+    { nombre: 'Español', selected: false },
+    { nombre: 'Ciencias Naturales', selected: false },
+    { nombre: 'Historia', selected: false },
+    { nombre: 'Geografía', selected: false },
+    { nombre: 'Inglés', selected: false },
+    { nombre: 'Educación Física', selected: false },
+    { nombre: 'Arte', selected: false }
+  ];
 
   dateFormatOptions = {
     date: {
@@ -189,30 +214,74 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+
   onAddAbsence(student: Student) {
 
+    const notification = {
+      fecha: this.selectedDate,
+      materias: this.selectedSubjects,
+      nombreCompleto: student.nombreCompleto,
+      observaciones: this.teacherComments,
+      tipo: 'Inasistencia',
+    };
 
+    console.log('Notification:', notification);
     this.closeModal('absence-' + student.id);
-    console.log('selectedDate', this.selectedDate)
-    this.resetDate();
   }
 
   onAddNoncompliance(student: Student) {
-    console.log('onAddNoncompliance', student);
     this.closeModal('noncompliance-' + student.id);
   }
 
   onAddMisconduct(student: Student) {
-    console.log('onAddMisconduct', student);
     this.closeModal('misconduct-' + student.id);
+  }
+
+  onCommentsChange(event: CustomEvent) {
+    this.teacherComments = event.detail.value;
   }
 
   async onModalDismiss(slidingItem: IonItemSliding) {
     await slidingItem.close();
+    this.resetDate();
+    this.studentDidntShowUp = true;
+    this.teacherComments = '';
+    this.selectedSubjects = [];
   }
 
-  onSelectedDate(event: CustomEvent) {
+  onDatetimePickerChange(event: CustomEvent) {
     this.selectedDate = event.detail.value;
+  }
+
+  onSubjectChange(subject: any) {
+    subject.selected = !subject.selected;
+
+    this.selectedSubjects = this.subjects
+    .filter(m => m.selected)
+    .map(m => m.nombre);
+
+    if(!this.studentDidntShowUp) {
+      if(this.selectedSubjects.length > 0) {
+        this.isAbsenceButtonDisabled = false;
+      } else {
+        this.isAbsenceButtonDisabled = true;
+      }
+    }
+  }
+
+  onStudentDidntShowUpChange() {
+    this.studentDidntShowUp = !this.studentDidntShowUp;
+
+    if(!this.studentDidntShowUp && this.selectedSubjects.length === 0) {
+      this.isAbsenceButtonDisabled = true;
+    }
+
+    if(this.studentDidntShowUp) {
+      this.isAbsenceButtonDisabled = false;
+      this.selectedSubjects = [];
+      this.subjects.forEach(s => s.selected = false);
+      this.checkboxes.forEach(c => c.checked = false);
+    }
   }
 
   studentsListByGroup(groupGid: string) {

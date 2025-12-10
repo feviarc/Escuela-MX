@@ -15,7 +15,7 @@
   }
   <ion-accordion-group expand="inset">
     @for(group of studentGroups; track group.gid) {
-      <ion-accordion value="{{ group.grado }}{{ group.letra }}" toggleIconSlot="start">
+      <ion-accordion value="{{ group.grado }}{{ group.letra }}" toggleIconSlot="end">
         <ion-item slot="header" color="light">
           <ion-label>Grupo {{ group.grado }}° "{{ group.letra }}"</ion-label>
         </ion-item>
@@ -76,49 +76,88 @@
                       <ion-title>Inasistencia</ion-title>
                       <ion-buttons slot="end">
                         <ion-button
+                         [disabled]="isAbsenceButtonDisabled"
                          [strong]="true"
                          (click)="onAddAbsence(student)"
                         >
-                          Agregar
+                          Notificar
                         </ion-button>
                       </ion-buttons>
                     </ion-toolbar>
                   </ion-header>
                   <ion-content class="ion-padding" color="light">
-                    <form>
-                      <ion-list-header>
-                        {{ student.nombreCompleto }}
-                      </ion-list-header>
-                      <ion-list [inset]="true">
-
-                        <ion-item>
-                          <p>Elige la fecha:</p>
-                        </ion-item>
-                        <ion-item class="ion-padding">
-                          <ion-datetime-button
-                           class="date-button__color--primary"
-                           datetime="datetime"
+                    <ion-list-header>
+                      {{ student.nombreCompleto }}
+                    </ion-list-header>
+                    <ion-list [inset]="true">
+                      <ion-item lines="none">
+                        <p>Presiona el botón para seleccionar una fecha anterior:</p>
+                      </ion-item>
+                      <ion-item class="ion-padding">
+                        <ion-datetime-button
+                          class="date-button__color--primary"
+                          datetime="datetime"
+                        >
+                        </ion-datetime-button>
+                        <ion-modal [keepContentsMounted]="true">
+                          <ng-template>
+                            <ion-datetime
+                              cancel-text="Cancelar"
+                              done-text="Seleccionar"
+                              id="datetime"
+                              locale="es-ES"
+                              presentation="date"
+                              [formatOptions]="dateFormatOptions"
+                              [isDateEnabled]="isWeekday"
+                              [showDefaultButtons]="true"
+                              (ionChange)="onDatetimePickerChange($event)"
+                              #datetimePicker
+                            ></ion-datetime>
+                          </ng-template>
+                        </ion-modal>
+                      </ion-item>
+                    </ion-list>
+                    <ion-list [inset]="true">
+                      <ion-item>
+                        <ion-toggle
+                         [checked]="studentDidntShowUp"
+                         (ionChange)="onStudentDidntShowUpChange()"
+                        >
+                          <ion-label>No asistió a la escuela.</ion-label>
+                        </ion-toggle>
+                      </ion-item>
+                    </ion-list>
+                    <ion-list [inset]="true">
+                      <ion-item>
+                        <ion-textarea
+                         label="Observaciones:"
+                         labelPlacement="floating"
+                         placeholder="Escribe aquí..."
+                         [autoGrow]="true"
+                         [clearOnEdit]="true"
+                         [maxlength]="200"
+                         (ionChange)="onCommentsChange($event)"
+                        >
+                        </ion-textarea>
+                      </ion-item>
+                    </ion-list>
+                    <ion-list-header>
+                      <ion-label>Inasistencia Parcial</ion-label>
+                    </ion-list-header>
+                    <ion-note>No se presento a una o más materias:</ion-note>
+                    <ion-list [inset]="true">
+                      @for(subject of subjects; track subject.nombre) {
+                        <ion-item lines="full">
+                          <ion-checkbox
+                           justify="space-between"
+                           [disabled]="studentDidntShowUp"
+                           (ionChange)="onSubjectChange(subject)"
                           >
-                          </ion-datetime-button>
-                          <ion-modal [keepContentsMounted]="true">
-                            <ng-template>
-                              <ion-datetime
-                               cancel-text="Cancelar"
-                               done-text="Seleccionar"
-                               id="datetime"
-                               locale="es-ES"
-                               presentation="date"
-                               [formatOptions]="dateFormatOptions"
-                               [isDateEnabled]="isWeekday"
-                               [showDefaultButtons]="true"
-                               (ionChange)="onSelectedDate($event)"
-                               #datetimePicker
-                              ></ion-datetime>
-                            </ng-template>
-                          </ion-modal>
+                            {{ subject.nombre }}
+                          </ion-checkbox>
                         </ion-item>
-                      </ion-list>
-                    </form>
+                      }
+                    </ion-list>
                   </ion-content>
                 </ng-template>
               </ion-modal>
@@ -147,7 +186,7 @@
                          [strong]="true"
                          (click)="onAddNoncompliance(student)"
                         >
-                          Agregar
+                          Notificar
                         </ion-button>
                       </ion-buttons>
                     </ion-toolbar>
@@ -179,7 +218,7 @@
                          [strong]="true"
                          (click)="onAddMisconduct(student)"
                         >
-                          Agregar
+                          Notificar
                         </ion-button>
                       </ion-buttons>
                     </ion-toolbar>

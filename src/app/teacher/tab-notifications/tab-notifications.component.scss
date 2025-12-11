@@ -3,6 +3,10 @@ ion-accordion ion-label {
   font-weight: 400;
 }
 
+ion-item p {
+  color: #6a6a6a;
+}
+
 ion-label p {
   text-align: center;
   padding: 1rem;
@@ -10,6 +14,10 @@ ion-label p {
 
 ion-note {
   margin-left: 1rem;
+}
+
+ion-label.margin-top--none {
+  margin-top: 0;
 }
 
 .date-button__color--primary {

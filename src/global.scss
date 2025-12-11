@@ -53,6 +53,11 @@ ion-modal ion-title {
   text-align: center;
 }
 
+ion-textarea {
+  min-height: 100px;
+  max-height: 200px;
+}
+
 .center-box {
   display: flex;
   justify-content: center;

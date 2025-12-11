@@ -218,11 +218,11 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
   onAddAbsence(student: Student) {
 
     const notification = {
-      fecha: this.selectedDate,
-      materias: this.selectedSubjects,
-      nombreCompleto: student.nombreCompleto,
-      observaciones: this.teacherComments,
       tipo: 'Inasistencia',
+      nombreCompleto: student.nombreCompleto,
+      fecha: this.selectedDate,
+      observaciones: this.teacherComments,
+      materias: this.selectedSubjects,
     };
 
     console.log('Notification:', notification);
@@ -230,6 +230,14 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
   }
 
   onAddNoncompliance(student: Student) {
+    const notification = {
+      tipo: 'Incumplimiento',
+      nombreCompleto: student.nombreCompleto,
+      observaciones: this.teacherComments,
+      materias: this.selectedSubjects,
+    };
+
+    console.log('Notification:', notification);
     this.closeModal('noncompliance-' + student.id);
   }
 
@@ -243,10 +251,14 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
 
   async onModalDismiss(slidingItem: IonItemSliding) {
     await slidingItem.close();
+
     this.resetDate();
+    this.isAbsenceButtonDisabled = false;
     this.studentDidntShowUp = true;
+
     this.teacherComments = '';
     this.selectedSubjects = [];
+    this.subjects.forEach(s => s.selected = false);
   }
 
   onDatetimePickerChange(event: CustomEvent) {
@@ -260,6 +272,12 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     .filter(m => m.selected)
     .map(m => m.nombre);
 
+    console.log('selectedSubjects.length', this.selectedSubjects.length);
+    console.log('selectedSubjects', this.selectedSubjects);
+    console.log('subjects', this.subjects);
+
+
+    // Validar la ausencia a la escuela
     if(!this.studentDidntShowUp) {
       if(this.selectedSubjects.length > 0) {
         this.isAbsenceButtonDisabled = false;

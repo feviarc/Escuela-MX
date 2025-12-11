@@ -242,6 +242,14 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
   }
 
   onAddMisconduct(student: Student) {
+    const notification = {
+      tipo: 'Indisciplina',
+      nombreCompleto: student.nombreCompleto,
+      observaciones: this.teacherComments,
+      materias: this.selectedSubjects,
+    };
+
+    console.log('Notification:', notification);
     this.closeModal('misconduct-' + student.id);
   }
 

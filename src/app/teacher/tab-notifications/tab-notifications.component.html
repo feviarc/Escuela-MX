@@ -260,6 +260,7 @@
                       <ion-title>Indisciplina</ion-title>
                       <ion-buttons slot="end">
                         <ion-button
+                         [disabled]="teacherComments === ''"
                          [strong]="true"
                          (click)="onAddMisconduct(student)"
                         >
@@ -268,6 +269,51 @@
                       </ion-buttons>
                     </ion-toolbar>
                   </ion-header>
+                  <ion-content class="ion-padding" color="light">
+                    <ion-list-header>
+                      {{ student.nombreCompleto }}
+                    </ion-list-header>
+                    <ion-list-header>
+                      <ion-label>Comportamiento inapropiado.</ion-label>
+                    </ion-list-header>
+                    <ion-note>Anota las observaciones correspondientes</ion-note>
+                    <br>
+                    <ion-note>respecto al mal comportamiento o uso</ion-note>
+                    <br>
+                    <ion-note>de lenguaje no apropiado.</ion-note>
+                    <ion-list [inset]="true">
+                      <ion-item>
+                        <ion-textarea
+                         label="Observaciones:"
+                         labelPlacement="floating"
+                         placeholder="Escribe aquí..."
+                         rows="5"
+                         [autoGrow]="true"
+                         [clearOnEdit]="true"
+                         [maxlength]="200"
+                         (ionInput)="onCommentsChange($event)"
+                        >
+                        </ion-textarea>
+                      </ion-item>
+                    </ion-list>
+                    <ion-note>Selecciona las materias en las cuales el</ion-note>
+                    <br>
+                    <ion-note>estudiante ha presentado incidentes</ion-note>
+                    <br>
+                    <ion-note>de indisciplina.</ion-note>
+                    <ion-list [inset]="true">
+                      @for(subject of subjects; track subject.nombre) {
+                        <ion-item lines="full">
+                          <ion-checkbox
+                           justify="space-between"
+                           (ionChange)="onSubjectChange(subject)"
+                          >
+                            {{ subject.nombre }}
+                          </ion-checkbox>
+                        </ion-item>
+                      }
+                    </ion-list>
+                  </ion-content>
                 </ng-template>
               </ion-modal>
             }

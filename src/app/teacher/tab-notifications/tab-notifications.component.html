@@ -28,6 +28,14 @@
           @else {
             @for(student of studentsListByGroup(group.gid); track student.id) {
               <ion-item-sliding #studentSlidingItem>
+                <ion-item-options side="start">
+                  <ion-item-option
+                   color="warning"
+                   id="sent-{{ student.id }}"
+                  >
+                    <ion-icon slot="icon-only" name="notifications"></ion-icon>
+                  </ion-item-option>
+                </ion-item-options>
                 <ion-item>
                   <ion-label>
                     <h2>{{ student.nombreCompleto }}</h2>
@@ -80,7 +88,7 @@
                          [strong]="true"
                          (click)="onAddAbsence(student)"
                         >
-                          Notificar
+                          <ion-icon slot="icon-only" name="send"></ion-icon>
                         </ion-button>
                       </ion-buttons>
                     </ion-toolbar>
@@ -188,7 +196,7 @@
                          [strong]="true"
                          (click)="onAddNoncompliance(student)"
                         >
-                          Notificar
+                          <ion-icon slot="icon-only" name="send"></ion-icon>
                         </ion-button>
                       </ion-buttons>
                     </ion-toolbar>
@@ -264,7 +272,7 @@
                          [strong]="true"
                          (click)="onAddMisconduct(student)"
                         >
-                          Notificar
+                          <ion-icon slot="icon-only" name="send"></ion-icon>
                         </ion-button>
                       </ion-buttons>
                     </ion-toolbar>

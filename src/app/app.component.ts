@@ -19,6 +19,7 @@ import {
   personAdd,
   personRemove,
   sad,
+  send,
   school,
   trash,
 } from 'ionicons/icons';
@@ -49,6 +50,7 @@ export class AppComponent {
       personAdd,
       personRemove,
       sad,
+      send,
       school,
       trash,
     });

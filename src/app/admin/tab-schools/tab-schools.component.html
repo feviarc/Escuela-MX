@@ -323,8 +323,8 @@
       <ion-grid class="background--light">
         <ion-row class="ion-align-items-center">
           <!-- Input ocupa todo el espacio disponible -->
-          <ion-col>
-            <ion-list [inset]="true">
+          <ion-col size="10">
+            <ion-list class="margin-bottom--none" [inset]="true">
               <ion-item>
                 <ion-input
                   label="Nueva materia"
@@ -338,7 +338,7 @@
             </ion-list>
           </ion-col>
           <!-- Botón con tamaño automático -->
-          <ion-col size="auto">
+          <ion-col size="2">
             <ion-button
               shape="round"
               color="primary"
@@ -350,6 +350,25 @@
             </ion-button>
           </ion-col>
         </ion-row>
+        <ion-row class="ion-align-items-center">
+          <ion-col size="10">
+            <ion-list class="margin-top--none" [inset]="true">
+              <ion-radio-group value="1" [compareWith]="compareWith" (ionChange)="gradeHandleChange($event)">
+                <ion-item>
+                  <ion-radio value="1" justify="space-between">Primero</ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-radio value="2" justify="space-between">Segundo</ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-radio value="3" justify="space-between">Tercero</ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+          </ion-col>
+          <ion-col>
+          </ion-col>
+        </ion-row>
       </ion-grid>
     </ion-header>
     <ion-content class="ion-padding" color="light">
@@ -359,6 +378,7 @@
         <ion-item-sliding #subjectSlidingItem>
           <ion-item>
             <ion-label>{{ subject.nombre }}</ion-label>
+            <ion-chip>3°</ion-chip>
           </ion-item>
           <ion-item-options side="end">
             <ion-item-option color="danger" (click)="onDeleteSubject(subject)">

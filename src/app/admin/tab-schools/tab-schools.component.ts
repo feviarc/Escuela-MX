@@ -45,8 +45,7 @@ import {
   IonText,
   IonTitle,
   IonToast,
-  IonToolbar,
-} from "@ionic/angular/standalone";
+  IonToolbar, IonRadio, IonRadioGroup } from "@ionic/angular/standalone";
 
 import type { OverlayEventDetail } from '@ionic/core/components';
 import { Observable, of ,Subscription } from 'rxjs';
@@ -60,7 +59,7 @@ import { Subject, SubjectCRUDService } from 'src/app/services/subject-crud.servi
   templateUrl: './tab-schools.component.html',
   styleUrls: ['./tab-schools.component.scss'],
   standalone: true,
-  imports: [IonCol, IonRow, IonGrid,
+  imports: [IonRadioGroup, IonRadio, IonCol, IonRow, IonGrid,
     CommonModule,
     FormsModule,
     IonActionSheet,
@@ -98,22 +97,23 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   breakpoints = [0, 0.20, 0.40, 0.60, 0.80, 1];
   classGrade = '';
   classLetter = '';
-  subjectName = '';
   groups: Group[] = [];
-  initialBreakpoint = 0.80;
+  initialBreakpoint = 1;
   isLoadingData = true;
   isSaveButtonDisabled = false;
   isSpinnerActive = false;
   isToastOpen = false;
   pin = 1111;
+  schoolForm!: FormGroup;
+  schools: School[] = [];
+  selectedGrade = '1';
+  spinnerText = '';
+  subjectName = '';
+  subjects: Subject[] = [];
+  toastMessage = '';
   private groupSubscription?: Subscription;
   private schoolSubscription?: Subscription;
   private subjectSubscription?: Subscription;
-  schoolForm!: FormGroup;
-  schools: School[] = [];
-  subjects: Subject[] = [];
-  spinnerText = '';
-  toastMessage = '';
 
   public actionSheetButtons = [
     {
@@ -315,10 +315,9 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
 
   onAddSubject() {
     const subject = {
-      nombre: this.subjectName.toUpperCase()
+      nombre: this.subjectName.toUpperCase(),
+      grado: this.selectedGrade
     };
-
-    this.subjectName = '';
 
     this.subjectCRUDService.addSubject(subject).subscribe({
       next: id => {
@@ -328,6 +327,8 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
         console.log('Error: ', e);
       }
     });
+
+    this.subjectName = '';
   }
 
   onAddSchool() {
@@ -433,5 +434,15 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   private showToast(message: string) {
     this.toastMessage = message;
     this.isToastOpen = true;
+  }
+
+  compareWith(g1: number, g2: number) {
+    return g1 === g2;
+  }
+
+  gradeHandleChange(event: CustomEvent) {
+    const target = event.target as HTMLInputElement;
+    this.selectedGrade = target.value;
+    console.log('Grade:', this.selectedGrade);
   }
 }

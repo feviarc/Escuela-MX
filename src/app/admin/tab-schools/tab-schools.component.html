@@ -378,7 +378,7 @@
         <ion-item-sliding #subjectSlidingItem>
           <ion-item>
             <ion-label>{{ subject.nombre }}</ion-label>
-            <ion-chip>3°</ion-chip>
+            <ion-chip>{{ subject.grado }}°</ion-chip>
           </ion-item>
           <ion-item-options side="end">
             <ion-item-option color="danger" (click)="onDeleteSubject(subject)">

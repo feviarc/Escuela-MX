@@ -164,6 +164,10 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
 
     this.subjectSubscription = this.subjectCRUDService.subjects$.subscribe({
       next: subjects => {
+        subjects.sort(
+          (a, b) => `${a.nombre}${a.grado}`.localeCompare(`${b.nombre}${b.grado}`)
+        );
+
         this.subjects = subjects;
         console.log('Materias:', subjects);
       },

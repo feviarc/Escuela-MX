@@ -7,8 +7,6 @@ import {
   CollectionReference,
   deleteDoc,
   doc,
-  docData,
-  DocumentReference,
   Firestore,
   getDoc,
   getDocs,
@@ -38,6 +36,7 @@ export interface Subject {
   id?: string;
   nombre: string;
   grado: string;
+  selected?: boolean;
 }
 
 /**

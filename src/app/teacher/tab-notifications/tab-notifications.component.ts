@@ -37,6 +37,7 @@ import { Subscription } from 'rxjs';
 import { CctStorageService } from 'src/app/services/cct-storage.service';
 import { StudentCRUDService, Student } from 'src/app/services/student-crud.service';
 import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-group-crud.service';
+import { SubjectCRUDService, Subject } from 'src/app/services/subject-crud.service';
 
 @Component({
   selector: 'app-teacher-tab-notifications',
@@ -86,20 +87,9 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
   studentDidntShowUp = true;
   studentGroups: StudentGroup[] = [];
   studentsWithGroup: Student[] = [];
+  subjects: Subject[] = [];
   teacherComments = '';
   private subscriptions: Subscription[] = [];
-
-  // Temporal
-  subjects = [
-    { nombre: 'Matemáticas', selected: false },
-    { nombre: 'Español', selected: false },
-    { nombre: 'Ciencias Naturales', selected: false },
-    { nombre: 'Historia', selected: false },
-    { nombre: 'Geografía', selected: false },
-    { nombre: 'Inglés', selected: false },
-    { nombre: 'Educación Física', selected: false },
-    { nombre: 'Arte', selected: false }
-  ];
 
   dateFormatOptions = {
     date: {
@@ -120,6 +110,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     private cctStorageService: CctStorageService,
     private studentCRUDService: StudentCRUDService,
     private studentGroupCRUDService: StudentGroupCRUDService,
+    private subjectCRUDService: SubjectCRUDService,
   ) { }
 
   ngOnInit() {
@@ -130,6 +121,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
 
     this.resetDate();
     this.loadSchoolGroups();
+    this.loadSubjects();
     this.loadStudents();
   }
 
@@ -187,6 +179,24 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     });
 
     this.subscriptions.push(sub);
+  }
+
+  loadSubjects() {
+    this.subjectCRUDService.getSubjectsSnapshot().subscribe({
+      next: (subjects) => {
+        this.subjects = subjects.map(
+          (subject) => ({
+            grado: subject.grado,
+            id: subject.id,
+            nombre: subject.nombre,
+            selected: false
+          })
+        );
+      },
+      error: (error) => {
+        console.log('Error:', error);
+      }
+    });
   }
 
   loadStudents() {
@@ -266,6 +276,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
 
     this.teacherComments = '';
     this.selectedSubjects = [];
+    // Modificar
     this.subjects.forEach(s => s.selected = false);
   }
 
@@ -276,6 +287,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
   onSubjectChange(subject: any) {
     subject.selected = !subject.selected;
 
+    // Modificar
     this.selectedSubjects = this.subjects
     .filter(m => m.selected)
     .map(m => m.nombre);
@@ -305,9 +317,14 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     if(this.studentDidntShowUp) {
       this.isAbsenceButtonDisabled = false;
       this.selectedSubjects = [];
+      // Modificar
       this.subjects.forEach(s => s.selected = false);
       this.checkboxes.forEach(c => c.checked = false);
     }
+  }
+
+  resetDate() {
+    this.selectedDate = this.formatTimestampToISO(Date.now());
   }
 
   studentsListByGroup(groupGid: string) {
@@ -322,7 +339,9 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     return students;
   }
 
-  resetDate() {
-    this.selectedDate = this.formatTimestampToISO(Date.now());
+  subjectsByGrade(grade: string) {
+    return this.subjects.filter(
+      (subject) => subject.grado === grade
+    );
   }
 }

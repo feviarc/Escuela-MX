@@ -28,35 +28,50 @@
           @else {
             @for(student of studentsListByGroup(group.gid); track student.id) {
               <ion-item-sliding #studentSlidingItem>
+
                 <ion-item-options side="start">
                   <ion-item-option
                    color="warning"
                    id="sent-{{ student.id }}"
+                   [disabled]="!student.tid"
                   >
                     <ion-icon slot="icon-only" name="notifications"></ion-icon>
                   </ion-item-option>
                 </ion-item-options>
+
                 <ion-item>
                   <ion-label>
-                    <h2>{{ student.nombreCompleto }}</h2>
+                    <h2>
+                      @if(student.tid){
+                        <span>🟢</span>
+                      }
+                      @else {
+                        <span>🔴</span>
+                      }
+                      {{ student.nombreCompleto }}
+                    </h2>
                   </ion-label>
                 </ion-item>
+
                 <ion-item-options side="end">
                   <ion-item-option
                    color="tertiary"
                    id="absence-{{ student.id }}"
+                   [disabled]="!student.tid"
                   >
                     <ion-icon slot="icon-only" name="calendar-number"></ion-icon>
                   </ion-item-option>
                   <ion-item-option
                    color="primary"
                    id="noncompliance-{{ student.id }}"
+                   [disabled]="!student.tid"
                   >
                     <ion-icon slot="icon-only" name="book"></ion-icon>
                   </ion-item-option>
                   <ion-item-option
                    color="secondary"
                    id="misconduct-{{ student.id }}"
+                   [disabled]="!student.tid"
                   >
                     <ion-icon slot="icon-only" name="sad"></ion-icon>
                   </ion-item-option>
@@ -155,7 +170,7 @@
                     </ion-list-header>
                     <ion-note>No se presento a una o más materias:</ion-note>
                     <ion-list [inset]="true">
-                      @for(subject of subjects; track subject.nombre) {
+                      @for(subject of subjectsByGrade(group.grado); track subject.id) {
                         <ion-item lines="full">
                           <ion-checkbox
                            justify="space-between"
@@ -232,7 +247,7 @@
                     <br>
                     <ion-note>estudiante no realizó la entrega.</ion-note>
                     <ion-list [inset]="true">
-                      @for(subject of subjects; track subject.nombre) {
+                      @for(subject of subjectsByGrade(group.grado); track subject.id) {
                         <ion-item lines="full">
                           <ion-checkbox
                            justify="space-between"
@@ -310,7 +325,7 @@
                     <br>
                     <ion-note>de indisciplina.</ion-note>
                     <ion-list [inset]="true">
-                      @for(subject of subjects; track subject.nombre) {
+                      @for(subject of subjectsByGrade(group.grado); track subject.id) {
                         <ion-item lines="full">
                           <ion-checkbox
                            justify="space-between"
@@ -331,4 +346,3 @@
     }
   </ion-accordion-group>
 </ion-content>
-

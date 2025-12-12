@@ -34,6 +34,7 @@ import {
 } from "@ionic/angular/standalone";
 
 import { Subscription } from 'rxjs';
+import { CaregiverNotificationsCRUDService, NotificationInput } from 'src/app/services/caregiver-notifications-crud.service';
 import { CctStorageService } from 'src/app/services/cct-storage.service';
 import { StudentCRUDService, Student } from 'src/app/services/student-crud.service';
 import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-group-crud.service';
@@ -107,6 +108,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
   };
 
   constructor(
+    private caregiverNotifCRUDService: CaregiverNotificationsCRUDService,
     private cctStorageService: CctStorageService,
     private studentCRUDService: StudentCRUDService,
     private studentGroupCRUDService: StudentGroupCRUDService,
@@ -224,43 +226,58 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  async onAddAbsence(student: Student) {
+    this.closeModal('absence-' + student.id);
 
-  onAddAbsence(student: Student) {
+    if(!student.id || !student.tid) {
+      return;
+    }
 
-    const notification = {
-      tipo: 'Inasistencia',
+    const notification: NotificationInput = {
+      sid: student.id,
       nombreCompleto: student.nombreCompleto,
-      fecha: this.selectedDate,
+      tipo: 'Inasistencia',
+      fecha: this.selectedDate || undefined,
       observaciones: this.teacherComments,
       materias: this.selectedSubjects,
     };
 
-    console.log('Notification:', notification);
-    this.closeModal('absence-' + student.id);
+    await this.caregiverNotifCRUDService.addNotification(student.tid, notification);
   }
 
-  onAddNoncompliance(student: Student) {
-    const notification = {
+  async onAddNoncompliance(student: Student) {
+    this.closeModal('noncompliance-' + student.id);
+
+    if(!student.id || !student.tid) {
+      return;
+    }
+
+    const notification: NotificationInput = {
+      sid: student.id,
       tipo: 'Incumplimiento',
       nombreCompleto: student.nombreCompleto,
       observaciones: this.teacherComments,
       materias: this.selectedSubjects,
     };
-
-    console.log('Notification:', notification);
-    this.closeModal('noncompliance-' + student.id);
+    await this.caregiverNotifCRUDService.addNotification(student.tid, notification);
   }
 
-  onAddMisconduct(student: Student) {
-    const notification = {
+  async onAddMisconduct(student: Student) {
+    this.closeModal('misconduct-' + student.id);
+
+    if(!student.id || !student.tid) {
+      return;
+    }
+
+    const notification: NotificationInput = {
+      sid: student.id,
       tipo: 'Indisciplina',
       nombreCompleto: student.nombreCompleto,
       observaciones: this.teacherComments,
       materias: this.selectedSubjects,
     };
 
-    console.log('Notification:', notification);
-    this.closeModal('misconduct-' + student.id);
+    await this.caregiverNotifCRUDService.addNotification(student.tid, notification);
   }
 
   onCommentsChange(event: CustomEvent) {

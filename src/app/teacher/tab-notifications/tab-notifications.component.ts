@@ -29,6 +29,7 @@ import {
   IonProgressBar,
   IonTextarea,
   IonTitle,
+  IonToast,
   IonToggle,
   IonToolbar,
 } from "@ionic/angular/standalone";
@@ -68,6 +69,7 @@ import { SubjectCRUDService, Subject } from 'src/app/services/subject-crud.servi
     IonProgressBar,
     IonTextarea,
     IonTitle,
+    IonToast,
     IonToggle,
     IonToolbar,
   ]
@@ -83,6 +85,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
   initialBreakpoint = 1;
   isAbsenceButtonDisabled = false;
   isLoading = false;
+  isToastOpen = false;
   selectedDate!: string | null;
   selectedSubjects: string[] = [];
   studentDidntShowUp = true;
@@ -90,6 +93,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
   studentsWithGroup: Student[] = [];
   subjects: Subject[] = [];
   teacherComments = '';
+  toastMessage = '';
   private subscriptions: Subscription[] = [];
 
   dateFormatOptions = {
@@ -243,6 +247,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     };
 
     await this.caregiverNotifCRUDService.addNotification(student.tid, notification);
+    this.showToast('📤 Se ha enviado la notificación de inasistencia.');
   }
 
   async onAddNoncompliance(student: Student) {
@@ -260,6 +265,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
       materias: this.selectedSubjects,
     };
     await this.caregiverNotifCRUDService.addNotification(student.tid, notification);
+    this.showToast('📤 Se ha enviado la notificación de incumplimiento.');
   }
 
   async onAddMisconduct(student: Student) {
@@ -278,6 +284,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     };
 
     await this.caregiverNotifCRUDService.addNotification(student.tid, notification);
+    this.showToast('📤 Se ha enviado la notificación de indisciplina.');
   }
 
   onCommentsChange(event: CustomEvent) {
@@ -342,6 +349,11 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
 
   resetDate() {
     this.selectedDate = this.formatTimestampToISO(Date.now());
+  }
+
+  private showToast(message: string) {
+    this.toastMessage = message;
+    this.isToastOpen = true;
   }
 
   studentsListByGroup(groupGid: string) {

@@ -346,3 +346,12 @@
     }
   </ion-accordion-group>
 </ion-content>
+
+<ion-toast
+ cssClass="page__toast"
+ [message]="toastMessage"
+ [isOpen]="isToastOpen"
+ [duration]="3000"
+ (didDismiss)="isToastOpen = false"
+>
+</ion-toast>

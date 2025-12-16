@@ -4,17 +4,20 @@ h2 {
   font-weight: 500;
 }
 
-ion-chip {
-  --background: #f6e338;
-  --color: #222d3a;
-}
-
 ion-chip strong {
     font-size: 1.2rem;
 }
 
 ion-grid.background--light {
   background-color: #f4f5f8;
+}
+
+ion-list.margin-bottom--none {
+  margin-bottom: 0;
+}
+
+ion-list.margin-top--none {
+  margin-top: 0;
 }
 
 ion-modal.modal-classes__item ion-label{

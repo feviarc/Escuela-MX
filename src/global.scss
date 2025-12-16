@@ -44,8 +44,18 @@
  * Global customized rules
  */
 
+ion-chip {
+  --background: #f6e338;
+  --color: #222d3a;
+}
+
 ion-modal ion-title {
   text-align: center;
+}
+
+ion-textarea {
+  min-height: 100px;
+  max-height: 200px;
 }
 
 .center-box {

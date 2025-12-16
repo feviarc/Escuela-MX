@@ -7,8 +7,6 @@ import {
   CollectionReference,
   deleteDoc,
   doc,
-  docData,
-  DocumentReference,
   Firestore,
   getDoc,
   getDocs,
@@ -37,8 +35,8 @@ import {
 export interface Subject {
   id?: string;
   nombre: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  grado: string;
+  selected?: boolean;
 }
 
 /**
@@ -48,6 +46,7 @@ export interface Subject {
 @Injectable({
   providedIn: 'root'
 })
+
 export class SubjectCRUDService {
 
   private readonly COLLECTION_NAME = 'materias';
@@ -80,13 +79,8 @@ export class SubjectCRUDService {
    * @returns Observable with the created document ID
    */
   addSubject(subject: Omit<Subject, 'id'>): Observable<string> {
-    const subjectWithTimestamps = {
-      ...subject,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
 
-    return from(addDoc(this.subjectsCollection, subjectWithTimestamps)).pipe(
+    return from(addDoc(this.subjectsCollection, subject)).pipe(
       map(docRef => docRef.id),
       tap(id => {
         console.log('Subject added with ID:', id);
@@ -143,44 +137,53 @@ export class SubjectCRUDService {
   }
 
   /**
-   * Get a subject by ID as Observable
-   * Subscribes to real-time changes
-   * @param subjectId - Document ID
-   * @returns Observable with subject data
+   * Get subjects by grade (real-time)
+   * ⚠️ REQUIERE UNSUBSCRIBE: Usa async pipe o unsubscribe en ngOnDestroy
+   * @param grado - Grade level
+   * @returns Observable with array of subjects for the specified grade
    */
-  getSubjectById(subjectId: string): Observable<Subject | null> {
-    const docRef = doc(this.firestore, this.COLLECTION_NAME, subjectId) as DocumentReference;
+  getSubjectsByGrade(grado: string): Observable<Subject[]> {
+    const q = query(
+      this.subjectsCollection,
+      where('grado', '==', grado),
+      orderBy('nombre', 'asc')
+    );
 
-    return docData(docRef, { idField: 'id' }).pipe(
-      map(data => data ? data as Subject : null),
+    return collectionData(q, { idField: 'id' }).pipe(
+      map(subjects => subjects as Subject[]),
       catchError(error => {
-        console.error('Error getting subject by ID:', error);
-        return of(null);
+        console.error('Error getting subjects by grade:', error);
+        return throwError(() => new Error('Could not get subjects by grade'));
       })
     );
   }
 
   /**
-   * Get a subject by ID (one-time snapshot)
-   * @param subjectId - Document ID
-   * @returns Observable with subject data or null
+   * Get subjects by grade (one-time snapshot, not real-time)
+   * @param grado - Grade level
+   * @returns Observable with array of subjects for the specified grade
    */
-  getSubjectByIdSnapshot(subjectId: string): Observable<Subject | null> {
-    const docRef = doc(this.firestore, this.COLLECTION_NAME, subjectId);
+  getSubjectsByGradeSnapshot(grado: string): Observable<Subject[]> {
+    const q = query(
+      this.subjectsCollection,
+      where('grado', '==', grado),
+      orderBy('nombre', 'asc')
+    );
 
-    return from(getDoc(docRef)).pipe(
-      map(docSnap => {
-        if (docSnap.exists()) {
-          return {
-            id: docSnap.id,
-            ...docSnap.data()
-          } as Subject;
-        }
-        return null;
+    return from(getDocs(q)).pipe(
+      map(querySnapshot => {
+        const subjects: Subject[] = [];
+        querySnapshot.forEach(doc => {
+          subjects.push({
+            id: doc.id,
+            ...doc.data()
+          } as Subject);
+        });
+        return subjects;
       }),
       catchError(error => {
-        console.error('Error getting subject by ID:', error);
-        return of(null);
+        console.error('Error getting subjects by grade snapshot:', error);
+        return throwError(() => new Error('Could not get subjects by grade'));
       })
     );
   }

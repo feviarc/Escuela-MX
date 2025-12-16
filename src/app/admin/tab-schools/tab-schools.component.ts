@@ -40,6 +40,8 @@ import {
   IonList,
   IonModal,
   IonProgressBar,
+  IonRadio,
+  IonRadioGroup,
   IonRow,
   IonSpinner,
   IonText,
@@ -51,8 +53,8 @@ import {
 import type { OverlayEventDetail } from '@ionic/core/components';
 import { Observable, of ,Subscription } from 'rxjs';
 import { catchError , map } from 'rxjs/operators';
-import { School, SchoolCRUDService } from 'src/app/services/school-crud.service';
 import { Group, GroupCRUDService } from 'src/app/services/group-crud.service';
+import { School, SchoolCRUDService } from 'src/app/services/school-crud.service';
 import { Subject, SubjectCRUDService } from 'src/app/services/subject-crud.service';
 
 @Component({
@@ -60,16 +62,18 @@ import { Subject, SubjectCRUDService } from 'src/app/services/subject-crud.servi
   templateUrl: './tab-schools.component.html',
   styleUrls: ['./tab-schools.component.scss'],
   standalone: true,
-  imports: [IonCol, IonRow, IonGrid,
+  imports: [
     CommonModule,
     FormsModule,
     IonActionSheet,
     IonButton,
     IonButtons,
     IonChip,
+    IonCol,
     IonContent,
     IonFab,
     IonFabButton,
+    IonGrid,
     IonHeader,
     IonIcon,
     IonInput,
@@ -82,6 +86,9 @@ import { Subject, SubjectCRUDService } from 'src/app/services/subject-crud.servi
     IonList,
     IonModal,
     IonProgressBar,
+    IonRadio,
+    IonRadioGroup,
+    IonRow,
     IonSpinner,
     IonText,
     IonTitle,
@@ -98,22 +105,21 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   breakpoints = [0, 0.20, 0.40, 0.60, 0.80, 1];
   classGrade = '';
   classLetter = '';
-  subjectName = '';
   groups: Group[] = [];
-  initialBreakpoint = 0.80;
+  initialBreakpoint = 1;
   isLoadingData = true;
   isSaveButtonDisabled = false;
   isSpinnerActive = false;
   isToastOpen = false;
   pin = 1111;
-  private groupSubscription?: Subscription;
-  private schoolSubscription?: Subscription;
-  private subjectSubscription?: Subscription;
   schoolForm!: FormGroup;
   schools: School[] = [];
-  subjects: Subject[] = [];
+  selectedGrade = '1';
   spinnerText = '';
+  subjectName = '';
+  subjects: Subject[] = [];
   toastMessage = '';
+  private subscriptions: Subscription[] = [];
 
   public actionSheetButtons = [
     {
@@ -140,7 +146,7 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.schoolSubscription = this.schoolCRUDService.schools$.subscribe({
+    const sub1 = this.schoolCRUDService.schools$.subscribe({
       next: schools => {
         this.schools = schools;
         if(schools.length !== 0){
@@ -152,7 +158,7 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.groupSubscription = this.groupCRUDService.groups$.subscribe({
+    const sub2 = this.groupCRUDService.groups$.subscribe({
       next: groups => {
         this.groups = groups;
         console.log('Grupos: ', groups);
@@ -162,8 +168,12 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.subjectSubscription = this.subjectCRUDService.subjects$.subscribe({
+    const sub3 = this.subjectCRUDService.subjects$.subscribe({
       next: subjects => {
+        subjects.sort(
+          (a, b) => `${a.nombre}${a.grado}`.localeCompare(`${b.nombre}${b.grado}`)
+        );
+
         this.subjects = subjects;
         console.log('Materias:', subjects);
       },
@@ -173,24 +183,14 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
     });
 
     this.initForm();
+
+    this.subscriptions.push(sub1);
+    this.subscriptions.push(sub2);
+    this.subscriptions.push(sub3);
   }
 
   ngOnDestroy(){
-    if(!this.groupSubscription) {
-      return;
-    }
-
-    if(!this.schoolSubscription) {
-      return;
-    }
-
-    if(!this.subjectSubscription) {
-      return;
-    }
-
-    this.groupSubscription.unsubscribe();
-    this.schoolSubscription.unsubscribe();
-    this.subjectSubscription.unsubscribe();
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   get cct() {
@@ -315,10 +315,9 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
 
   onAddSubject() {
     const subject = {
-      nombre: this.subjectName.toUpperCase()
+      nombre: this.subjectName.toUpperCase(),
+      grado: this.selectedGrade
     };
-
-    this.subjectName = '';
 
     this.subjectCRUDService.addSubject(subject).subscribe({
       next: id => {
@@ -328,6 +327,8 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
         console.log('Error: ', e);
       }
     });
+
+    this.subjectName = '';
   }
 
   onAddSchool() {
@@ -433,5 +434,15 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   private showToast(message: string) {
     this.toastMessage = message;
     this.isToastOpen = true;
+  }
+
+  compareWith(g1: number, g2: number) {
+    return g1 === g2;
+  }
+
+  gradeHandleChange(event: CustomEvent) {
+    const target = event.target as HTMLInputElement;
+    this.selectedGrade = target.value;
+    console.log('Grade:', this.selectedGrade);
   }
 }

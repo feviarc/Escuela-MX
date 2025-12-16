@@ -23,13 +23,27 @@
   <ion-content>
     @if(studentGroups.length === 0 && !isLoading) {
       <div class="center-box">
-        <p>No hay grupos registrados todavía.</p>!
+        <p>No hay grupos registrados todavía.</p>
       </div>
     }
     <ion-list>
       @for(group of studentGroups; track group.gid) {
         <ion-item-sliding class="sliding-item-card" #groupSlidingItem>
           <ion-item-options side="start">
+            <ion-item-option
+             color="danger"
+             id="delete-{{ group.gid }}"
+            >
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+          <ion-item class="custom-item">
+            <ion-label>
+              <h2>Grupo {{ group.grado }}° "{{ group.letra }}"</h2>
+            </ion-label>
+            <ion-chip>{{ studentsCounterByGroup?.[group.gid] || 0 }}</ion-chip>
+          </ion-item>
+          <ion-item-options side="end">
             <ion-item-option
              color="primary"
              id="add-student-{{ group.gid }}"
@@ -41,20 +55,6 @@
              id="delete-student-{{ group.gid }}"
             >
               <ion-icon slot="icon-only" name="person-remove"></ion-icon>
-            </ion-item-option>
-          </ion-item-options>
-          <ion-item class="custom-item">
-            <ion-label>
-              <h2>Grupo {{ group.grado }}° "{{ group.letra }}"</h2>
-            </ion-label>
-            <ion-chip>{{ studentsCounterByGroup?.[group.gid] || 0 }}</ion-chip>
-          </ion-item>
-          <ion-item-options side="end">
-            <ion-item-option
-             color="danger"
-             id="delete-{{ group.gid }}"
-            >
-              <ion-icon slot="icon-only" name="trash"></ion-icon>
             </ion-item-option>
           </ion-item-options>
         </ion-item-sliding>
@@ -215,7 +215,7 @@
           <ion-button
            (click)="addGroupModal.dismiss(null, 'cancel')"
           >
-            Cerrar
+            Cancelar
           </ion-button>
         </ion-buttons>
         <ion-title>Grupo</ion-title>
@@ -261,7 +261,7 @@
  cssClass="page__toast"
  [message]="toastMessage"
  [isOpen]="isToastOpen"
- [duration]="5000"
+ [duration]="3000"
  (didDismiss)="isToastOpen = false"
 >
 </ion-toast>

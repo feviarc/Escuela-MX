@@ -12,6 +12,7 @@ import {
   IonButton,
   IonButtons,
   IonCheckbox,
+  IonChip,
   IonContent,
   IonDatetime,
   IonDatetimeButton,
@@ -27,6 +28,7 @@ import {
   IonModal,
   IonNote,
   IonProgressBar,
+  IonText,
   IonTextarea,
   IonTitle,
   IonToast,
@@ -35,7 +37,8 @@ import {
 } from "@ionic/angular/standalone";
 
 import { Subscription } from 'rxjs';
-import { CaregiverNotificationsCRUDService, NotificationInput } from 'src/app/services/caregiver-notifications-crud.service';
+import { DateFormatPipe } from 'src/app/pipes/date-format.pipe';
+import { CaregiverNotificationsCRUDService, CaregiverNotification, NotificationInput } from 'src/app/services/caregiver-notifications-crud.service';
 import { CctStorageService } from 'src/app/services/cct-storage.service';
 import { StudentCRUDService, Student } from 'src/app/services/student-crud.service';
 import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-group-crud.service';
@@ -47,11 +50,13 @@ import { SubjectCRUDService, Subject } from 'src/app/services/subject-crud.servi
   styleUrls: ['./tab-notifications.component.scss'],
   standalone: true,
   imports: [
+    DateFormatPipe,
     IonAccordion,
     IonAccordionGroup,
     IonButton,
     IonButtons,
     IonCheckbox,
+    IonChip,
     IonContent,
     IonDatetime,
     IonDatetimeButton,
@@ -67,6 +72,7 @@ import { SubjectCRUDService, Subject } from 'src/app/services/subject-crud.servi
     IonModal,
     IonNote,
     IonProgressBar,
+    IonText,
     IonTextarea,
     IonTitle,
     IonToast,
@@ -90,6 +96,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
   selectedSubjects: string[] = [];
   studentDidntShowUp = true;
   studentGroups: StudentGroup[] = [];
+  studentNotifications: CaregiverNotification[] = [];
   studentsWithGroup: Student[] = [];
   subjects: Subject[] = [];
   teacherComments = '';
@@ -205,6 +212,22 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     });
   }
 
+  loadStudentNotifications(student: Student) {
+    console.log('Historiald de notifcaciones');
+    if(!student.tid || !student.id) {
+      return;
+    }
+    this.caregiverNotifCRUDService.getNotificationsByStudentIdSnapshot(student.tid, student.id).subscribe({
+      next: (notifications) => {
+        this.studentNotifications = notifications;
+        console.log(this.studentNotifications);
+      },
+      error: (error) => {
+        console.log('Error:', error);
+      }
+    });
+  }
+
   loadStudents() {
     const sub = this.studentCRUDService.getStudentsWithGroupByCCT(this.cct).subscribe({
       next: (students) => {
@@ -300,7 +323,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
 
     this.teacherComments = '';
     this.selectedSubjects = [];
-    // Modificar
+
     this.subjects.forEach(s => s.selected = false);
   }
 
@@ -311,17 +334,10 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
   onSubjectChange(subject: any) {
     subject.selected = !subject.selected;
 
-    // Modificar
     this.selectedSubjects = this.subjects
     .filter(m => m.selected)
     .map(m => m.nombre);
 
-    console.log('selectedSubjects.length', this.selectedSubjects.length);
-    console.log('selectedSubjects', this.selectedSubjects);
-    console.log('subjects', this.subjects);
-
-
-    // Validar la ausencia a la escuela
     if(!this.studentDidntShowUp) {
       if(this.selectedSubjects.length > 0) {
         this.isAbsenceButtonDisabled = false;

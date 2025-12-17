@@ -6,6 +6,8 @@ import {
   book,
   business,
   calendarNumber,
+  call,
+  checkmarkCircle,
   create,
   laptopOutline,
   logoAndroid,
@@ -19,8 +21,8 @@ import {
   personAdd,
   personRemove,
   sad,
-  send,
   school,
+  send,
   trash,
 } from 'ionicons/icons';
 
@@ -37,6 +39,8 @@ export class AppComponent {
       book,
       business,
       calendarNumber,
+      call,
+      checkmarkCircle,
       create,
       laptopOutline,
       logoAndroid,
@@ -50,8 +54,8 @@ export class AppComponent {
       personAdd,
       personRemove,
       sad,
-      send,
       school,
+      send,
       trash,
     });
   }

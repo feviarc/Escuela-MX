@@ -288,6 +288,53 @@ export class StudentCRUDService {
   }
 
   /**
+   * Get students without tutor assigned filtered by CCT (real-time)
+   * ⚠️ REQUIERE UNSUBSCRIBE: Usa async pipe o unsubscribe en ngOnDestroy
+   * @param cct - School CCT
+   * @returns Observable with array of students without tid
+   */
+  getStudentsWithoutTutorByCCT(cct: string): Observable<Student[]> {
+    return this.getStudentsByCCT(cct).pipe(
+      map(students => students.filter(s => !s.tid))
+    );
+  }
+
+  /**
+   * Get students without tutor assigned filtered by CCT (snapshot - one-time read)
+   * ⚠️ NO REQUIERE UNSUBSCRIBE (se completa automáticamente)
+   * @param cct - School CCT
+   * @returns Promise with array of students without tid
+   */
+  async getStudentsWithoutTutorByCCTSnapshot(cct: string): Promise<Student[]> {
+    try {
+      const q = query(
+        this.studentsCollection,
+        where('cct', '==', cct),
+        orderBy('nombre', 'asc')
+      );
+      const querySnapshot = await getDocs(q);
+
+      const students: Student[] = [];
+      querySnapshot.forEach(doc => {
+        const student = {
+          id: doc.id,
+          ...doc.data()
+        } as Student;
+
+        // Filtrar solo estudiantes sin tutor
+        if (!student.tid) {
+          students.push(student);
+        }
+      });
+
+      return students;
+    } catch (error) {
+      console.error('Error getting students without tutor by CCT:', error);
+      throw new Error('Could not get students without tutor');
+    }
+  }
+
+  /**
    * Get students without tutor assigned
    * ⚠️ REQUIERE UNSUBSCRIBE: Usa async pipe o unsubscribe en ngOnDestroy
    * @returns Observable with array of students without tid

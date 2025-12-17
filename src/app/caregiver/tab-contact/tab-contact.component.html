@@ -1,3 +1,35 @@
-<p>
-  tab-contact works!
-</p>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Contacto</ion-title>
+    @if(isLoading) {
+      <ion-progress-bar type="indeterminate" color="warning"></ion-progress-bar>
+    }
+    <ion-buttons slot="end">
+      <ion-button id="open-action-sheet">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+</ion-content>
+
+<ion-action-sheet
+ trigger="open-action-sheet"
+ header="Estás a punto de cerrar sesión"
+ subHeader="¿Deseas continuar?"
+ [buttons]="logoutActionSheetButtons"
+ (didDismiss)="onLogout($event)"
+>
+</ion-action-sheet>
+
+<ion-toast
+ cssClass="page__toast"
+ [message]="toastMessage"
+ [isOpen]="isToastOpen"
+ [duration]="3000"
+ (didDismiss)="isToastOpen = false"
+>
+</ion-toast>

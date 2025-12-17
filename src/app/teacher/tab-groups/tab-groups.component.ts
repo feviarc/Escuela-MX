@@ -412,7 +412,7 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
       return;
     }
 
-    const sub = this.authService.logout().subscribe({
+    this.authService.logout().subscribe({
       next: () => {
         this.router.navigateByUrl('/auth');
       },
@@ -420,8 +420,6 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
         console.log('Error al cerrar sesión: ',  error);
       }
     });
-
-    this.subscriptions.push(sub);
   }
 
   selectStudentCompareWith(s1: Student, s2: Student): boolean {

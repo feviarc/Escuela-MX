@@ -38,10 +38,12 @@ export interface Student {
   id?: string; // Autogenerado por Firestore
   gid?: string; // ID del grupo (opcional, se asigna después)
   tid?: string; // ID del tutor (opcional, se asigna después)
+  validado?: boolean;
   nombre: string; // Requerido en creación
   apellidoPaterno: string;
   apellidoMaterno: string;
   nombreCompleto: string;
+  nombreTutor?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -411,6 +413,16 @@ export class StudentCRUDService {
    */
   async assignTutor(studentId: string, tutorId: string): Promise<void> {
     await this.updateStudent(studentId, { tid: tutorId });
+  }
+
+  /**
+   * Validate notifications for a specific student
+   * @param studentId - Student ID
+   * @param validation - Validation Request
+   * @returns Promise<void>
+   */
+  async validateStudentNotifications(studentId: string, validation: boolean): Promise<void> {
+    await this.updateStudent(studentId, { validado: validation });
   }
 
   /**

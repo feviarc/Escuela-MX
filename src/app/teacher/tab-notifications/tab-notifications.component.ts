@@ -9,6 +9,7 @@ import {
 import {
   IonAccordion,
   IonAccordionGroup,
+  IonActionSheet,
   IonButton,
   IonButtons,
   IonCheckbox,
@@ -36,13 +37,21 @@ import {
   IonToolbar,
 } from "@ionic/angular/standalone";
 
+import { OverlayEventDetail } from '@ionic/core/components';
 import { Subscription } from 'rxjs';
 import { DateFormatPipe } from 'src/app/pipes/date-format.pipe';
-import { CaregiverNotificationsCRUDService, CaregiverNotification, NotificationInput } from 'src/app/services/caregiver-notifications-crud.service';
+
+import {
+  CaregiverNotification,
+  CaregiverNotificationsCRUDService,
+  NotificationInput,
+} from 'src/app/services/caregiver-notifications-crud.service';
+
 import { CctStorageService } from 'src/app/services/cct-storage.service';
 import { StudentCRUDService, Student } from 'src/app/services/student-crud.service';
 import { StudentGroupCRUDService, StudentGroup } from 'src/app/services/student-group-crud.service';
 import { SubjectCRUDService, Subject } from 'src/app/services/subject-crud.service';
+
 
 @Component({
   selector: 'app-teacher-tab-notifications',
@@ -53,6 +62,7 @@ import { SubjectCRUDService, Subject } from 'src/app/services/subject-crud.servi
     DateFormatPipe,
     IonAccordion,
     IonAccordionGroup,
+    IonActionSheet,
     IonButton,
     IonButtons,
     IonCheckbox,
@@ -117,6 +127,23 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     const utcDay = date.getUTCDay();
     return utcDay !== 0 && utcDay !== 6;
   };
+
+  public actionSheetButtons = [
+    {
+      text: 'Permitir',
+      role: 'accept',
+      data: {
+        action: 'accept',
+      }
+    },
+    {
+      text: 'Cancelar',
+      role: 'cancel',
+      data: {
+        action: 'cancel',
+      },
+    },
+  ];
 
   constructor(
     private caregiverNotifCRUDService: CaregiverNotificationsCRUDService,
@@ -357,10 +384,19 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     if(this.studentDidntShowUp) {
       this.isAbsenceButtonDisabled = false;
       this.selectedSubjects = [];
-      // Modificar
       this.subjects.forEach(s => s.selected = false);
       this.checkboxes.forEach(c => c.checked = false);
     }
+  }
+
+  async onValidate(event: CustomEvent<OverlayEventDetail>, studentId: string) {
+    const eventButton = event.detail.data;
+
+    if(!eventButton || eventButton.action === 'cancel') {
+      return;
+    }
+
+    await this.studentCRUDService.validateStudentNotifications(studentId, true);
   }
 
   resetDate() {

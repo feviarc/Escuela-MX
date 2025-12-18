@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Grupos</ion-title>
+    <ion-title>Administrar grupos</ion-title>
     @if(isLoading) {
       <ion-progress-bar type="indeterminate" color="warning"></ion-progress-bar>
     }
@@ -98,11 +98,10 @@
                  #addSearchbar
                 >
                 </ion-searchbar>
-
               </ion-toolbar>
             </ion-header>
             <ion-content>
-               @if(filteredStudentsWithoutGroup.length === 0) {
+              @if(filteredStudentsWithoutGroup.length === 0) {
                 <div class="center-box">
                   <p>{{ tabMessage }}</p>
                 </div>

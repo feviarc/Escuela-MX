@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Notificaciones</ion-title>
+    <ion-title>Enviar notificaciones</ion-title>
     @if(isLoading) {
       <ion-progress-bar type="indeterminate" color="warning"></ion-progress-bar>
     }
@@ -28,12 +28,16 @@
           @else {
             @for(student of studentsListByGroup(group.gid); track student.id) {
               <ion-item-sliding #studentSlidingItem>
-
                 <ion-item>
                   <ion-label>
                     <h2>
                       @if(student.tid){
-                        <span>🟡</span>
+                        @if(student.validado) {
+                          <span>🟢</span>
+                        }
+                        @else {
+                          <span>🟡</span>
+                        }
                       }
                       @else {
                         <span>🔴</span>
@@ -42,61 +46,54 @@
                     </h2>
                   </ion-label>
                 </ion-item>
-
-                <ion-item-options side="start">
-
-                  @if(!student.tid) {
+                @if(student.tid) {
+                  <ion-item-options side="start">
+                    @if(!student.validado) {
+                      <ion-item-option
+                       color="success"
+                       id="validated-{{ student.id }}"
+                      >
+                        <ion-icon slot="icon-only" name="checkmark-circle"></ion-icon>
+                      </ion-item-option>
+                    }
+                    @if(student.validado) {
+                      <ion-item-option
+                       color="warning"
+                       id="history-{{ student.id }}"
+                       [disabled]="!student.tid"
+                      >
+                        <ion-icon slot="icon-only" name="notifications"></ion-icon>
+                      </ion-item-option>
+                    }
+                  </ion-item-options>
+                }
+                @if(student.tid && student.validado) {
+                  <ion-item-options side="end">
                     <ion-item-option
-                     color="success"
-                     id="validated-{{ student.id }}"
+                    color="tertiary"
+                    id="absence-{{ student.id }}"
+                    [disabled]="!student.tid"
                     >
-                      <ion-icon slot="icon-only" name="checkmark-circle"></ion-icon>
+                      <ion-icon slot="icon-only" name="calendar-number"></ion-icon>
                     </ion-item-option>
-                  }
-
-                  <!-- @if(student.tid && student.validated) { -->
-                  @if(student.tid) {
                     <ion-item-option
-                     color="warning"
-                     id="history-{{ student.id }}"
-                     [disabled]="!student.tid"
+                    color="primary"
+                    id="noncompliance-{{ student.id }}"
+                    [disabled]="!student.tid"
                     >
-                      <ion-icon slot="icon-only" name="notifications"></ion-icon>
+                      <ion-icon slot="icon-only" name="book"></ion-icon>
                     </ion-item-option>
-                  }
-                </ion-item-options>
-
-                <!-- @if(student.tid && student.validated) { -->
-                 @if(student.tid) {
-                   <ion-item-options side="end">
-                     <ion-item-option
-                      color="tertiary"
-                      id="absence-{{ student.id }}"
-                      [disabled]="!student.tid"
-                     >
-                       <ion-icon slot="icon-only" name="calendar-number"></ion-icon>
-                     </ion-item-option>
-                     <ion-item-option
-                      color="primary"
-                      id="noncompliance-{{ student.id }}"
-                      [disabled]="!student.tid"
-                     >
-                       <ion-icon slot="icon-only" name="book"></ion-icon>
-                     </ion-item-option>
-                     <ion-item-option
-                      color="secondary"
-                      id="misconduct-{{ student.id }}"
-                      [disabled]="!student.tid"
-                     >
-                       <ion-icon slot="icon-only" name="sad"></ion-icon>
-                     </ion-item-option>
-                   </ion-item-options>
-                 }
-
+                    <ion-item-option
+                    color="secondary"
+                    id="misconduct-{{ student.id }}"
+                    [disabled]="!student.tid"
+                    >
+                      <ion-icon slot="icon-only" name="sad"></ion-icon>
+                    </ion-item-option>
+                  </ion-item-options>
+                }
               </ion-item-sliding>
-
-              <!-- @if(student.tid && student.validated) { -->
-              @if(student.tid) {
+              @if(student.tid && student.validado) {
               <!-- Modal (Faltas) -->
                 <ion-modal
                 trigger="absence-{{ student.id }}"
@@ -418,6 +415,18 @@
                   </ion-content>
                 </ng-template>
                 </ion-modal>
+              }
+              @if(student.tid && !student.validado) {
+                <!-- Action Sheet (Validar tutor) -->
+                <ion-action-sheet
+                 trigger="validated-{{student.id}}"
+                 header="{{student.nombreTutor}}"
+                 subHeader="solicita acceso a las notificaciones del estudiante"
+                 [buttons]="actionSheetButtons"
+                 (didDismiss)="onValidate($event, student.id??'')"
+                 (willDismiss)="studentSlidingItem.close()"
+                >
+                </ion-action-sheet>
               }
             }
           }

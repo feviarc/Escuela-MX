@@ -80,7 +80,7 @@
         >
           <ng-template>
             <ion-header>
-              <ion-toolbar>
+              <ion-toolbar color="primary">
                 <ion-buttons slot="start">
                   <ion-button
                   (click)="addStudentsModal.dismiss(null, 'cancel')"
@@ -90,7 +90,7 @@
                 </ion-buttons>
                 <ion-title>Agregar a {{ group.grado }}° "{{ group.letra }}"</ion-title>
               </ion-toolbar>
-              <ion-toolbar>
+              <ion-toolbar color="primary">
                 <ion-searchbar
                  placeholder="Buscar..."
                  [debounce]="500"
@@ -117,7 +117,7 @@
               </ion-list>
             </ion-content>
             <ion-footer>
-              <ion-toolbar>
+              <ion-toolbar color="primary">
                 <ion-button
                  expand="block"
                  [disabled]="!selectedStudent"
@@ -142,7 +142,7 @@
         >
           <ng-template>
             <ion-header>
-              <ion-toolbar>
+              <ion-toolbar color="primary">
                 <ion-buttons slot="start">
                   <ion-button
                   (click)="deleteStudentsModal.dismiss(null, 'cancel')"
@@ -152,7 +152,7 @@
                 </ion-buttons>
                 <ion-title>Eliminar de {{ group.grado }}° "{{ group.letra }}"</ion-title>
               </ion-toolbar>
-              <ion-toolbar>
+              <ion-toolbar color="primary">
                 <ion-searchbar
                  placeholder="Buscar..."
                  [debounce]="500"
@@ -174,7 +174,7 @@
               </ion-list>
             </ion-content>
             <ion-footer>
-              <ion-toolbar>
+              <ion-toolbar color="primary">
                 <ion-button
                  expand="block"
                  [disabled]="!selectedStudent"
@@ -209,7 +209,7 @@
 >
   <ng-template>
     <ion-header>
-      <ion-toolbar>
+      <ion-toolbar color="primary">
         <ion-buttons slot="start">
           <ion-button
            (click)="addGroupModal.dismiss(null, 'cancel')"

@@ -442,7 +442,7 @@ export class StudentCRUDService {
    * @returns Promise<void>
    */
   async removeTutor(studentId: string): Promise<void> {
-    await this.updateStudent(studentId, { tid: undefined, nombreTutor: undefined });
+    await this.updateStudent(studentId, { tid: '', nombreTutor: '' });
   }
 
   /**

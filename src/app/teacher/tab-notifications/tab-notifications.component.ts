@@ -137,6 +137,13 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
       }
     },
     {
+      text: 'Rechazar',
+      role: 'destructive',
+      data: {
+        action: 'reject'
+      }
+    },
+    {
       text: 'Cancelar',
       role: 'cancel',
       data: {
@@ -396,7 +403,11 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
       return;
     }
 
-    await this.studentCRUDService.validateStudentNotifications(studentId, true);
+    if(eventButton.action === 'reject') {
+      await this.studentCRUDService.removeTutor(studentId);
+    } else {
+      await this.studentCRUDService.validateStudentNotifications(studentId, true);
+    }
   }
 
   resetDate() {

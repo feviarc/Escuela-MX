@@ -49,7 +49,11 @@ export class UserProfileService {
 
   async updateUserProfile(uid: string, data: Partial<UserProfile>): Promise<void> {
     const userDocRef = doc(this.firestore, `usuarios/${uid}`);
-    await updateDoc(userDocRef, data);
+    try {
+     await updateDoc(userDocRef, data);
+    } catch(e) {
+      console.log(e)
+    }
   }
 
   getAllUsers(): Observable<UserProfile[]> {

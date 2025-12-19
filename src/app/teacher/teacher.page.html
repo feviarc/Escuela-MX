@@ -35,10 +35,10 @@
       <ion-list [inset]="true">
         <ion-item>
           <ion-input
-          formControlName="escuela"
-          readonly
+           formControlName="escuela"
+           readonly
           >
-        </ion-input>
+          </ion-input>
         </ion-item>
         <ion-item>
           <ion-input
@@ -111,7 +111,7 @@
       <ion-list [inset]="true" class="background--light">
         <ion-button
         expand="block"
-        [disabled]="!form.valid"
+        [disabled]="!form.valid || isSavingData"
         (click)="onUpdateUserProfile()"
         >
           Guardar

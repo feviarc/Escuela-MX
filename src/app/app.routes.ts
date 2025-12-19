@@ -73,7 +73,27 @@ export const routes: Routes = [
     path: 'caregiver-dashboard',
     loadComponent: () => import('./caregiver/caregiver.page').then( m => m.CaregiverPage),
     canActivate: [AuthGuard],
-    data: {expectedRole: 'tutor'}
+    canActivateChild: [AuthGuard],
+    data: {expectedRole: 'tutor'},
+    children: [
+      {
+        path: 'tab-notifications',
+        loadComponent: () => import('./caregiver/tab-notifications/tab-notifications.component').then((m) => m.TabNotificationsComponent)
+      },
+      {
+        path: 'tab-students',
+        loadComponent: () => import('./caregiver/tab-students/tab-students.component').then((m) => m.TabStudentsComponent)
+      },
+      {
+        path: 'tab-contact',
+        loadComponent: () => import('./caregiver/tab-contact/tab-contact.component').then((m) => m.TabContactComponent)
+      },
+      {
+        path: '',
+        redirectTo: '/caregiver-dashboard/tab-notifications',
+        pathMatch: 'full'
+      }
+    ]
   },
   {
     path: '**',

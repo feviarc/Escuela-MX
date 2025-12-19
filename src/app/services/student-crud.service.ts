@@ -38,10 +38,12 @@ export interface Student {
   id?: string; // Autogenerado por Firestore
   gid?: string; // ID del grupo (opcional, se asigna después)
   tid?: string; // ID del tutor (opcional, se asigna después)
+  validado?: boolean;
   nombre: string; // Requerido en creación
   apellidoPaterno: string;
   apellidoMaterno: string;
   nombreCompleto: string;
+  nombreTutor?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -288,6 +290,53 @@ export class StudentCRUDService {
   }
 
   /**
+   * Get students without tutor assigned filtered by CCT (real-time)
+   * ⚠️ REQUIERE UNSUBSCRIBE: Usa async pipe o unsubscribe en ngOnDestroy
+   * @param cct - School CCT
+   * @returns Observable with array of students without tid
+   */
+  getStudentsWithoutTutorByCCT(cct: string): Observable<Student[]> {
+    return this.getStudentsByCCT(cct).pipe(
+      map(students => students.filter(s => !s.tid))
+    );
+  }
+
+  /**
+   * Get students without tutor assigned filtered by CCT (snapshot - one-time read)
+   * ⚠️ NO REQUIERE UNSUBSCRIBE (se completa automáticamente)
+   * @param cct - School CCT
+   * @returns Promise with array of students without tid
+   */
+  async getStudentsWithoutTutorByCCTSnapshot(cct: string): Promise<Student[]> {
+    try {
+      const q = query(
+        this.studentsCollection,
+        where('cct', '==', cct),
+        orderBy('nombre', 'asc')
+      );
+      const querySnapshot = await getDocs(q);
+
+      const students: Student[] = [];
+      querySnapshot.forEach(doc => {
+        const student = {
+          id: doc.id,
+          ...doc.data()
+        } as Student;
+
+        // Filtrar solo estudiantes sin tutor
+        if (!student.tid) {
+          students.push(student);
+        }
+      });
+
+      return students;
+    } catch (error) {
+      console.error('Error getting students without tutor by CCT:', error);
+      throw new Error('Could not get students without tutor');
+    }
+  }
+
+  /**
    * Get students without tutor assigned
    * ⚠️ REQUIERE UNSUBSCRIBE: Usa async pipe o unsubscribe en ngOnDestroy
    * @returns Observable with array of students without tid
@@ -360,10 +409,21 @@ export class StudentCRUDService {
    * Assign a tutor to a student
    * @param studentId - Student ID
    * @param tutorId - Tutor ID
+   * @param tutorName - Tutor Name
    * @returns Promise<void>
    */
-  async assignTutor(studentId: string, tutorId: string): Promise<void> {
-    await this.updateStudent(studentId, { tid: tutorId });
+  async assignTutor(studentId: string, tutorId: string, tutorName: string): Promise<void> {
+    await this.updateStudent(studentId, { tid: tutorId, nombreTutor: tutorName });
+  }
+
+  /**
+   * Validate notifications for a specific student
+   * @param studentId - Student ID
+   * @param validation - Validation Request
+   * @returns Promise<void>
+   */
+  async validateStudentNotifications(studentId: string, validation: boolean): Promise<void> {
+    await this.updateStudent(studentId, { validado: validation });
   }
 
   /**
@@ -382,7 +442,7 @@ export class StudentCRUDService {
    * @returns Promise<void>
    */
   async removeTutor(studentId: string): Promise<void> {
-    await this.updateStudent(studentId, { tid: undefined });
+    await this.updateStudent(studentId, { tid: '', nombreTutor: '' });
   }
 
   /**

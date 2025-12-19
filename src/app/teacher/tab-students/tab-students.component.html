@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Alumnos</ion-title>
+    <ion-title>Administrar alumnos</ion-title>
   </ion-toolbar>
   <ion-toolbar color="primary">
     <ion-searchbar
@@ -67,7 +67,7 @@
       <!-- Modal (Actualizar Estudiante) -->
       <ion-modal
        trigger="update-{{ filteredStudent.id }}"
-       [initialBreakpoint]="initialBreakpoint"
+       [initialBreakpoint]="0.80"
        [breakpoints]="breakpoints"
        (willDismiss)="onModalDismiss(studentSlidingItem)"
        (willPresent)="loadStudentData(filteredStudent)"
@@ -132,6 +132,30 @@
                   </ion-input>
                 </ion-item>
               </ion-list>
+              @if(filteredStudent.validado) {
+                <ion-list-header>
+                  Tutor (Mamá / Papá)
+                </ion-list-header>
+                <ion-note>
+                  Presiona el botón para desvincular la cuenta.
+                </ion-note>
+                <ion-list [inset]="true">
+                  <ion-item lines="none">
+                    <ion-input
+                     label="Nombre:"
+                     labelPlacement="floating"
+                     value=" {{ filteredStudent.nombreTutor }}"
+                     readonly
+                    >
+                    </ion-input>
+                    <ion-button
+                     (click)="onRemoveTutor(filteredStudent.id??'')"
+                    >
+                      Quitar
+                    </ion-button>
+                  </ion-item>
+                </ion-list>
+              }
             </form>
           </ion-content>
         </ng-template>

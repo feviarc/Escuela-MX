@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Notificaciones</ion-title>
+    <ion-title>Enviar notificaciones</ion-title>
     @if(isLoading) {
       <ion-progress-bar type="indeterminate" color="warning"></ion-progress-bar>
     }
@@ -28,20 +28,16 @@
           @else {
             @for(student of studentsListByGroup(group.gid); track student.id) {
               <ion-item-sliding #studentSlidingItem>
-                <ion-item-options side="start">
-                  <ion-item-option
-                   color="warning"
-                   id="history-{{ student.id }}"
-                   [disabled]="!student.tid"
-                  >
-                    <ion-icon slot="icon-only" name="notifications"></ion-icon>
-                  </ion-item-option>
-                </ion-item-options>
                 <ion-item>
                   <ion-label>
                     <h2>
                       @if(student.tid){
-                        <span>🟢</span>
+                        @if(student.validado) {
+                          <span>🟢</span>
+                        }
+                        @else {
+                          <span>🟡</span>
+                        }
                       }
                       @else {
                         <span>🔴</span>
@@ -50,352 +46,388 @@
                     </h2>
                   </ion-label>
                 </ion-item>
-                <ion-item-options side="end">
-                  <ion-item-option
-                   color="tertiary"
-                   id="absence-{{ student.id }}"
-                   [disabled]="!student.tid"
-                  >
-                    <ion-icon slot="icon-only" name="calendar-number"></ion-icon>
-                  </ion-item-option>
-                  <ion-item-option
-                   color="primary"
-                   id="noncompliance-{{ student.id }}"
-                   [disabled]="!student.tid"
-                  >
-                    <ion-icon slot="icon-only" name="book"></ion-icon>
-                  </ion-item-option>
-                  <ion-item-option
-                   color="secondary"
-                   id="misconduct-{{ student.id }}"
-                   [disabled]="!student.tid"
-                  >
-                    <ion-icon slot="icon-only" name="sad"></ion-icon>
-                  </ion-item-option>
-                </ion-item-options>
-              </ion-item-sliding>
-
-              <!-- Modal (Faltas) -->
-              <ion-modal
-               trigger="absence-{{ student.id }}"
-               [initialBreakpoint]="initialBreakpoint"
-               [breakpoints]="breakpoints"
-               (willDismiss)="onModalDismiss(studentSlidingItem)"
-               #addAbsenseModal
-              >
-                <ng-template>
-                  <ion-header>
-                    <ion-toolbar color="primary">
-                      <ion-buttons slot="start">
-                        <ion-button
-                         (click)="closeModal('absence-'+student.id)"
-                        >
-                          Cancelar
-                        </ion-button>
-                      </ion-buttons>
-                      <ion-title>Inasistencia</ion-title>
-                      <ion-buttons slot="end">
-                        <ion-button
-                         [disabled]="isAbsenceButtonDisabled"
-                         [strong]="true"
-                         (click)="onAddAbsence(student)"
-                        >
-                          <ion-icon slot="icon-only" name="send"></ion-icon>
-                        </ion-button>
-                      </ion-buttons>
-                    </ion-toolbar>
-                  </ion-header>
-                  <ion-content class="ion-padding" color="light">
-                    <ion-list-header>
-                      {{ student.nombreCompleto }}
-                    </ion-list-header>
-                    <ion-list [inset]="true">
-                      <ion-item lines="none">
-                        <p>Si la falta fue en una fecha anterior, presiona el siguiente botón para seleccionar el día:</p>
-                      </ion-item>
-                      <ion-item class="ion-padding">
-                        <ion-datetime-button
-                          class="date-button__color--primary"
-                          datetime="datetime"
-                        >
-                        </ion-datetime-button>
-                        <ion-modal [keepContentsMounted]="true">
-                          <ng-template>
-                            <ion-datetime
-                              cancel-text="Cancelar"
-                              done-text="Seleccionar"
-                              id="datetime"
-                              locale="es-ES"
-                              presentation="date"
-                              [formatOptions]="dateFormatOptions"
-                              [isDateEnabled]="isWeekday"
-                              [showDefaultButtons]="true"
-                              (ionChange)="onDatetimePickerChange($event)"
-                              #datetimePicker
-                            ></ion-datetime>
-                          </ng-template>
-                        </ion-modal>
-                      </ion-item>
-                    </ion-list>
-                    <ion-list [inset]="true">
-                      <ion-item>
-                        <ion-toggle
-                         [checked]="studentDidntShowUp"
-                         (ionChange)="onStudentDidntShowUpChange()"
-                        >
-                          <ion-label>No asistió a la escuela</ion-label>
-                        </ion-toggle>
-                      </ion-item>
-                    </ion-list>
-                    <ion-list [inset]="true">
-                      <ion-item>
-                        <ion-textarea
-                         label="Observaciones:"
-                         labelPlacement="floating"
-                         placeholder="Escribe aquí..."
-                         rows="5"
-                         [autoGrow]="true"
-                         [clearOnEdit]="true"
-                         [maxlength]="200"
-                         (ionChange)="onCommentsChange($event)"
-                        >
-                        </ion-textarea>
-                      </ion-item>
-                    </ion-list>
-                    <ion-list-header>
-                      <ion-label class="margin-top--none">Inasistencia Parcial</ion-label>
-                    </ion-list-header>
-                    <ion-note>No se presento a una o más materias:</ion-note>
-                    <ion-list [inset]="true">
-                      @for(subject of subjectsByGrade(group.grado); track subject.id) {
-                        <ion-item lines="full">
-                          <ion-checkbox
-                           justify="space-between"
-                           [disabled]="studentDidntShowUp"
-                           (ionChange)="onSubjectChange(subject)"
-                          >
-                            {{ subject.nombre }}
-                          </ion-checkbox>
-                        </ion-item>
-                      }
-                    </ion-list>
-                  </ion-content>
-                </ng-template>
-              </ion-modal>
-
-              <!-- Modal (Incumplimiento de tareas) -->
-              <ion-modal
-               trigger="noncompliance-{{ student.id }}"
-               [initialBreakpoint]="initialBreakpoint"
-               [breakpoints]="breakpoints"
-               (willDismiss)="onModalDismiss(studentSlidingItem)"
-               #addNoncomplianceModal
-              >
-                <ng-template>
-                  <ion-header>
-                    <ion-toolbar color="primary">
-                      <ion-buttons slot="start">
-                        <ion-button
-                         (click)="closeModal('noncompliance-'+student.id)"
-                        >
-                          Cancelar
-                        </ion-button>
-                      </ion-buttons>
-                      <ion-title>Incumplimiento</ion-title>
-                      <ion-buttons slot="end">
-                        <ion-button
-                         [disabled]="selectedSubjects.length === 0 || teacherComments === ''"
-                         [strong]="true"
-                         (click)="onAddNoncompliance(student)"
-                        >
-                          <ion-icon slot="icon-only" name="send"></ion-icon>
-                        </ion-button>
-                      </ion-buttons>
-                    </ion-toolbar>
-                  </ion-header>
-                  <ion-content class="ion-padding" color="light">
-                    <ion-list-header>
-                      {{ student.nombreCompleto }}
-                    </ion-list-header>
-                    <ion-list-header>
-                      <ion-label>Trabajos no entregados.</ion-label>
-                    </ion-list-header>
-                    <ion-note>Anota las observaciones correspondientes</ion-note>
-                    <br>
-                    <ion-note>respecto al incumplimiento de trabajos</ion-note>
-                    <br>
-                    <ion-note>o tareas.</ion-note>
-                    <ion-list [inset]="true">
-                      <ion-item>
-                        <ion-textarea
-                         label="Observaciones:"
-                         labelPlacement="floating"
-                         placeholder="Escribe aquí..."
-                         rows="5"
-                         [autoGrow]="true"
-                         [clearOnEdit]="true"
-                         [maxlength]="200"
-                         (ionInput)="onCommentsChange($event)"
-                        >
-                        </ion-textarea>
-                      </ion-item>
-                    </ion-list>
-                    <ion-note>Selecciona las materias en las cuales el</ion-note>
-                    <br>
-                    <ion-note>estudiante no realizó la entrega.</ion-note>
-                    <ion-list [inset]="true">
-                      @for(subject of subjectsByGrade(group.grado); track subject.id) {
-                        <ion-item lines="full">
-                          <ion-checkbox
-                           justify="space-between"
-                           (ionChange)="onSubjectChange(subject)"
-                          >
-                            {{ subject.nombre }}
-                          </ion-checkbox>
-                        </ion-item>
-                      }
-                    </ion-list>
-                  </ion-content>
-                </ng-template>
-              </ion-modal>
-
-              <!-- Modal (Indisciplina) -->
-              <ion-modal
-               trigger="misconduct-{{ student.id }}"
-               [initialBreakpoint]="initialBreakpoint"
-               [breakpoints]="breakpoints"
-               (willDismiss)="onModalDismiss(studentSlidingItem)"
-               #addMisconductModal
-              >
-                <ng-template>
-                  <ion-header>
-                    <ion-toolbar color="primary">
-                      <ion-buttons slot="start">
-                        <ion-button
-                         (click)="closeModal('misconduct-'+student.id)"
-                        >
-                          Cancelar
-                        </ion-button>
-                      </ion-buttons>
-                      <ion-title>Indisciplina</ion-title>
-                      <ion-buttons slot="end">
-                        <ion-button
-                         [disabled]="teacherComments === ''"
-                         [strong]="true"
-                         (click)="onAddMisconduct(student)"
-                        >
-                          <ion-icon slot="icon-only" name="send"></ion-icon>
-                        </ion-button>
-                      </ion-buttons>
-                    </ion-toolbar>
-                  </ion-header>
-                  <ion-content class="ion-padding" color="light">
-                    <ion-list-header>
-                      {{ student.nombreCompleto }}
-                    </ion-list-header>
-                    <ion-list-header>
-                      <ion-label>Comportamiento inapropiado.</ion-label>
-                    </ion-list-header>
-                    <ion-note>Anota las observaciones correspondientes</ion-note>
-                    <br>
-                    <ion-note>respecto al mal comportamiento o uso</ion-note>
-                    <br>
-                    <ion-note>de lenguaje no apropiado.</ion-note>
-                    <ion-list [inset]="true">
-                      <ion-item>
-                        <ion-textarea
-                         label="Observaciones:"
-                         labelPlacement="floating"
-                         placeholder="Escribe aquí..."
-                         rows="5"
-                         [autoGrow]="true"
-                         [clearOnEdit]="true"
-                         [maxlength]="200"
-                         (ionInput)="onCommentsChange($event)"
-                        >
-                        </ion-textarea>
-                      </ion-item>
-                    </ion-list>
-                    <ion-note>Selecciona las materias en las cuales el</ion-note>
-                    <br>
-                    <ion-note>estudiante ha presentado incidentes</ion-note>
-                    <br>
-                    <ion-note>de indisciplina.</ion-note>
-                    <ion-list [inset]="true">
-                      @for(subject of subjectsByGrade(group.grado); track subject.id) {
-                        <ion-item lines="full">
-                          <ion-checkbox
-                           justify="space-between"
-                           (ionChange)="onSubjectChange(subject)"
-                          >
-                            {{ subject.nombre }}
-                          </ion-checkbox>
-                        </ion-item>
-                      }
-                    </ion-list>
-                  </ion-content>
-                </ng-template>
-              </ion-modal>
-
-              <!-- Modal (Historial de notificaciones) -->
-              <ion-modal
-               trigger="history-{{ student.id }}"
-               [initialBreakpoint]="1"
-               [breakpoints]="breakpoints"
-               (willDismiss)="onModalDismiss(studentSlidingItem)"
-               (willPresent)="loadStudentNotifications(student)"
-               #viewHistoryModal
-              >
-              <ng-template>
-                <ion-header color="light">
-                  <ion-toolbar color="primary">
-                    <ion-buttons slot="start">
-                      <ion-button (click)="closeModal('history-'+student.id)">
-                        Cerrar
-                      </ion-button>
-                    </ion-buttons>
-                    <ion-title>Historial</ion-title>
-                  </ion-toolbar>
-                  <ion-list-header>
-                    <br>
-                    {{ student.nombreCompleto }}
-                  </ion-list-header>
-                  <br>
-                  @if(studentNotifications.length !== 0) {
-                    <ion-note>Historial de notificaciones enviadas al tutor.</ion-note>
-                  }
-                  @else {
-                    <ion-note>No se han generado notificaciones aún.</ion-note>
-                  }
-                </ion-header>
-                <ion-content class="ion-padding">
-                  <ion-list [inset]="false">
-                    @for(notification of studentNotifications; track notification.id) {
-                      <ion-item lines="full">
-                        <ion-label>
-                          <strong>{{ notification.tipo }}</strong>
-                          @if(notification.fecha) {
-                            <ion-text>Día: {{ notification.fecha | dateFormat:'date' }}</ion-text>
-                            <br>
-                          }
-                          <ion-note color="medium" class="ion-text-wrap margin-left--none">
-                            {{ notification.observaciones }}
-                          </ion-note>
-                          <div class="subjects-container">
-                            @for(materia of notification.materias; track $index) {
-                              <ion-chip color="primary">{{ materia }}</ion-chip>
-                            }
-                          </div>
-                        </ion-label>
-                        <div class="metadata-end-wrapper" slot="end">
-                          <ion-note color="medium">{{ notification.createdAt | dateFormat:'date' }}</ion-note>
-                        </div>
-                      </ion-item>
+                @if(student.tid) {
+                  <ion-item-options side="start">
+                    @if(!student.validado) {
+                      <ion-item-option
+                       color="success"
+                       id="validated-{{ student.id }}"
+                      >
+                        <ion-icon slot="icon-only" name="checkmark-circle"></ion-icon>
+                      </ion-item-option>
                     }
-                  </ion-list>
-                </ion-content>
-              </ng-template>
-              </ion-modal>
+                    @if(student.validado) {
+                      <ion-item-option
+                       color="warning"
+                       id="history-{{ student.id }}"
+                       [disabled]="!student.tid"
+                      >
+                        <ion-icon slot="icon-only" name="notifications"></ion-icon>
+                      </ion-item-option>
+                    }
+                  </ion-item-options>
+                }
+                @if(student.tid && student.validado) {
+                  <ion-item-options side="end">
+                    <ion-item-option
+                    color="tertiary"
+                    id="absence-{{ student.id }}"
+                    [disabled]="!student.tid"
+                    >
+                      <ion-icon slot="icon-only" name="calendar-number"></ion-icon>
+                    </ion-item-option>
+                    <ion-item-option
+                    color="primary"
+                    id="noncompliance-{{ student.id }}"
+                    [disabled]="!student.tid"
+                    >
+                      <ion-icon slot="icon-only" name="book"></ion-icon>
+                    </ion-item-option>
+                    <ion-item-option
+                    color="secondary"
+                    id="misconduct-{{ student.id }}"
+                    [disabled]="!student.tid"
+                    >
+                      <ion-icon slot="icon-only" name="sad"></ion-icon>
+                    </ion-item-option>
+                  </ion-item-options>
+                }
+              </ion-item-sliding>
+              @if(student.tid && student.validado) {
+              <!-- Modal (Faltas) -->
+                <ion-modal
+                trigger="absence-{{ student.id }}"
+                [initialBreakpoint]="initialBreakpoint"
+                [breakpoints]="breakpoints"
+                (willDismiss)="onModalDismiss(studentSlidingItem)"
+                #addAbsenseModal
+                >
+                  <ng-template>
+                    <ion-header>
+                      <ion-toolbar color="primary">
+                        <ion-buttons slot="start">
+                          <ion-button
+                          (click)="closeModal('absence-'+student.id)"
+                          >
+                            Cancelar
+                          </ion-button>
+                        </ion-buttons>
+                        <ion-title>Inasistencia</ion-title>
+                        <ion-buttons slot="end">
+                          <ion-button
+                          [disabled]="isAbsenceButtonDisabled"
+                          [strong]="true"
+                          (click)="onAddAbsence(student)"
+                          >
+                            <ion-icon slot="icon-only" name="send"></ion-icon>
+                          </ion-button>
+                        </ion-buttons>
+                      </ion-toolbar>
+                    </ion-header>
+                    <ion-content class="ion-padding" color="light">
+                      <ion-list-header>
+                        {{ student.nombreCompleto }}
+                      </ion-list-header>
+                      <ion-list [inset]="true">
+                        <ion-item lines="none">
+                          <p>Si la falta fue en una fecha anterior, presiona el siguiente botón para seleccionar el día:</p>
+                        </ion-item>
+                        <ion-item class="ion-padding">
+                          <ion-datetime-button
+                            class="date-button__color--primary"
+                            datetime="datetime"
+                          >
+                          </ion-datetime-button>
+                          <ion-modal [keepContentsMounted]="true">
+                            <ng-template>
+                              <ion-datetime
+                                cancel-text="Cancelar"
+                                done-text="Seleccionar"
+                                id="datetime"
+                                locale="es-ES"
+                                presentation="date"
+                                [formatOptions]="dateFormatOptions"
+                                [isDateEnabled]="isWeekday"
+                                [showDefaultButtons]="true"
+                                (ionChange)="onDatetimePickerChange($event)"
+                                #datetimePicker
+                              ></ion-datetime>
+                            </ng-template>
+                          </ion-modal>
+                        </ion-item>
+                      </ion-list>
+                      <ion-list [inset]="true">
+                        <ion-item>
+                          <ion-toggle
+                          [checked]="studentDidntShowUp"
+                          (ionChange)="onStudentDidntShowUpChange()"
+                          >
+                            <ion-label>No asistió a la escuela</ion-label>
+                          </ion-toggle>
+                        </ion-item>
+                      </ion-list>
+                      <ion-list [inset]="true">
+                        <ion-item>
+                          <ion-textarea
+                          label="Observaciones:"
+                          labelPlacement="floating"
+                          placeholder="Escribe aquí..."
+                          rows="5"
+                          [autoGrow]="true"
+                          [clearOnEdit]="true"
+                          [maxlength]="200"
+                          (ionChange)="onCommentsChange($event)"
+                          >
+                          </ion-textarea>
+                        </ion-item>
+                      </ion-list>
+                      <ion-list-header>
+                        <ion-label class="margin-top--none">Inasistencia Parcial</ion-label>
+                      </ion-list-header>
+                      <ion-note>No se presento a una o más materias:</ion-note>
+                      <ion-list [inset]="true">
+                        @for(subject of subjectsByGrade(group.grado); track subject.id) {
+                          <ion-item lines="full">
+                            <ion-checkbox
+                            justify="space-between"
+                            [disabled]="studentDidntShowUp"
+                            (ionChange)="onSubjectChange(subject)"
+                            >
+                              {{ subject.nombre }}
+                            </ion-checkbox>
+                          </ion-item>
+                        }
+                      </ion-list>
+                    </ion-content>
+                  </ng-template>
+                </ion-modal>
+
+                <!-- Modal (Incumplimiento de tareas) -->
+                <ion-modal
+                trigger="noncompliance-{{ student.id }}"
+                [initialBreakpoint]="initialBreakpoint"
+                [breakpoints]="breakpoints"
+                (willDismiss)="onModalDismiss(studentSlidingItem)"
+                #addNoncomplianceModal
+                >
+                  <ng-template>
+                    <ion-header>
+                      <ion-toolbar color="primary">
+                        <ion-buttons slot="start">
+                          <ion-button
+                          (click)="closeModal('noncompliance-'+student.id)"
+                          >
+                            Cancelar
+                          </ion-button>
+                        </ion-buttons>
+                        <ion-title>Incumplimiento</ion-title>
+                        <ion-buttons slot="end">
+                          <ion-button
+                          [disabled]="selectedSubjects.length === 0 || teacherComments === ''"
+                          [strong]="true"
+                          (click)="onAddNoncompliance(student)"
+                          >
+                            <ion-icon slot="icon-only" name="send"></ion-icon>
+                          </ion-button>
+                        </ion-buttons>
+                      </ion-toolbar>
+                    </ion-header>
+                    <ion-content class="ion-padding" color="light">
+                      <ion-list-header>
+                        {{ student.nombreCompleto }}
+                      </ion-list-header>
+                      <ion-list-header>
+                        <ion-label>Trabajos no entregados.</ion-label>
+                      </ion-list-header>
+                      <ion-note>Anota las observaciones correspondientes</ion-note>
+                      <br>
+                      <ion-note>respecto al incumplimiento de trabajos</ion-note>
+                      <br>
+                      <ion-note>o tareas.</ion-note>
+                      <ion-list [inset]="true">
+                        <ion-item>
+                          <ion-textarea
+                          label="Observaciones:"
+                          labelPlacement="floating"
+                          placeholder="Escribe aquí..."
+                          rows="5"
+                          [autoGrow]="true"
+                          [clearOnEdit]="true"
+                          [maxlength]="200"
+                          (ionInput)="onCommentsChange($event)"
+                          >
+                          </ion-textarea>
+                        </ion-item>
+                      </ion-list>
+                      <ion-note>Selecciona las materias en las cuales el</ion-note>
+                      <br>
+                      <ion-note>estudiante no realizó la entrega.</ion-note>
+                      <ion-list [inset]="true">
+                        @for(subject of subjectsByGrade(group.grado); track subject.id) {
+                          <ion-item lines="full">
+                            <ion-checkbox
+                            justify="space-between"
+                            (ionChange)="onSubjectChange(subject)"
+                            >
+                              {{ subject.nombre }}
+                            </ion-checkbox>
+                          </ion-item>
+                        }
+                      </ion-list>
+                    </ion-content>
+                  </ng-template>
+                </ion-modal>
+
+                <!-- Modal (Indisciplina) -->
+                <ion-modal
+                trigger="misconduct-{{ student.id }}"
+                [initialBreakpoint]="initialBreakpoint"
+                [breakpoints]="breakpoints"
+                (willDismiss)="onModalDismiss(studentSlidingItem)"
+                #addMisconductModal
+                >
+                  <ng-template>
+                    <ion-header>
+                      <ion-toolbar color="primary">
+                        <ion-buttons slot="start">
+                          <ion-button
+                          (click)="closeModal('misconduct-'+student.id)"
+                          >
+                            Cancelar
+                          </ion-button>
+                        </ion-buttons>
+                        <ion-title>Indisciplina</ion-title>
+                        <ion-buttons slot="end">
+                          <ion-button
+                          [disabled]="teacherComments === ''"
+                          [strong]="true"
+                          (click)="onAddMisconduct(student)"
+                          >
+                            <ion-icon slot="icon-only" name="send"></ion-icon>
+                          </ion-button>
+                        </ion-buttons>
+                      </ion-toolbar>
+                    </ion-header>
+                    <ion-content class="ion-padding" color="light">
+                      <ion-list-header>
+                        {{ student.nombreCompleto }}
+                      </ion-list-header>
+                      <ion-list-header>
+                        <ion-label>Comportamiento inapropiado.</ion-label>
+                      </ion-list-header>
+                      <ion-note>Anota las observaciones correspondientes</ion-note>
+                      <br>
+                      <ion-note>respecto al mal comportamiento o uso</ion-note>
+                      <br>
+                      <ion-note>de lenguaje no apropiado.</ion-note>
+                      <ion-list [inset]="true">
+                        <ion-item>
+                          <ion-textarea
+                          label="Observaciones:"
+                          labelPlacement="floating"
+                          placeholder="Escribe aquí..."
+                          rows="5"
+                          [autoGrow]="true"
+                          [clearOnEdit]="true"
+                          [maxlength]="200"
+                          (ionInput)="onCommentsChange($event)"
+                          >
+                          </ion-textarea>
+                        </ion-item>
+                      </ion-list>
+                      <ion-note>Selecciona las materias en las cuales el</ion-note>
+                      <br>
+                      <ion-note>estudiante ha presentado incidentes</ion-note>
+                      <br>
+                      <ion-note>de indisciplina.</ion-note>
+                      <ion-list [inset]="true">
+                        @for(subject of subjectsByGrade(group.grado); track subject.id) {
+                          <ion-item lines="full">
+                            <ion-checkbox
+                            justify="space-between"
+                            (ionChange)="onSubjectChange(subject)"
+                            >
+                              {{ subject.nombre }}
+                            </ion-checkbox>
+                          </ion-item>
+                        }
+                      </ion-list>
+                    </ion-content>
+                  </ng-template>
+                </ion-modal>
+
+                <!-- Modal (Historial de notificaciones) -->
+                <ion-modal
+                trigger="history-{{ student.id }}"
+                [initialBreakpoint]="1"
+                [breakpoints]="breakpoints"
+                (willDismiss)="onModalDismiss(studentSlidingItem)"
+                (willPresent)="loadStudentNotifications(student)"
+                #viewHistoryModal
+                >
+                <ng-template>
+                  <ion-header color="light">
+                    <ion-toolbar color="primary">
+                      <ion-buttons slot="start">
+                        <ion-button (click)="closeModal('history-'+student.id)">
+                          Cerrar
+                        </ion-button>
+                      </ion-buttons>
+                      <ion-title>Historial</ion-title>
+                    </ion-toolbar>
+                    <ion-list-header>
+                      <br>
+                      {{ student.nombreCompleto }}
+                    </ion-list-header>
+                    <br>
+                    @if(studentNotifications.length !== 0) {
+                      <ion-note>Historial de notificaciones enviadas al tutor.</ion-note>
+                    }
+                    @else {
+                      <ion-note>No se han generado notificaciones aún.</ion-note>
+                    }
+                  </ion-header>
+                  <ion-content class="ion-padding">
+                    <ion-list [inset]="false">
+                      @for(notification of studentNotifications; track notification.id) {
+                        <ion-item lines="full">
+                          <ion-label>
+                            <strong>{{ notification.tipo }}</strong>
+                            @if(notification.fecha) {
+                              <ion-text>Día: {{ notification.fecha | dateFormat:'date' }}</ion-text>
+                              <br>
+                            }
+                            <ion-note color="medium" class="ion-text-wrap margin-left--none">
+                              {{ notification.observaciones }}
+                            </ion-note>
+                            <div class="subjects-container">
+                              @for(materia of notification.materias; track $index) {
+                                <ion-chip color="primary">{{ materia }}</ion-chip>
+                              }
+                            </div>
+                          </ion-label>
+                          <div class="metadata-end-wrapper" slot="end">
+                            <ion-note color="medium">{{ notification.createdAt | dateFormat:'date' }}</ion-note>
+                          </div>
+                        </ion-item>
+                      }
+                    </ion-list>
+                  </ion-content>
+                </ng-template>
+                </ion-modal>
+              }
+              @if(student.tid && !student.validado) {
+                <!-- Action Sheet (Validar tutor) -->
+                <ion-action-sheet
+                 trigger="validated-{{student.id}}"
+                 header="{{student.nombreTutor}}"
+                 subHeader="solicita acceso a las notificaciones del estudiante"
+                 [buttons]="actionSheetButtons"
+                 (didDismiss)="onValidate($event, student.id??'')"
+                 (willDismiss)="studentSlidingItem.close()"
+                >
+                </ion-action-sheet>
+              }
             }
           }
         </div>

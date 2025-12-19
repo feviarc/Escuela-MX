@@ -69,8 +69,8 @@ export class TeacherPage implements OnInit {
 
   cct = '';
   isLoading = true;
+  isSavingData = false;
   isUserActive = false;
-  school?: School | null;
   user: User | null = null;
   profile: UserProfile | null = null ;
   uid?: string;
@@ -181,6 +181,8 @@ export class TeacherPage implements OnInit {
     if(!this.uid) {
       return;
     }
+
+    this.isSavingData = true;
 
     const fields: Partial<UserProfile> = {};
     fields.celular = this.celular?.value ?? '';

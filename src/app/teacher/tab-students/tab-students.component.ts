@@ -287,6 +287,11 @@ export class TabStudentsComponent  implements OnInit, OnDestroy {
     this.form.reset();
   }
 
+  async onRemoveTutor(studentId: string) {
+    await this.studentCRUDService.validateStudentNotifications(studentId, false);
+    await this.studentCRUDService.removeTutor(studentId);
+  }
+
   async onUpdateStudent(student: Student) {
     if(!student.id){
       return;

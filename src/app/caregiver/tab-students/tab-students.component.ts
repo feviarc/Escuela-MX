@@ -1,5 +1,4 @@
-import { Auth } from '@angular/fire/auth';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 import {
   IonButton,
@@ -11,20 +10,27 @@ import {
   IonHeader,
   IonIcon,
   IonItem,
+  IonItemSliding,
+  IonLabel,
   IonList,
   IonModal,
+  IonNote,
   IonProgressBar,
   IonRadio,
   IonRadioGroup,
   IonSearchbar,
   IonTitle,
-  IonToolbar, IonItemSliding, IonLabel, IonNote } from "@ionic/angular/standalone";
+  IonToolbar,
+} from "@ionic/angular/standalone";
 
 import { User } from 'firebase/auth'
 import { firstValueFrom, Subscription } from 'rxjs';
+
+import { UserProfile } from 'src/app/models/user-profile.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { CctStorageService } from 'src/app/services/cct-storage.service';
 import { StudentCRUDService, Student } from 'src/app/services/student-crud.service';
+import { UserProfileService } from 'src/app/services/user-profile.service';
 
 
 @Component({
@@ -32,7 +38,7 @@ import { StudentCRUDService, Student } from 'src/app/services/student-crud.servi
   templateUrl: './tab-students.component.html',
   styleUrls: ['./tab-students.component.scss'],
   standalone: true,
-  imports: [IonNote, IonLabel, IonItemSliding,
+  imports: [
     IonButton,
     IonButtons,
     IonContent,
@@ -42,8 +48,11 @@ import { StudentCRUDService, Student } from 'src/app/services/student-crud.servi
     IonHeader,
     IonIcon,
     IonItem,
+    IonItemSliding,
+    IonLabel,
     IonList,
     IonModal,
+    IonNote,
     IonProgressBar,
     IonRadio,
     IonRadioGroup,
@@ -55,28 +64,33 @@ import { StudentCRUDService, Student } from 'src/app/services/student-crud.servi
 
 export class TabStudentsComponent  implements OnInit {
 
+  @ViewChild(IonSearchbar) searchbar!: IonSearchbar;
+
   cct!: string;
   filteredStudentsWithoutTutor: Student[] = [];
   isLoading = true;
+  profile: UserProfile | null = null;
   selectedStudent: any;
-  studentsWithoutTutor: Student[] = [];
   studentsByTutor: Student[] = [];
+  studentsWithoutTutor: Student[] = [];
   subscriptions: Subscription[] = [];
   tabMessage = '';
   tid?: string;
+  uid?: string;
   user: User | null = null;
 
   constructor(
     private authService: AuthService,
     private cctStorageService: CctStorageService,
     private studentCRUDService: StudentCRUDService,
+    private userProfileService: UserProfileService,
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     const cct = this.cctStorageService.getCCT();
     this.cct = (cct !== null ? cct : '');
-
-    this.getCurrentUser();
+    await this.getCurrentUser();
+    await this.getUserProfile();
   }
 
   ngOnDestroy() {
@@ -91,6 +105,18 @@ export class TabStudentsComponent  implements OnInit {
       if (this.tid) {
         this.loadStudentsByTutor(this.tid);
       }
+    } catch(error) {
+      console.log('Error:', error);
+    }
+  }
+
+  async getUserProfile() {
+    if (!this.user) {
+      return;
+    }
+    try {
+      this.profile = await firstValueFrom(this.userProfileService.getUserProfile(this.tid!));
+      console.log('UserProfile:', this.profile);
     } catch(error) {
       console.log('Error:', error);
     }
@@ -150,6 +176,15 @@ export class TabStudentsComponent  implements OnInit {
     });
 
     this.subscriptions.push(sub);
+  }
+
+  async onAssingTutor() {
+    const studenId = this.selectedStudent.id;
+    const tutorId = this.tid ?? '';
+    const tutorName = this.profile?.nombre ?? '';
+
+    this.searchbar.value = '';
+    await this.studentCRUDService.assignTutor(studenId, tutorId, tutorName);
   }
 
   selectStudentCompareWith(s1: Student, s2: Student): boolean {

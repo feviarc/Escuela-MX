@@ -23,7 +23,7 @@
               {{ student.nombreCompleto }}
             </h2>
             @if(!student.validado) {
-              <ion-note>Validación pendiente.</ion-note>
+              <ion-note>Validación de notificaciones pendiente.</ion-note>
             }
           </ion-label>
         </ion-item>
@@ -87,9 +87,9 @@
     <ion-footer>
       <ion-toolbar>
         <ion-button
-          expand="block"
-          [disabled]="!selectedStudent"
-
+         expand="block"
+         [disabled]="!selectedStudent"
+         (click)="onAssingTutor()"
         >
           <ion-icon slot="start" name="person-add"></ion-icon>
           Agregar

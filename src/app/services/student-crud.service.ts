@@ -409,10 +409,11 @@ export class StudentCRUDService {
    * Assign a tutor to a student
    * @param studentId - Student ID
    * @param tutorId - Tutor ID
+   * @param tutorName - Tutor Name
    * @returns Promise<void>
    */
-  async assignTutor(studentId: string, tutorId: string): Promise<void> {
-    await this.updateStudent(studentId, { tid: tutorId });
+  async assignTutor(studentId: string, tutorId: string, tutorName: string): Promise<void> {
+    await this.updateStudent(studentId, { tid: tutorId, nombreTutor: tutorName });
   }
 
   /**
@@ -441,7 +442,7 @@ export class StudentCRUDService {
    * @returns Promise<void>
    */
   async removeTutor(studentId: string): Promise<void> {
-    await this.updateStudent(studentId, { tid: undefined });
+    await this.updateStudent(studentId, { tid: undefined, nombreTutor: undefined });
   }
 
   /**

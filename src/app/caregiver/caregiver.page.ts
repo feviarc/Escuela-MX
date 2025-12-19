@@ -62,7 +62,7 @@ import { UserProfileService } from '../services/user-profile.service';
     IonTitle,
     IonToolbar,
     ReactiveFormsModule,
-]
+  ]
 })
 
 export class CaregiverPage implements OnInit {
@@ -77,8 +77,8 @@ export class CaregiverPage implements OnInit {
 
   form = this.formBuilder.group({
     celular: ['',[
-        Validators.required,
-        Validators.pattern('^[0-9]{10}$')
+      Validators.required,
+      Validators.pattern('^[0-9]{10}$')
     ]],
     nombre: ['',[
       Validators.required,
@@ -178,7 +178,7 @@ export class CaregiverPage implements OnInit {
 
     const fields: Partial<UserProfile> = {};
     fields.celular = this.celular?.value ?? '';
-    fields.nombre = this.nombre?.value ?? '';
+    fields.nombre = this.nombre?.value?.trim().toUpperCase() ?? '';
     fields.cct = this.cct;
     fields.activo = true;
 

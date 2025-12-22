@@ -75,6 +75,12 @@ export class UserProfileService {
     );
   }
 
+  getUsersByRoleAndCCT(rol: string, cct: string) {
+    return this.getUsersByRole(rol).pipe(
+      map( users => users.filter(user => user.cct === cct))
+    );
+  }
+
   async userExists(uid: string): Promise<boolean> {
     const userDocRef = doc(this.firestore, `usuarios/${uid}`);
     const docSnap = await getDoc(userDocRef);

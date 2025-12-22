@@ -5,17 +5,25 @@ import {
   IonActionSheet,
   IonButton,
   IonButtons,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
   IonContent,
   IonHeader,
   IonIcon,
   IonProgressBar,
   IonTitle,
-  IonToast,
   IonToolbar,
 } from "@ionic/angular/standalone";
 
 import { OverlayEventDetail } from '@ionic/core/components';
+import { take } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import { CctStorageService } from 'src/app/services/cct-storage.service';
+import { UserProfile } from 'src/app/models/user-profile.model';
+import { UserProfileService } from 'src/app/services/user-profile.service';
 
 
 @Component({
@@ -27,20 +35,27 @@ import { AuthService } from 'src/app/services/auth.service';
     IonActionSheet,
     IonButton,
     IonButtons,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
     IonContent,
     IonHeader,
     IonIcon,
     IonProgressBar,
     IonTitle,
-    IonToast,
     IonToolbar,
   ]
 })
+
 export class TabContactComponent  implements OnInit {
 
+  cct = '';
+  escuela = '';
   isLoading = true;
-  toastMessage = '';
-  isToastOpen = false;
+  teachers: UserProfile[] = [];
+  telefono = '';
 
   public logoutActionSheetButtons = [
     {
@@ -62,9 +77,27 @@ export class TabContactComponent  implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private cctStorageService: CctStorageService,
+    private userProfileService: UserProfileService,
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    const cct = this.cctStorageService.getCCT();
+    this.cct = (cct !== null ? cct : '');
+
+    this.userProfileService.getUsersByRoleAndCCT('maestro', this.cct)
+    .pipe(take(1))
+    .subscribe({
+      next: (users) => {
+        this.escuela = users[0].escuela ?? '';
+        this.telefono = users[0].telefono ?? '';
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.log('Error:', error);
+      }
+    });
+  }
 
   onLogout(event: CustomEvent<OverlayEventDetail>) {
     const eventButton = event.detail.data;

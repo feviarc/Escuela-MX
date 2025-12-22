@@ -11,7 +11,8 @@ import {
   IonProgressBar,
   IonText,
   IonTitle,
-  IonToolbar, IonBadge } from "@ionic/angular/standalone";
+  IonToolbar
+} from "@ionic/angular/standalone";
 
 import { User } from 'firebase/auth';
 import { firstValueFrom, Subscription } from 'rxjs';
@@ -26,7 +27,7 @@ import { CctStorageService } from 'src/app/services/cct-storage.service';
   templateUrl: './tab-notifications.component.html',
   styleUrls: ['./tab-notifications.component.scss'],
   standalone: true,
-  imports: [IonBadge,
+  imports: [
     DateFormatPipe,
     IonChip,
     IonContent,

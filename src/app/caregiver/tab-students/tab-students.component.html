@@ -45,6 +45,7 @@
  [initialBreakpoint]="1.0"
  [breakpoints]="[0, 1.0]"
  (willPresent)="loadStudentsWithoutTutor(cct)"
+ (didDismiss)="selectedStudent=null"
  #addStudentModal
 >
   <ng-template>

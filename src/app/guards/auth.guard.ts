@@ -37,6 +37,10 @@ export class AuthGuard implements CanActivate, CanActivateChild {
           return of(this.router.createUrlTree(['/portal']));
         }
 
+        if(!user.emailVerified) {
+          return of(this.router.createUrlTree(['/auth']));
+        }
+
         return this.userProfileService.getUserProfile(user.uid).pipe(
           map(profile => {
             if(profile && profile.rol === expectedRole) {

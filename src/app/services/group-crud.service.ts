@@ -68,7 +68,7 @@ export class GroupCRUDService {
   private loadGroups(): void {
     this.getGroups().subscribe({
       next: (groups) => this.groupsSubject.next(groups),
-      error: (error) => console.error('Error loading groups:', error)
+      error: (error) => console.error('❌ Escuela-MX: [group-crud.service.ts]', error)
     });
   }
 
@@ -87,11 +87,10 @@ export class GroupCRUDService {
     return from(addDoc(this.groupsCollection, groupWithTimestamps)).pipe(
       map(docRef => docRef.id),
       tap(id => {
-        console.log('Group added with ID:', id);
         this.loadGroups(); // Update list
       }),
       catchError(error => {
-        console.error('Error adding group:', error);
+        console.error('❌ Escuela-MX: [group-crud.service.ts]', error);
         return throwError(() => new Error('Could not add group'));
       })
     );
@@ -113,7 +112,7 @@ export class GroupCRUDService {
     return collectionData(q, { idField: 'id' }).pipe(
       map(groups => groups as Group[]),
       catchError(error => {
-        console.error('Error getting groups:', error);
+        console.error('❌ Escuela-MX: [group-crud.service.ts]', error);
         return throwError(() => new Error('Could not get groups'));
       })
     );
@@ -142,7 +141,7 @@ export class GroupCRUDService {
         return groups;
       }),
       catchError(error => {
-        console.error('Error getting groups snapshot:', error);
+        console.error('❌ Escuela-MX: [group-crud.service.ts]', error);
         return throwError(() => new Error('Could not get groups'));
       })
     );
@@ -160,7 +159,7 @@ export class GroupCRUDService {
     return docData(docRef, { idField: 'id' }).pipe(
       map(data => data ? data as Group : null),
       catchError(error => {
-        console.error('Error getting group by ID:', error);
+        console.error('❌ Escuela-MX: [group-crud.service.ts]', error);
         return of(null);
       })
     );
@@ -185,7 +184,7 @@ export class GroupCRUDService {
         return null;
       }),
       catchError(error => {
-        console.error('Error getting group by ID:', error);
+        console.error('❌ Escuela-MX: [group-crud.service.ts]', error);
         return of(null);
       })
     );
@@ -215,7 +214,7 @@ export class GroupCRUDService {
         return groups;
       }),
       catchError(error => {
-        console.error('Error getting groups by grade:', error);
+        console.error('❌ Escuela-MX: [group-crud.service.ts]', error);
         return of([]);
       })
     );
@@ -246,7 +245,7 @@ export class GroupCRUDService {
         } as Group;
       }),
       catchError(error => {
-        console.error('Error getting group by grade and letter:', error);
+        console.error('❌ Escuela-MX: [group-crud.service.ts]', error);
         return of(null);
       })
     );
@@ -278,11 +277,10 @@ export class GroupCRUDService {
         return from(updateDoc(docRef, dataWithTimestamp));
       }),
       tap(() => {
-        console.log('Group updated with ID:', groupId);
         this.loadGroups(); // Update list
       }),
       catchError(error => {
-        console.error('Error updating group:', error);
+        console.error('❌ Escuela-MX: [group-crud.service.ts]', error);
         return throwError(() => new Error('Could not update group'));
       })
     );
@@ -304,11 +302,10 @@ export class GroupCRUDService {
         return from(deleteDoc(docRef));
       }),
       tap(() => {
-        console.log('Group deleted with ID:', groupId);
         this.loadGroups(); // Update list
       }),
       catchError(error => {
-        console.error('Error deleting group:', error);
+        console.error('❌ Escuela-MX: [group-crud.service.ts]', error);
         return throwError(() => new Error('Could not delete group'));
       })
     );
@@ -360,7 +357,7 @@ export class GroupCRUDService {
     return from(getDocs(this.groupsCollection)).pipe(
       map(querySnapshot => querySnapshot.size),
       catchError(error => {
-        console.error('Error counting groups:', error);
+        console.error('❌ Escuela-MX: [group-crud.service.ts]', error);
         return of(0);
       })
     );

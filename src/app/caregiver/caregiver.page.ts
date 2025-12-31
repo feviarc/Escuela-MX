@@ -123,9 +123,8 @@ export class CaregiverPage implements OnInit {
     try {
       this.user = await firstValueFrom(this.authService.getCurrentUser());
       this.uid = this.user?.uid;
-      console.log('CurrentUser:', this.user);
     } catch(error) {
-      console.log('Error:', error);
+      console.log('❌ Escuela-MX: [caregiver.page.ts]', error);
     }
   }
 
@@ -136,9 +135,8 @@ export class CaregiverPage implements OnInit {
     try {
       this.profile = await firstValueFrom(this.userProfileService.getUserProfile(this.uid!));
       this.isUserActive = this.profile?.activo ?? false;
-      console.log('UserProfile:', this.profile);
     } catch(error) {
-      console.log('Error:', error);
+      console.log('❌ Escuela-MX: [caregiver.page.ts]', error);
     }
   }
 
@@ -151,7 +149,7 @@ export class CaregiverPage implements OnInit {
         if(!school) {
           return;
         }
-        console.log('School:', school);
+
         this.schoolStateService.setSchool(school);
         this.form.get('escuela')?.setValue(school?.nombre);
       }
@@ -163,8 +161,8 @@ export class CaregiverPage implements OnInit {
       next: ()=>{
         this.router.navigateByUrl('/auth');
       },
-      error: error=>{
-        console.log('Error de cierre de sesión');
+      error: error => {
+        console.log('❌ Escuela-MX: [caregiver.page.ts]', error);
       }
     });
   }

@@ -51,8 +51,8 @@ export class UserProfileService {
     const userDocRef = doc(this.firestore, `usuarios/${uid}`);
     try {
      await updateDoc(userDocRef, data);
-    } catch(e) {
-      console.log(e)
+    } catch(error) {
+      console.log('❌ Escuela-MX: [user-profile.service.ts]', error)
     }
   }
 

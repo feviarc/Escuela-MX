@@ -69,7 +69,7 @@ export class SubjectCRUDService {
   private loadSubjects(): void {
     this.getSubjects().subscribe({
       next: (subjects) => this.subjectsSubject.next(subjects),
-      error: (error) => console.error('Error loading subjects:', error)
+      error: (error) => console.error('❌ Escuela-MX: [subject-crud.service.ts]', error)
     });
   }
 
@@ -83,11 +83,10 @@ export class SubjectCRUDService {
     return from(addDoc(this.subjectsCollection, subject)).pipe(
       map(docRef => docRef.id),
       tap(id => {
-        console.log('Subject added with ID:', id);
         this.loadSubjects(); // Update list
       }),
       catchError(error => {
-        console.error('Error adding subject:', error);
+        console.error('❌ Escuela-MX: [subject-crud.service.ts]', error);
         return throwError(() => new Error('Could not add subject'));
       })
     );
@@ -105,7 +104,7 @@ export class SubjectCRUDService {
     return collectionData(q, { idField: 'id' }).pipe(
       map(subjects => subjects as Subject[]),
       catchError(error => {
-        console.error('Error getting subjects:', error);
+        console.error('❌ Escuela-MX: [subject-crud.service.ts]', error);
         return throwError(() => new Error('Could not get subjects'));
       })
     );
@@ -130,7 +129,7 @@ export class SubjectCRUDService {
         return subjects;
       }),
       catchError(error => {
-        console.error('Error getting subjects snapshot:', error);
+        console.error('❌ Escuela-MX: [subject-crud.service.ts]', error);
         return throwError(() => new Error('Could not get subjects'));
       })
     );
@@ -152,7 +151,7 @@ export class SubjectCRUDService {
     return collectionData(q, { idField: 'id' }).pipe(
       map(subjects => subjects as Subject[]),
       catchError(error => {
-        console.error('Error getting subjects by grade:', error);
+        console.error('❌ Escuela-MX: [subject-crud.service.ts]', error);
         return throwError(() => new Error('Could not get subjects by grade'));
       })
     );
@@ -182,7 +181,7 @@ export class SubjectCRUDService {
         return subjects;
       }),
       catchError(error => {
-        console.error('Error getting subjects by grade snapshot:', error);
+        console.error('❌ Escuela-MX: [subject-crud.service.ts]', error);
         return throwError(() => new Error('Could not get subjects by grade'));
       })
     );
@@ -211,7 +210,7 @@ export class SubjectCRUDService {
         } as Subject;
       }),
       catchError(error => {
-        console.error('Error getting subject by name:', error);
+        console.error('❌ Escuela-MX: [subject-crud.service.ts]', error);
         return of(null);
       })
     );
@@ -243,11 +242,10 @@ export class SubjectCRUDService {
         return from(updateDoc(docRef, dataWithTimestamp));
       }),
       tap(() => {
-        console.log('Subject updated with ID:', subjectId);
         this.loadSubjects(); // Update list
       }),
       catchError(error => {
-        console.error('Error updating subject:', error);
+        console.error('❌ Escuela-MX: [subject-crud.service.ts]', error);
         return throwError(() => new Error('Could not update subject'));
       })
     );
@@ -269,11 +267,10 @@ export class SubjectCRUDService {
         return from(deleteDoc(docRef));
       }),
       tap(() => {
-        console.log('Subject deleted with ID:', subjectId);
         this.loadSubjects(); // Update list
       }),
       catchError(error => {
-        console.error('Error deleting subject:', error);
+        console.error('❌ Escuela-MX: [subject-crud.service.ts]', error);
         return throwError(() => new Error('Could not delete subject'));
       })
     );
@@ -324,7 +321,7 @@ export class SubjectCRUDService {
     return from(getDocs(this.subjectsCollection)).pipe(
       map(querySnapshot => querySnapshot.size),
       catchError(error => {
-        console.error('Error counting subjects:', error);
+        console.error('❌ Escuela-MX: [subject-crud.service.ts]', error);
         return of(0);
       })
     );

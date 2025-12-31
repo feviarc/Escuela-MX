@@ -99,13 +99,12 @@ export class AdminNotificationsCRUDService {
    */
   private loadNotifications(): void {
     if (!this.currentUserId) {
-      console.warn('No user ID set. Call setCurrentUser() first.');
       return;
     }
 
     this.getNotifications(this.currentUserId).subscribe({
       next: (notifications) => this.notificationsSubject.next(notifications),
-      error: (error) => console.error('Error loading notifications:', error)
+      error: (error) => console.error('❌ Escuela-MX: [admin-notifications-crud.service.ts]', error)
     });
   }
 
@@ -127,13 +126,12 @@ export class AdminNotificationsCRUDService {
     return from(addDoc(notificationsCol, notification)).pipe(
       map(docRef => docRef.id),
       tap(id => {
-        console.log('Notification added with ID:', id);
         if (userId === this.currentUserId) {
           this.loadNotifications();
         }
       }),
       catchError(error => {
-        console.error('Error adding notification:', error);
+        console.error('❌ Escuela-MX: [admin-notifications-crud.service.ts]', error);
         return throwError(() => new Error('Could not add notification'));
       })
     );
@@ -158,7 +156,7 @@ export class AdminNotificationsCRUDService {
         })) as Notification[];
       }),
       catchError(error => {
-        console.error('Error getting notifications:', error);
+        console.error('❌ Escuela-MX: [admin-notifications-crud.service.ts]', error);
         return throwError(() => new Error('Could not get notifications'));
       })
     );
@@ -187,7 +185,7 @@ export class AdminNotificationsCRUDService {
         return notifications;
       }),
       catchError(error => {
-        console.error('Error getting notifications snapshot:', error);
+        console.error('❌ Escuela-MX: [admin-notifications-crud.service.ts]', error);
         return throwError(() => new Error('Could not get notifications'));
       })
     );
@@ -220,7 +218,7 @@ export class AdminNotificationsCRUDService {
         return notifications;
       }),
       catchError(error => {
-        console.error('Error getting unread notifications:', error);
+        console.error('❌ Escuela-MX: [admin-notifications-crud.service.ts]', error);
         return of([]);
       })
     );
@@ -253,7 +251,7 @@ export class AdminNotificationsCRUDService {
         return notifications;
       }),
       catchError(error => {
-        console.error('Error getting archived notifications:', error);
+        console.error('❌ Escuela-MX: [admin-notifications-crud.service.ts]', error);
         return of([]);
       })
     );
@@ -287,7 +285,7 @@ export class AdminNotificationsCRUDService {
         return null;
       }),
       catchError(error => {
-        console.error('Error getting notification by ID:', error);
+        console.error('❌ Escuela-MX: [admin-notifications-crud.service.ts]', error);
         return of(null);
       })
     );
@@ -322,13 +320,12 @@ export class AdminNotificationsCRUDService {
         return from(updateDoc(docRef, updatedData));
       }),
       tap(() => {
-        console.log('Notification updated:', notificationId);
         if (userId === this.currentUserId) {
           this.loadNotifications();
         }
       }),
       catchError(error => {
-        console.error('Error updating notification:', error);
+        console.error('❌ Escuela-MX: [admin-notifications-crud.service.ts]', error);
         return throwError(() => new Error('Could not update notification'));
       })
     );
@@ -383,13 +380,12 @@ export class AdminNotificationsCRUDService {
         return from(batch.commit());
       }),
       tap(() => {
-        console.log('All notifications marked as archived');
         if (userId === this.currentUserId) {
           this.loadNotifications();
         }
       }),
       catchError(error => {
-        console.error('Error marking all as archived:', error);
+        console.error('❌ Escuela-MX: [admin-notifications-crud.service.ts]', error);
         return throwError(() => new Error('Could not mark all as archived'));
       })
     );
@@ -418,13 +414,12 @@ export class AdminNotificationsCRUDService {
         return from(deleteDoc(docRef));
       }),
       tap(() => {
-        console.log('Notification deleted:', notificationId);
         if (userId === this.currentUserId) {
           this.loadNotifications();
         }
       }),
       catchError(error => {
-        console.error('Error deleting notification:', error);
+        console.error('❌ Escuela-MX: [admin-notifications-crud.service.ts]', error);
         return throwError(() => new Error('Could not delete notification'));
       })
     );
@@ -459,13 +454,12 @@ export class AdminNotificationsCRUDService {
         return from(batch.commit());
       }),
       tap(() => {
-        console.log('Archived notifications deleted');
         if (userId === this.currentUserId) {
           this.loadNotifications();
         }
       }),
       catchError(error => {
-        console.error('Error deleting archived notifications:', error);
+        console.error('❌ Escuela-MX: [admin-notifications-crud.service.ts]', error);
         return throwError(() => new Error('Could not delete archived notifications'));
       })
     );
@@ -509,13 +503,12 @@ export class AdminNotificationsCRUDService {
         return from(Promise.all(batches)).pipe(map(() => void 0));
       }),
       tap(() => {
-        console.log('All notifications cleared');
         if (userId === this.currentUserId) {
           this.loadNotifications();
         }
       }),
       catchError(error => {
-        console.error('Error clearing all notifications:', error);
+        console.error('❌ Escuela-MX: [admin-notifications-crud.service.ts]', error);
         return throwError(() => new Error('Could not clear all notifications'));
       })
     );
@@ -530,7 +523,7 @@ export class AdminNotificationsCRUDService {
     return this.getUnreadNotifications(userId).pipe(
       map(notifications => notifications.length),
       catchError(error => {
-        console.error('Error counting unread notifications:', error);
+        console.error('❌ Escuela-MX: [admin-notifications-crud.service.ts]', error);
         return of(0);
       })
     );
@@ -547,7 +540,7 @@ export class AdminNotificationsCRUDService {
     return from(getDocs(notificationsCol)).pipe(
       map(querySnapshot => querySnapshot.size),
       catchError(error => {
-        console.error('Error counting notifications:', error);
+        console.error('❌ Escuela-MX: [admin-notifications-crud.service.ts]', error);
         return of(0);
       })
     );

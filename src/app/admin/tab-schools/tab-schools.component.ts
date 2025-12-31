@@ -153,18 +153,17 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
           this.isLoadingData = false;
         }
       },
-      error: (e) => {
-        console.log('Error: ', e);
+      error: (error) => {
+        console.log('❌ Escuela-MX: [tab-schools.component.ts]', error);
       }
     });
 
     const sub2 = this.groupCRUDService.groups$.subscribe({
       next: groups => {
         this.groups = groups;
-        console.log('Grupos: ', groups);
       },
       error: (e) => {
-        console.log('Error:', e);
+        console.log('❌ Escuela-MX: [tab-schools.component.ts]', e);
       }
     });
 
@@ -175,10 +174,9 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
         );
 
         this.subjects = subjects;
-        console.log('Materias:', subjects);
       },
       error: (e) => {
-        console.log('Error:', e);
+        console.log('❌ Escuela-MX: [tab-schools.component.ts]', e);
       }
     });
 
@@ -204,11 +202,10 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
 
     return this.schoolCRUDService.cctExists(control.value).pipe(
       map(exists => {
-        console.log(`CCT "${control.value}" exists:`, exists);
         return exists ? { cctExists: true } : null;
       }),
       catchError(error => {
-        console.error('Error validating CCT:', error);
+        console.error('❌ Escuela-MX: [tab-schools.component.ts]', error);
         return of(null);
       })
     );
@@ -304,11 +301,9 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
     this.classLetter = '';
 
     this.groupCRUDService.addGroup(group).subscribe({
-      next: id => {
-        console.log(`Se creo ${id}`);
-      },
-      error: (e) => {
-        console.log(e);
+      next: () => {},
+      error: (error) => {
+        console.log('❌ Escuela-MX: [tab-schools.component.ts]', error);
       }
     });
   }
@@ -320,11 +315,9 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
     };
 
     this.subjectCRUDService.addSubject(subject).subscribe({
-      next: id => {
-        console.log(`Se creo ${id}`);
-      },
-      error: (e) => {
-        console.log('Error: ', e);
+      next: () => {},
+      error: (error) => {
+        console.log('❌ Escuela-MX: [tab-schools.component.ts]', error);
       }
     });
 
@@ -344,20 +337,17 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
         this.closeModal('new-school-btn');
         this.isSaveButtonDisabled = false;
       },
-      error: (e) => {
-        console.log('Error: ', e);
+      error: (error) => {
+        console.log('❌ Escuela-MX: [tab-schools.component.ts]', error);
       }
     });
   }
 
   onDeleteGroup(group: Group) {
-    console.log(group);
     this.groupCRUDService.deleteGroup(group.id!).subscribe({
-      next: () => {
-        console.log('Se eliminó ', group.nombre);
-      },
-      error: (e) => {
-        console.log('Error:', e);
+      next: () => {},
+      error: (error) => {
+        console.log('❌ Escuela-MX: [tab-schools.component.ts]', error);
       }
     });
   }
@@ -383,20 +373,17 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
         this.showToast(`🗑️ Se eliminó ${school.nombre}`);
         this.isSpinnerActive = false;
       },
-      error: (e) => {
-        console.log('Error: ', e);
+      error: (error) => {
+        console.log('❌ Escuela-MX: [tab-schools.component.ts]', error);
       },
     });
   }
 
   onDeleteSubject(subject: Subject) {
-    console.log(subject);
     this.subjectCRUDService.deleteSubject(subject.id!).subscribe({
-      next: () => {
-        console.log('Se eliminó ', subject.nombre);
-      },
-      error: (e) => {
-        console.log('Error:', e);
+      next: () => {},
+      error: (error) => {
+        console.log('❌ Escuela-MX: [tab-schools.component.ts]', error);
       }
     });
   }
@@ -407,7 +394,6 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
 
 
   onUpdateSchool(school: any, nameInput: any, pinInput: any) {
-
     const updatedData = {
       nombre: nameInput.value.toUpperCase(),
       pin: +pinInput.value
@@ -419,8 +405,8 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
       next: () => {
         this.isSaveButtonDisabled = false;
       },
-      error: (e) => {
-        console.log('Error: ', e);
+      error: (error) => {
+        console.log('❌ Escuela-MX: [tab-schools.component.ts]', error);
       }
     });
 
@@ -443,6 +429,5 @@ export class TabSchoolsComponent implements OnInit, OnDestroy {
   gradeHandleChange(event: CustomEvent) {
     const target = event.target as HTMLInputElement;
     this.selectedGrade = target.value;
-    console.log('Grade:', this.selectedGrade);
   }
 }

@@ -35,7 +35,7 @@ export class LoadingService {
       }
 
     } catch (error) {
-      console.error('❌ Error presentando loading:', error);
+      console.error('❌ Escuela-MX: [loading-service.ts]', error);
       this.isLoadingActive = false;
     }
   }
@@ -51,7 +51,7 @@ export class LoadingService {
       this.loading = null;
 
     } catch (error) {
-      console.error('❌ Error cerrando loading:', error);
+      console.error('❌ Escuela-MX: [loading-service.ts]', error);
       this.isLoadingActive = false;
       this.loading = null;
     }
@@ -79,12 +79,11 @@ export class LoadingService {
       }
 
     } catch (error) {
-      console.error('❌ Error en forceClose:', error);
+      console.error('❌ Escuela-MX: [loading-service.ts]', error);
 
     } finally {
       this.isLoadingActive = false;
       this.loading = null;
-      console.log('🔄 Loading forzado a cerrar');
     }
   }
 }

@@ -29,7 +29,6 @@ export class SchoolValidationService {
   }
 
   async validateCredentials(cct: string, pin: string): Promise<boolean> {
-
     const q = query(
       this.collectionRef,
       where('cct', '==', cct),
@@ -43,7 +42,7 @@ export class SchoolValidationService {
       return isValid;
 
     } catch(error) {
-      console.log('Error al validar la CCT y el PIN: ', error);
+      console.log('❌ Escuela-MX: [school-validation.service.ts]', error);
       this.cctpinValidSource.next(false);
       return false;
     }

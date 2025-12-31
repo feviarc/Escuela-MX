@@ -190,7 +190,7 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     try {
       modal.dismiss();
     } catch(error) {
-      console.log(error);
+      console.log('❌ Escuela-MX: [tab-notifications.component.ts]', error);
     }
   }
 
@@ -217,11 +217,10 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
   loadSchoolGroups() {
     const sub = this.studentGroupCRUDService.getStudentGroupsByCCT(this.cct).subscribe({
       next: groups => {
-        console.log('studentGroups:', groups);
         this.studentGroups = groups;
       },
       error: (error) => {
-        console.log('Error:', error);
+        console.log('❌ Escuela-MX: [tab-notifications.component.ts]', error);
       }
     });
 
@@ -241,23 +240,22 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
         );
       },
       error: (error) => {
-        console.log('Error:', error);
+        console.log('❌ Escuela-MX: [tab-notifications.component.ts]', error);
       }
     });
   }
 
   loadStudentNotifications(student: Student) {
-    console.log('Historiald de notifcaciones');
     if(!student.tid || !student.id) {
       return;
     }
+
     this.caregiverNotifCRUDService.getNotificationsByStudentIdSnapshot(student.tid, student.id).subscribe({
       next: (notifications) => {
         this.studentNotifications = notifications;
-        console.log(this.studentNotifications);
       },
       error: (error) => {
-        console.log('Error:', error);
+        console.log('❌ Escuela-MX: [tab-notifications.component.ts]', error);
       }
     });
   }
@@ -276,11 +274,9 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
 
         this.studentsWithGroup = students;
         this.isLoading = false;
-
-        console.log('this.studentsWithGroup:', students);
       },
       error: (error) => {
-        console.log('Error:', error);
+        console.log('❌ Escuela-MX: [tab-notifications.component.ts]', error);
       }
     });
 

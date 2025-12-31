@@ -193,7 +193,6 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
   handleInputAddModalSearchbar(event: CustomEvent) {
     const target = event.target as HTMLIonSearchbarElement;
     const query = target.value?.toUpperCase() || '';
-    console.log('event', event);
 
     this.filteredStudentsWithoutGroup = this.studentsWithoutGroup.filter(
       (student) => student.nombreCompleto.includes(query)
@@ -212,7 +211,6 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
 
     const target = event.target as HTMLIonSearchbarElement;
     const query = target.value?.toUpperCase() || '';
-    console.log('event', event);
 
     this.studentsListByGroup = this.studentsWithGroup.filter(
       (student) => student.nombreCompleto.includes(query)
@@ -227,10 +225,9 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
     const sub = this.groupCRUDService.getGroups().subscribe({
       next: groups => {
         this.groupsInfo = groups;
-        console.log(groups);
       },
-      error: (e) => {
-        console.log('Error:', e)
+      error: (error) => {
+        console.log('❌ Escuela-MX: [tab-groups.component.ts]', error);
       }
     });
 
@@ -239,7 +236,6 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
 
   loadStudents(cct: string) {
     if(!cct) {
-      console.log('No se encontró la CCT');
       return;
     }
 
@@ -250,10 +246,9 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
           );
           this.studentsWithoutGroup = students;
           this.filteredStudentsWithoutGroup = [...students];
-          console.log('filteredStudentsWithoutGroup',this.filteredStudentsWithoutGroup);
       },
       error: (error) => {
-        console.log('Error', error);
+        console.log('❌ Escuela-MX: [tab-groups.component.ts]', error);
       }
     });
 
@@ -265,7 +260,6 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
 
         this.studentsWithGroup = students;
         this.filteredStudentsWithGroup = [...students];
-        console.log('filteredStudentsWithGroup', this.filteredStudentsWithGroup);
 
         this.studentsCounterByGroup = this.studentsWithGroup.reduce(
           (acc: { [key: string]: number }, student) => {
@@ -274,12 +268,9 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
             return acc;
           },{}
         );
-
-        console.log('studentsCounter', this.studentsCounterByGroup);
-
       },
       error: (error) => {
-        console.log('Error', error);
+        console.log('❌ Escuela-MX: [tab-groups.component.ts]', error);
       }
     });
 
@@ -289,18 +280,16 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
 
   loadStudentsGroups(cct: string) {
     if(!cct) {
-      console.log('No se encontró la CCT');
       return;
     }
 
     const sub = this.studentGroupCRUDService.getStudentGroupsByCCT(cct).subscribe({
       next: groups => {
-        console.log('studentGroups:', groups);
         this.studentGroups = groups;
         this.isLoading = false;
       },
       error: (error) => {
-        console.log('Error:', error);
+        console.log('❌ Escuela-MX: [tab-groups.component.ts]', error);
       }
     });
 
@@ -317,7 +306,6 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
     const sub = this.schoolStateService.school$.subscribe(
       school => {
         this.schoolInfo = school;
-        console.log('tab-groups.component.ts', 'school', this.schoolInfo);
       }
     );
 
@@ -363,7 +351,7 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
         this.isSpinnerActive = false;
       },
       error: (error) => {
-        console.log('Error:', error);
+        console.log('❌ Escuela-MX: [tab-groups.component.ts]', error);
       }
     });
 
@@ -417,7 +405,7 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
         this.router.navigateByUrl('/auth');
       },
       error: error => {
-        console.log('Error al cerrar sesión: ',  error);
+        console.log('❌ Escuela-MX: [tab-groups.component.ts]', error);
       }
     });
   }
@@ -428,7 +416,6 @@ export class TabGroupsComponent  implements OnInit, OnDestroy {
 
   selectStudentHandleChange(event: Event) {
     const target = event.target as HTMLInputElement;
-    // console.log('Current value:', JSON.stringify(target.value));
     this.selectedStudent = target.value;
   }
 

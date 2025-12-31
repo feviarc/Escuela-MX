@@ -102,7 +102,7 @@ export class StudentGroupCRUDService {
   private loadStudentGroups(): void {
     this.getStudentGroups().subscribe({
       next: (groups) => this.studentGroupsSubject.next(groups),
-      error: (error) => console.error('Error loading student groups:', error)
+      error: (error) => console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error)
     });
   }
 
@@ -133,11 +133,10 @@ export class StudentGroupCRUDService {
         return from(setDoc(docRef, groupWithTimestamps));
       }),
       tap(() => {
-        console.log('Student group added with ID:', group.gid);
         this.loadStudentGroups();
       }),
       catchError(error => {
-        console.error('Error adding student group:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return throwError(() => new Error(error.message || 'Could not add student group'));
       })
     );
@@ -173,9 +172,8 @@ export class StudentGroupCRUDService {
 
         return this.updateStudentGroup(gid, { alumnos: updatedAlumnos });
       }),
-      tap(() => console.log('Student added to group:', gid)),
       catchError(error => {
-        console.error('Error adding student to group:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return throwError(() => new Error(error.message || 'Could not add student to group'));
       })
     );
@@ -212,9 +210,8 @@ export class StudentGroupCRUDService {
 
         return this.updateStudentGroup(gid, { alumnos: updatedAlumnos });
       }),
-      tap(() => console.log(`${students.length} students added to group:`, gid)),
       catchError(error => {
-        console.error('Error adding multiple students to group:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return throwError(() => new Error('Could not add students to group'));
       })
     );
@@ -237,7 +234,7 @@ export class StudentGroupCRUDService {
     return collectionData(q, { idField: 'gid' }).pipe(
       map(groups => groups as StudentGroup[]),
       catchError(error => {
-        console.error('Error getting student groups:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return throwError(() => new Error('Could not get student groups'));
       })
     );
@@ -266,7 +263,7 @@ export class StudentGroupCRUDService {
         return groups;
       }),
       catchError(error => {
-        console.error('Error getting student groups snapshot:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return throwError(() => new Error('Could not get student groups'));
       })
     );
@@ -283,7 +280,7 @@ export class StudentGroupCRUDService {
     return docData(docRef, { idField: 'gid' }).pipe(
       map(data => data ? data as StudentGroup : null),
       catchError(error => {
-        console.error('Error getting student group by ID:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return of(null);
       })
     );
@@ -308,7 +305,7 @@ export class StudentGroupCRUDService {
         return null;
       }),
       catchError(error => {
-        console.error('Error getting student group by ID:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return of(null);
       })
     );
@@ -340,7 +337,7 @@ export class StudentGroupCRUDService {
           observer.next(groups);
         },
         (error) => {
-          console.error('Error getting student groups by CCT:', error);
+          console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
           observer.next([]); // Emitir array vacío en caso de error
         }
       );
@@ -375,7 +372,7 @@ export class StudentGroupCRUDService {
         return groups;
       }),
       catchError(error => {
-        console.error('Error getting student groups by CCT:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return of([]);
       })
     );
@@ -407,7 +404,7 @@ export class StudentGroupCRUDService {
     return from(getDoc(docRef)).pipe(
       map(docSnap => docSnap.exists()),
       catchError(error => {
-        console.error('Error checking group existence:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return of(false);
       })
     );
@@ -472,11 +469,10 @@ export class StudentGroupCRUDService {
         return from(updateDoc(docRef, dataWithTimestamp));
       }),
       tap(() => {
-        console.log('Student group updated with ID:', gid);
         this.loadStudentGroups();
       }),
       catchError(error => {
-        console.error('Error updating student group:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return throwError(() => new Error('Could not update student group'));
       })
     );
@@ -513,9 +509,8 @@ export class StudentGroupCRUDService {
 
         return this.updateStudentGroup(gid, { alumnos: updatedAlumnos });
       }),
-      tap(() => console.log('Student updated in group:', gid)),
       catchError(error => {
-        console.error('Error updating student in group:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return throwError(() => new Error('Could not update student in group'));
       })
     );
@@ -539,11 +534,10 @@ export class StudentGroupCRUDService {
         return from(deleteDoc(docRef));
       }),
       tap(() => {
-        console.log('Student group deleted with ID:', gid);
         this.loadStudentGroups();
       }),
       catchError(error => {
-        console.error('Error deleting student group:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return throwError(() => new Error('Could not delete student group'));
       })
     );
@@ -570,9 +564,8 @@ export class StudentGroupCRUDService {
 
         return this.updateStudentGroup(gid, { alumnos: updatedAlumnos });
       }),
-      tap(() => console.log('Student removed from group:', gid)),
       catchError(error => {
-        console.error('Error removing student from group:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return throwError(() => new Error('Could not remove student from group'));
       })
     );
@@ -608,7 +601,7 @@ export class StudentGroupCRUDService {
     return from(getDocs(this.studentGroupsCollection)).pipe(
       map(querySnapshot => querySnapshot.size),
       catchError(error => {
-        console.error('Error counting student groups:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return of(0);
       })
     );
@@ -638,7 +631,7 @@ export class StudentGroupCRUDService {
         return groups;
       }),
       catchError(error => {
-        console.error('Error getting student groups by grade:', error);
+        console.error('❌ Escuela-MX: [student-group-crud.service.ts]', error);
         return of([]);
       })
     );

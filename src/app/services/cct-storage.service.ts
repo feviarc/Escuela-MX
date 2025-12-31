@@ -17,15 +17,13 @@ export class CctStorageService {
   saveCCT(cct: string): boolean {
     try {
       if (!cct || cct.trim() === '') {
-        console.warn('CCT vacía, no se guardará');
         return false;
       }
 
       localStorage.setItem(this.CCT_KEY, cct.trim());
-      console.log('CCT guardada correctamente:', cct);
       return true;
     } catch (error) {
-      console.error('Error al guardar la CCT:', error);
+      console.error('❌ Escuela-MX: [cct-storage.service.ts]', error);
       return false;
     }
   }
@@ -38,13 +36,11 @@ export class CctStorageService {
     try {
       const cct = localStorage.getItem(this.CCT_KEY);
       if (cct) {
-        console.log('CCT recuperada:', cct);
         return cct;
       }
-      console.log('No hay CCT almacenada');
       return null;
     } catch (error) {
-      console.error('Error al recuperar CCT:', error);
+      console.error('❌ Escuela-MX: [cct-storage.service.ts]', error);
       return null;
     }
   }
@@ -56,10 +52,9 @@ export class CctStorageService {
   deleteCCT(): boolean {
     try {
       localStorage.removeItem(this.CCT_KEY);
-      console.log('CCT eliminada correctamente');
       return true;
     } catch (error) {
-      console.error('Error al eliminar CCT:', error);
+      console.error('❌ Escuela-MX: [cct-storage.service.ts]', error);
       return false;
     }
   }

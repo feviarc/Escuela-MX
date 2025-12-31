@@ -74,6 +74,10 @@ Thumbs.db
 *-debug.log
 .runtimeconfig.json
 
+#Firebase Functions
+/functions/node_modules
+/functions/lib
+
 # Environments
 /src/environments/environment.ts
 /src/environments/environment.prod.ts

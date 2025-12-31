@@ -131,9 +131,8 @@ export class TeacherPage implements OnInit {
     try {
       this.user = await firstValueFrom(this.authService.getCurrentUser());
       this.uid = this.user?.uid;
-      console.log('CurrentUser:', this.user);
     } catch(error) {
-      console.log('Error:', error);
+      console.log('❌ Escuela-MX: [teacher.page.ts]', error);
     }
   }
 
@@ -144,9 +143,8 @@ export class TeacherPage implements OnInit {
     try {
       this.profile = await firstValueFrom(this.userProfileService.getUserProfile(this.uid!));
       this.isUserActive = this.profile?.activo ?? false;
-      console.log('UserProfile:', this.profile);
     } catch(error) {
-      console.log('Error:', error);
+      console.log('❌ Escuela-MX: [teacher.page.ts]', error);
     }
   }
 
@@ -159,7 +157,6 @@ export class TeacherPage implements OnInit {
         if(!school) {
           return;
         }
-        console.log('teacher.page.ts:', school);
         this.schoolStateService.setSchool(school);
         this.form.get('escuela')?.setValue(school?.nombre);
       }
@@ -172,7 +169,7 @@ export class TeacherPage implements OnInit {
         this.router.navigateByUrl('/auth');
       },
       error: error => {
-        console.log('Error de cierre de sesión: ', error);
+        console.log('❌ Escuela-MX: [teacher.page.ts]', error);
       }
     });
   }

@@ -102,7 +102,7 @@ export class AuthPage implements OnInit {
         this.handleLoginRedirect(user);
       }
     } catch(error) {
-      console.error('Error de verificación de usuario: ', error)
+      console.error('❌ Escuela-MX: [auth.page.ts]', error)
     }
   }
 
@@ -234,7 +234,7 @@ export class AuthPage implements OnInit {
           this.router.navigateByUrl('/auth');
       }
     } catch(error) {
-      console.log('Error de perfil: ', error);
+      console.log('❌ Escuela-MX: [auth.page.ts]', error);
       await firstValueFrom(this.authService.logout());
       this.router.navigateByUrl('/auth');
     }
@@ -256,7 +256,6 @@ export class AuthPage implements OnInit {
 
   private async requestNotificationsAfterLogin() {
     if(!this.notificationService.isNotificationSupported()) {
-      console.log('⚠️ Notificaciones no soportadas en este dispositivo');
       return;
     }
 
@@ -265,7 +264,6 @@ export class AuthPage implements OnInit {
     if(permission === 'default') {
       await this.showNotificationPermissionDialog();
     } else if (permission === 'granted') {
-      console.log('✅ Permiso ya concedido, obteniendo token...');
       await this.notificationService.requestPermission();
     }
   }
@@ -279,7 +277,6 @@ export class AuthPage implements OnInit {
         {
           text: 'Aceptar',
           handler: () => {
-            console.log('✅ Usuario aceptó notificaciones');
             alert.dismiss();
             setTimeout(async () => {
               const token = await this.notificationService.requestPermission();

@@ -17,7 +17,7 @@ export const validSchoolGuard: CanActivateFn = async (route, state) => {
       return true;
     }
   } catch(error) {
-    console.log('Error en la autenticación del usuario', error);
+    console.log('❌ Escuela-MX: [valid-school-guard.ts]', error);
   }
 
   if(schoolValidationService.getValidationStatus()) {

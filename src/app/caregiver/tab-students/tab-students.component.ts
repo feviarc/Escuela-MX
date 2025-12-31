@@ -106,7 +106,7 @@ export class TabStudentsComponent  implements OnInit {
         this.loadStudentsByTutor(this.tid);
       }
     } catch(error) {
-      console.log('Error:', error);
+      console.log('❌ Escuela-MX: [tab-students.component.ts]', error);
     }
   }
 
@@ -116,16 +116,14 @@ export class TabStudentsComponent  implements OnInit {
     }
     try {
       this.profile = await firstValueFrom(this.userProfileService.getUserProfile(this.tid!));
-      console.log('UserProfile:', this.profile);
     } catch(error) {
-      console.log('Error:', error);
+      console.log('❌ Escuela-MX: [tab-students.component.ts]', error);
     }
   }
 
   handleInputSearchbar(event: CustomEvent) {
     const target = event.target as HTMLIonSearchbarElement;
     const query = target.value?.toUpperCase() || '';
-    console.log('event', event);
 
     this.filteredStudentsWithoutTutor = this.studentsWithoutTutor.filter(
       (student) => student.nombreCompleto.includes(query)
@@ -143,11 +141,10 @@ export class TabStudentsComponent  implements OnInit {
             (a, b) => a.nombreCompleto.localeCompare(b.nombreCompleto)
         );
         this.studentsByTutor = students;
-        console.log('StudentsByTutor:', this.studentsByTutor);
         this.isLoading = false;
       },
       error: (error) => {
-        console.log('Error:', error);
+        console.log('❌ Escuela-MX: [tab-students.component.ts]', error);
       }
     });
 
@@ -159,8 +156,6 @@ export class TabStudentsComponent  implements OnInit {
       return;
     }
 
-    console.log('tid:', this.tid);
-
     const sub = this.studentCRUDService.getStudentsWithoutTutorByCCT(cct).subscribe({
       next: (students) => {
         students.sort(
@@ -168,10 +163,9 @@ export class TabStudentsComponent  implements OnInit {
         );
         this.studentsWithoutTutor = students;
         this.filteredStudentsWithoutTutor = [...students];
-        console.log('StudentsWithoutTutor', this.filteredStudentsWithoutTutor)
       },
       error: (error) => {
-        console.log('Error:', error);
+        console.log('❌ Escuela-MX: [tab-students.component.ts]', error);
       }
     });
 

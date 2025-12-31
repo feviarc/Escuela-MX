@@ -131,10 +131,9 @@ export class CaregiverNotificationsCRUDService {
       };
 
       const docRef = await addDoc(notificationsCol, notificationData);
-      console.log('Notification added with ID:', docRef.id);
       return docRef.id;
     } catch (error) {
-      console.error('Error adding notification:', error);
+      console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
       throw error;
     }
   }
@@ -154,7 +153,7 @@ export class CaregiverNotificationsCRUDService {
     return collectionData(q, { idField: 'id' }).pipe(
       map(notifications => notifications as CaregiverNotification[]),
       catchError(error => {
-        console.error('Error getting notifications by tid:', error);
+        console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
         throw error;
       })
     );
@@ -182,7 +181,7 @@ export class CaregiverNotificationsCRUDService {
         return notifications;
       }),
       catchError(error => {
-        console.error('Error getting notifications snapshot:', error);
+        console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
         return of([]);
       })
     );
@@ -206,7 +205,7 @@ export class CaregiverNotificationsCRUDService {
     return collectionData(q, { idField: 'id' }).pipe(
       map(notifications => notifications as CaregiverNotification[]),
       catchError(error => {
-        console.error('Error getting notifications by student ID:', error);
+        console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
         throw error;
       })
     );
@@ -239,7 +238,7 @@ export class CaregiverNotificationsCRUDService {
         return notifications;
       }),
       catchError(error => {
-        console.error('Error getting notifications by student ID snapshot:', error);
+        console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
         return of([]);
       })
     );
@@ -264,7 +263,7 @@ export class CaregiverNotificationsCRUDService {
     return docData(docRef, { idField: 'id' }).pipe(
       map(data => data ? data as CaregiverNotification : null),
       catchError(error => {
-        console.error('Error getting notification by ID:', error);
+        console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
         throw error;
       })
     );
@@ -297,7 +296,7 @@ export class CaregiverNotificationsCRUDService {
         return null;
       }),
       catchError(error => {
-        console.error('Error getting notification by ID:', error);
+        console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
         return of(null);
       })
     );
@@ -324,7 +323,7 @@ export class CaregiverNotificationsCRUDService {
     return collectionData(q, { idField: 'id' }).pipe(
       map(notifications => notifications as CaregiverNotification[]),
       catchError(error => {
-        console.error('Error getting notifications by type:', error);
+        console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
         throw error;
       })
     );
@@ -348,7 +347,7 @@ export class CaregiverNotificationsCRUDService {
     return collectionData(q, { idField: 'id' }).pipe(
       map(notifications => notifications as CaregiverNotification[]),
       catchError(error => {
-        console.error('Error getting notifications by student:', error);
+        console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
         throw error;
       })
     );
@@ -397,9 +396,8 @@ export class CaregiverNotificationsCRUDService {
       };
 
       await updateDoc(docRef, updateData);
-      console.log('Notification updated:', notificationId);
     } catch (error) {
-      console.error('Error updating notification:', error);
+      console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
       throw error;
     }
   }
@@ -429,9 +427,8 @@ export class CaregiverNotificationsCRUDService {
       }
 
       await deleteDoc(docRef);
-      console.log('Notification deleted:', notificationId);
     } catch (error) {
-      console.error('Error deleting notification:', error);
+      console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
       throw error;
     }
   }
@@ -448,7 +445,6 @@ export class CaregiverNotificationsCRUDService {
       const querySnapshot = await getDocs(notificationsCol);
 
       if (querySnapshot.empty) {
-        console.log('No notifications to delete for tutor:', tid);
         return;
       }
 
@@ -459,9 +455,8 @@ export class CaregiverNotificationsCRUDService {
       });
 
       await batch.commit();
-      console.log('All notifications deleted for tutor:', tid);
     } catch (error) {
-      console.error('Error deleting notifications by tid:', error);
+      console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
       throw error;
     }
   }
@@ -487,7 +482,7 @@ export class CaregiverNotificationsCRUDService {
       const docSnap = await getDoc(docRef);
       return docSnap.exists();
     } catch (error) {
-      console.error('Error checking notification existence:', error);
+      console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
       return false;
     }
   }
@@ -504,7 +499,7 @@ export class CaregiverNotificationsCRUDService {
       const querySnapshot = await getDocs(notificationsCol);
       return querySnapshot.size;
     } catch (error) {
-      console.error('Error counting notifications:', error);
+      console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
       return 0;
     }
   }
@@ -526,7 +521,7 @@ export class CaregiverNotificationsCRUDService {
       const querySnapshot = await getDocs(q);
       return querySnapshot.size;
     } catch (error) {
-      console.error('Error counting notifications by type:', error);
+      console.error('❌ Escuela-MX: [caregiver-notifications-crud.service.ts]', error);
       return 0;
     }
   }

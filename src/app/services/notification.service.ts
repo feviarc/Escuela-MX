@@ -54,7 +54,7 @@ export class NotificationService {
   async requestPermission(): Promise<string | null> {
     try {
       if (!this.isNotificationSupported()) {
-        console.log('Las notificaciones no están soportadas en este dispositivo');
+        console.log('⚠️ Las notificaciones no están soportadas en este dispositivo.');
         return null;
       }
 
@@ -62,11 +62,9 @@ export class NotificationService {
       const permission = await Notification.requestPermission();
 
       if (permission !== 'granted') {
-        console.log('Permiso de notificaciones denegado');
+        console.log('⚠️ Permiso de notificaciones denegado.');
         return null;
       }
-
-      console.log('Permiso de notificaciones concedido');
 
       // Esperar a que el service worker esté listo
       await this.waitForServiceWorker();
@@ -77,21 +75,17 @@ export class NotificationService {
         serviceWorkerRegistration: await navigator.serviceWorker.ready
       });
 
-      if (token) {
-        console.log('✅ Token FCM obtenido:', token);
+      if(token) {
         this.currentToken = token;
-
-        // Guardar el token en Firestore
         await this.saveTokenToFirestore(token);
-
         return token;
       }
 
-      console.log('❌ No se pudo obtener el token FCM');
+      console.log('⚠️ No se pudo obtener el token.');
       return null;
 
     } catch (error) {
-      console.error('❌ Error al solicitar permiso de notificaciones:', error);
+      console.error('❌ Escuela-MX: [notification.service.ts]', error);
       return null;
     }
   }
@@ -103,9 +97,8 @@ export class NotificationService {
     if ('serviceWorker' in navigator) {
       try {
         const registration = await navigator.serviceWorker.ready;
-        console.log('✅ Service Worker listo:', registration);
       } catch (error) {
-        console.error('❌ Error esperando Service Worker:', error);
+        console.error('❌ Escuela-MX: [notification.service.ts]', error);
       }
     }
   }
@@ -117,8 +110,7 @@ export class NotificationService {
     try {
       const userId = this.auth.currentUser?.uid;
 
-      if (!userId) {
-        console.log('⚠️ No hay usuario autenticado, no se puede guardar el token');
+      if(!userId) {
         return;
       }
 
@@ -135,10 +127,8 @@ export class NotificationService {
           merge: true
         }
       );
-
-      console.log('✅ Token guardado en Firestore para el usuario:', userId);
     } catch (error) {
-      console.error('❌ Error al guardar token en Firestore:', error);
+      console.error('❌ Escuela-MX: [notification.service.ts]', error);
     }
   }
 
@@ -151,9 +141,6 @@ export class NotificationService {
     }
 
     onMessage(this.messaging, (payload) => {
-      console.log('📬 Mensaje recibido en primer plano:', payload);
-
-      // Mostrar notificación del navegador
       this.showForegroundNotification(payload);
     });
   }
@@ -210,10 +197,9 @@ export class NotificationService {
         );
 
         this.currentToken = null;
-        console.log('✅ Token eliminado de Firestore');
       }
     } catch (error) {
-      console.error('❌ Error al eliminar token:', error);
+      console.error('❌ Escuela-MX: [notification.service.ts]', error);
     }
   }
 

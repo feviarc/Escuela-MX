@@ -79,8 +79,6 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
     .pipe(
       switchMap(user => {
         const uid = user?.uid ?? '';
-        console.log('Usuario obtenido:', user?.uid);
-        // Ahora ejecutar el segundo observable con el uid
         return this.notificationsCRUDService.getNotifications(uid);
       })
     )
@@ -88,10 +86,9 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
       next: notifications => {
         this.notifications = notifications;
         this.isLoadingData = false;
-        console.log(this.notifications);
       },
-      error: (e) => {
-        console.log('Error:', e);
+      error: (error) => {
+        console.log('❌ Escuela-MX: [tab-notifications.component.ts]', error);
       }
     });
   }
@@ -117,8 +114,8 @@ export class TabNotificationsComponent  implements OnInit, OnDestroy {
       next: () => {
         this.router.navigateByUrl('/auth');
       },
-      error: error => {
-        console.log('Error al cerrar sesión: ',  error);
+      error: (error) => {
+        console.log('❌ Escuela-MX: [tab-notifications.component.ts]',  error);
       }
     });
   }

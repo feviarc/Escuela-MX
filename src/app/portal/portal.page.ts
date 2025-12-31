@@ -116,7 +116,7 @@ export class PortalPage implements OnInit {
         }
       }
     } catch(error) {
-      console.log('Error en la verificación de usuario: ', error);
+      console.log('❌ Escuela-MX: [portal.page.ts]', error);
     }
   }
 

@@ -82,3 +82,4 @@ Thumbs.db
 !/src/environments/environment.template.ts
 !/src/environments/environment.prod.template.ts
 
+src/firebase-messaging-sw.js
